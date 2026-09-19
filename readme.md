@@ -77,7 +77,7 @@ To write a new post, open the .qmd file, edit the text, and then re-render the w
 
 ![](images/Screen%20Shot%202022-10-24%20at%2011.29.18%20AM.png)
 
-The text at the top between the "\-\--" is called YAML, and provides meta-data for your document. This is where you can change the title, date, name, and add keywords if you want.
+The text at the top between the "---" is called YAML, and provides meta-data for your document. This is where you can change the title, date, name, and add keywords if you want.
 
 The rest of the document is for the main body of the post. For example, I changed the text to read:
 
@@ -120,32 +120,33 @@ I am planning to add a video overview of these steps soon. In the meantime, thes
 2.  Sign up for a free <https://github.com> account.
 3.  Log in to Github, and search for this repository <https://github.com/CrumpLab/quartoCourseBlog>.
 
--   Click the green "Use this template" Button
--   This will make a copy of the template in your github account, it will show up as one of your repositories
--   Give your new repository a name
+- Click the green "Use this template" Button
+- This will make a copy of the template in your github account, it will show up as one of your repositories
+- Give your new repository a name
 
 4.  Activate Github pages for your repository (under repository settings), and serve the page from the "docs" folder. You should now be able to view the blog from the url given by github pages.
 5.  Log into Posit Cloud
 6.  Create a New Project, choose "New Project from Git Repository"
 
--   enter the URL to the github repository you just made
+- enter the URL to the github repository you just made
 
 7.  Load the project, and edit/modify the files (see above for examples of creating new posts etc.)
 8.  To send your changed files back to github.com you need to do a few steps
 
--   From the Git tab: stage your changes, commit your changes, and push your changes using the green up arrow.
--   You will also need to authenticate your git credentials, and allow Rstudio cloud to update your github repository
--   In the terminal run these two lines, but replace with your name and email
+- From the Git tab: stage your changes, commit your changes, and push your changes using the green up arrow.
+- You will also need to authenticate your git credentials, and allow Rstudio cloud to update your github repository
+- In the terminal run these two lines, but replace with your name and email
 
-```{=html}
 <!-- -->
-```
-    git config --global user.name "Your Name"
-    git config --global user.email "you@example.com"
 
--   When you "push" your changes back to Github using the green up arrow, you will be asked to enter a username and password. You can enter the username for your Github.com account, **but your password won't work**. You need to set up a personal access token.
--   Go to your github.com profile \> settings page. Scroll down, click on "\<\> Developer Settings", on the left
--   Click on personal access tokens, generate a new token, give it repo access. Save the text somewhere and use it as your github password when pushing from RStudio.
+```         
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+- When you "push" your changes back to Github using the green up arrow, you will be asked to enter a username and password. You can enter the username for your Github.com account, **but your password won't work**. You need to set up a personal access token.
+- Go to your github.com profile \> settings page. Scroll down, click on "\<\> Developer Settings", on the left
+- Click on personal access tokens, generate a new token, give it repo access. Save the text somewhere and use it as your github password when pushing from RStudio.
 
 9.  At this point you should be able to work on your blog in Rstudio Cloud, and push your changes to have them updated on github.com, which serves your blog online.
 

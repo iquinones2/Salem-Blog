@@ -3,17 +3,14 @@ project:
   output-dir: docs
 
 website:
-  title: "quartoCourseBlog"
+  title: "Salem"
   navbar:
     right:
       - about.qmd
-      links:
-    - icon: instagram
-      text: instagram
-      href: https://www.instagram.com/salem.csp5/
-    - icon: facebook
-      text: facebook
-      href: https://www.facebook.com/profile.php?id=61590308556408
+      - icon: instagram
+        href: https://www.instagram.com/salem.csp5/
+      - icon: facebook
+        href: https://www.facebook.com/profile.php?id=61590308556408
 format:
   html:
     theme: minty
