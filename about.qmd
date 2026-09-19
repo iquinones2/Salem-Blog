@@ -20,4 +20,3 @@ The content on this page is from `about.qmd`. Edit that file to change how this 
 "About" pages are special quarto template pages, with multiple options: <https://quarto.org/docs/websites/website-about.html>.
 
 Try changing the template type from `jolla` to one of the other options for a different look and feel.
-
