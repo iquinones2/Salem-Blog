@@ -7,10 +7,13 @@ website:
   navbar:
     right:
       - about.qmd
-      - icon: github
-        href: https://github.com/CrumpLab/quartoCourseBlog
-      - icon: twitter
-        href: https://twitter.com/MattCrumpLab
+      links:
+    - icon: instagram
+      text: instagram
+      href: https://www.instagram.com/salem.csp5/
+    - icon: facebook
+      text: facebook
+      href: https://www.facebook.com/profile.php?id=61590308556408
 format:
   html:
     theme: minty
