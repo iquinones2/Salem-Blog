@@ -4,7 +4,9 @@ project:
 
 website:
   title: "Salem"
+  favicon: "images/Salem.jpg"
   navbar:
+    logo: "images/Salem.jpg"
     right:
       - about.qmd
       - icon: instagram
@@ -13,7 +15,7 @@ website:
         href: https://www.facebook.com/profile.php?id=61590308556408
 format:
   html:
-    theme: minty
+    theme: lux
     css: styles.css
 
 editor: visual
