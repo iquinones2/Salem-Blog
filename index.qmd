@@ -1,5 +1,5 @@
 ---
-title: "Salem"
+title: "Salem Custom Screen Printing"
 listing:
   contents: posts
   sort: "date desc"
