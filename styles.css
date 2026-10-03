@@ -1,1 +1,36 @@
 /* css styles */
+.quarto-post .thumbnail-image,
+.quarto-grid-item .card-img-top img{
+    object-fit: contain;  
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect */
+.quarto-post .thumbnail-image,
+.quarto-grid-item:hover .card-img-top img{
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/*keep the zoom from spilling outside the box*/
+.quarto-post .thumbnail-image,
+.quarto-grid-item .card-img-top img{
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+/*Space inside each post so the thumbnail doesn't touch the edges*/
+.quarto-post{
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    margin-bottom: 0;
+}
+
+/* Center the thumbnail image within the post */
+.quarto-post .thumbnail{
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
