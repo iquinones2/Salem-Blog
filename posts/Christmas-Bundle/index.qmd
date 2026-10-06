@@ -1,0 +1,9 @@
+---
+title: "Beat the Holiday rush!"
+author: "Salem"
+date: "2026-9-22"
+image: ChristmasB.jpg
+categories: [Sale]
+---
+
+🎄Family Christmas Bundle🎄
