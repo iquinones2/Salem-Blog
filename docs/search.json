@@ -11,35 +11,21 @@
     "href": "index.html",
     "title": "Salem Custom Screen Printing",
     "section": "",
-    "text": "Rooted Event\n\n\n\nRooted\n\n\n\n\n\n\n\n\n\nMay 27, 2026\n\n\nSalem\n\n\n\n\n\n\n\n\n\n\n\n\nSalem’s Mission\n\n\n\nMission\n\n\n\n\n\n\n\n\n\nMay 26, 2026\n\n\nSalem\n\n\n\n\n\nNo matching items"
+    "text": "Sort by:\n  \n    Date: Newest First\n    Date: Oldest First\n    Title: A-Z\n    Title: Z-A\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFall is here!\n\n\n\nSale\n\n\n\n\n\n\n\n\n\nSep 23, 2026\n\n\nSalem\n\n\n\n\n\n\n\n\n\n\n\n\nRooted Event\n\n\n\nRooted\n\n\n\n\n\n\n\n\n\nMay 27, 2026\n\n\nSalem\n\n\n\n\n\n\n\n\n\n\n\n\nSalem’s Mission\n\n\n\nMission\n\n\n\n\n\n\n\n\n\nMay 26, 2026\n\n\nSalem\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "posts/my_first_post/index.html",
-    "href": "posts/my_first_post/index.html",
+    "objectID": "posts/October-Sale/index.html",
+    "href": "posts/October-Sale/index.html",
+    "title": "Fall is here!",
+    "section": "",
+    "text": "Take advantage of our October sale!"
+  },
+  {
+    "objectID": "posts/Rooted/index.html",
+    "href": "posts/Rooted/index.html",
     "title": "Rooted Event",
     "section": "",
     "text": "Roots matter. Before anything can grow tall, it has to grow deep. That’s the heart behind Rooted, our pre-youth camp event based on Colossians 2:6-7, where we focused on staying grounded in Christ and being built up˝ in our faith."
-  },
-  {
-    "objectID": "posts/my_first_post/index.html#this-is-a-second-level-heading",
-    "href": "posts/my_first_post/index.html#this-is-a-second-level-heading",
-    "title": "Rooted Event",
-    "section": "This is a second level heading",
-    "text": "This is a second level heading\nYou can include images, and many other kinds of content.\nIf you are using the visual editor in Rstudio you can drag images onto the editor to insert them into the document. Otherwise, you need to place the image inside of the folder for this post, and then you can insert it to your post directly, like this:\nThe first image in a blog post will also be used on the listings page."
-  },
-  {
-    "objectID": "posts/Example_assignment/index.html",
-    "href": "posts/Example_assignment/index.html",
-    "title": "Example assignment",
-    "section": "",
-    "text": "This assignment engages you in the process of introspection. Your task is to use introspection to evaluate and describe your own mental imagery abilities. Attempt to answer the following kinds of questions. What is your mental imagery like? Do you have mental imagery for different kinds of senses? Is your mental imagery vivid and life-like or very different from normal perception? How would you describe your mental imagery?\nYou should write a minimum of 250 words, but feel free to write more. Submit your document on blackboard by the due date."
-  },
-  {
-    "objectID": "posts/Example_assignment/index.html#my-mental-imagery",
-    "href": "posts/Example_assignment/index.html#my-mental-imagery",
-    "title": "Example assignment",
-    "section": "My mental imagery",
-    "text": "My mental imagery\nMy mental imagery is like…"
   },
   {
     "objectID": "readme.html",
@@ -124,12 +110,5 @@
     "title": "Using this quarto course blog template",
     "section": "",
     "text": "See this growing list of quarto resources for much, much more:\nhttps://github.com/mcanouil/awesome-quarto"
-  },
-  {
-    "objectID": "posts/Rooted/index.html",
-    "href": "posts/Rooted/index.html",
-    "title": "Rooted Event",
-    "section": "",
-    "text": "Roots matter. Before anything can grow tall, it has to grow deep. That’s the heart behind Rooted, our pre-youth camp event based on Colossians 2:6-7, where we focused on staying grounded in Christ and being built up˝ in our faith."
   }
 ]

@@ -1,0 +1,9 @@
+---
+title: "Fall is here!"
+author: "Salem"
+date: "2026-9-23"
+image: OctoberImg.jpg
+categories: [Sale]
+---
+
+Take advantage of our October sale!

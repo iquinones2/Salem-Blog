@@ -203,7 +203,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="TWlzc2lvbg==">Mission <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Um9vdGVk">Rooted <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="TWlzc2lvbg==">Mission <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Um9vdGVk">Rooted <span class="quarto-category-count">(1)</span></div><div class="category" data-category="U2FsZQ==">Sale <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -211,13 +211,89 @@ window.Quarto = {
 
 
 
+<div class="custom-banner">
+  <label for="sort-post">Sort by:</label>
+  <select id="sort-post">
+    <option value="date-desc">Date: Newest First</option>
+    <option value="date-asc">Date: Oldest First</option>
+    <option value="title-asc">Title: A-Z</option>
+    <option value="title-desc">Title: Z-A</option>
+  </select>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const select = document.getElementById("sort-post");
+    const container = document.querySelector(".quarto-listing .list");
+    if (!select || !container) return;
+
+    function getTitle(post){
+      const el = post.querySelector(".listing-title");
+      return el ? el.textContent.trim().toLowerCase() : "";
+    }
+
+    function getDate(post){
+      const stamp = post.getAttribute("data-listing-date-sort");
+      if (stamp) return Number(stamp);
+      const el = post.querySelector(".listing-date");
+      return el ? new Date(el.textContent.trim()).getTime() || 0 : 0;
+    }
+
+    function sortPosts(){
+      const posts = Array.from(container.querySelectorAll(":scope > .quarto-post"));
+      const mode = select.value;
+      posts.sort((a, b) => {
+        if(mode === "date-desc") return getDate(b) - getDate(a);
+        if(mode === "date-asc") return getDate(a) - getDate(b);
+        if (mode === "title-asc") return getTitle(a).localeCompare(getTitle(b));
+        if (mode === "title-desc") return getTitle(b).localeCompare(getTitle(a));
+        return 0;
+      });
+      
+      posts.forEach(function (post){container.appendChild(post);
+      });
+    }
+
+    select.addEventListener("change", sortPosts);
+  });
+</script>
 
 
 
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Um9vdGVk" data-listing-date-sort="1779858000000" data-listing-file-modified-sort="1790985600956" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="40">
+<div class="quarto-post image-right" data-index="0" data-categories="U2FsZQ==" data-listing-date-sort="1790139600000" data-listing-file-modified-sort="1791315353615" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="6">
+<div class="thumbnail"><a href="./posts/October-Sale/index.html" class="no-external">
+
+<img loading="lazy" src="./posts/October-Sale/OctoberImg.jpg" class="thumbnail-image" style="height: 220px;">
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/October-Sale/index.html" class="no-external">Fall is here!</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('U2FsZQ=='); return false;">Sale</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/October-Sale/index.html" class="no-external">
+Take advantage of our October sale!
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/October-Sale/index.html" class="no-external">
+<div class="listing-date">
+Sep 23, 2026
+</div>
+<div class="listing-author">
+Salem
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="Um9vdGVk" data-listing-date-sort="1779858000000" data-listing-file-modified-sort="1791314608519" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="40">
 <div class="thumbnail"><a href="./posts/Rooted/index.html" class="no-external">
 
 <img loading="lazy" src="./posts/Rooted/rooted.jpg" class="thumbnail-image" style="height: 220px;">
@@ -247,7 +323,7 @@ Salem
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="TWlzc2lvbg==" data-listing-date-sort="1779771600000" data-listing-file-modified-sort="1790990320377" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="1">
+<div class="quarto-post image-right" data-index="2" data-categories="TWlzc2lvbg==" data-listing-date-sort="1779771600000" data-listing-file-modified-sort="1790990320377" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="1">
 <div class="thumbnail"><a href="./posts/Salem's-Mission/index.html" class="no-external">
 
 <p class="card-img-top"><img loading='lazy' src="images/Salem.jpg" style="height: 220px;"  class="thumbnail-image card-img"/></p>

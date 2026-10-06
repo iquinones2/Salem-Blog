@@ -13,3 +13,52 @@ listing:
 page-layout: full
 title-block-banner: true
 ---
+
+```{=html}
+<div class="custom-banner">
+  <label for = "sort-post">Sort by:</label>
+  <select id = "sort-post">
+    <option value="date-desc">Date: Newest First</option>
+    <option value="date-asc">Date: Oldest First</option>
+    <option value="title-asc">Title: A-Z</option>
+    <option value="title-desc">Title: Z-A</option>
+  </select>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const select = document.getElementById("sort-post");
+    const container = document.querySelector(".quarto-listing .list");
+    if (!select || !container) return;
+
+    function getTitle(post){
+      const el = post.querySelector(".listing-title");
+      return el ? el.textContent.trim().toLowerCase() : "";
+    }
+
+    function getDate(post){
+      const stamp = post.getAttribute("data-listing-date-sort");
+      if (stamp) return Number(stamp);
+      const el = post.querySelector(".listing-date");
+      return el ? new Date(el.textContent.trim()).getTime() || 0 : 0;
+    }
+
+    function sortPosts(){
+      const posts = Array.from(container.querySelectorAll(":scope > .quarto-post"));
+      const mode = select.value;
+      posts.sort((a, b) => {
+        if(mode === "date-desc") return getDate(b) - getDate(a);
+        if(mode === "date-asc") return getDate(a) - getDate(b);
+        if (mode === "title-asc") return getTitle(a).localeCompare(getTitle(b));
+        if (mode === "title-desc") return getTitle(b).localeCompare(getTitle(a));
+        return 0;
+      });
+      
+      posts.forEach(function (post){container.appendChild(post);
+      });
+    }
+
+    select.addEventListener("change", sortPosts);
+  });
+</script>
+```

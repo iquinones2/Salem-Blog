@@ -1,15 +1,18 @@
 /* css styles */
 .quarto-post .thumbnail-image,
 .quarto-grid-item .card-img-top img{
-    object-fit: contain;  
-    width: 100%;
+    object-fit: contain !important; 
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 220px !important;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Hover effect */
-.quarto-post .thumbnail-image,
+.quarto-post:hover .thumbnail-image,
 .quarto-grid-item:hover .card-img-top img{
     transform: scale(1.05);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -33,4 +36,52 @@
 .quarto-post .thumbnail{
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+}
+
+/*Custom styling for sort box */
+.custom-banner{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    margin: 1rem 0 1.25rem;
+    padding: 0.5rem 1rem;
+    border-radius:12px;
+    background-color: #f9f9f9;
+}
+
+.custom-banner label{
+    font-weight: 600;
+    margin: 0;
+}
+
+#sort-post{
+    appearance: none;
+    -webkit-appearance:none;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    color: inherit;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /*custom arrow for the select dropdown*/
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M2%200L0%202h4L2%200zm0%205L0%203h4l-2%202z%22/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 0.65rem auto;
+}
+
+#sort-post:hover{
+    border-color: #888;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+#sort-post:focus{
+    outline: none;
+    border-color: #2c7be5;
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.25);
 }
