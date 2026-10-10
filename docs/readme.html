@@ -36,7 +36,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./images/Salem.jpg" rel="icon" type="image/jpeg">
+<link href="./images/Salem.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -87,8 +87,8 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./images/Salem.jpg" alt="" class="navbar-logo light-content">
-    <img src="./images/Salem.jpg" alt="" class="navbar-logo dark-content">
+    <img src="./images/Salem.png" alt="" class="navbar-logo light-content">
+    <img src="./images/Salem.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Salem</span>
@@ -132,147 +132,26 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="using-this-quarto-course-blog-template" class="level1">
-<h1>Using this quarto course blog template</h1>
-<p>This is a template for using <a href="https://quarto.org">quarto</a> to create a course blog. A course blog can be used in many ways to engage with course content. For example, you could use the blog to post assignments, or to dive more deeply into course material that interests you. By the end of the course, your blog can serve as a portfolio of ways that you engaged in the material. By learning how to use quarto for your blog, you will also be learning new skills for creating and sharing reproducible documents that could be useful to you in the future.</p>
-<p>The purpose of this page is to provide tips and pointers about blogging with quarto. Quarto is simple enough for creating a basic course blog. However, it is also very deep and can be used to create all sorts of documents, from website, to slide decks, and books.</p>
-<section id="quarto-documentation" class="level2">
-<h2 class="anchored" data-anchor-id="quarto-documentation">Quarto documentation</h2>
-<p>Many questions about quarto can be answered from the quarto documentation located at: <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
-<p>If you are looking for something specific and don’t know where to find it on the website, use the search tool in the top right corner.</p>
-<p><img src="images/Screen Shot 2022-10-24 at 10.23.46 AM.png" class="img-fluid"></p>
-</section>
-<section id="using-this-template" class="level2">
-<h2 class="anchored" data-anchor-id="using-this-template">Using this template</h2>
-<p>To use this template you will need a Github.com account, and access to R and Rstudio.</p>
-<p>You can get access by creating a Github.com account, and downloading the necessary open-source software to your machine.</p>
-<p>It is also possible to use Rstudio in your web-browser, which does not require downloading any software. There are two sets of instructions, one for the downloading approach, and the other for using Rstudio cloud. Scroll to the bottom for instructions on using Rstudio cloud.</p>
-</section>
-<section id="downloading-the-free-software" class="level2">
-<h2 class="anchored" data-anchor-id="downloading-the-free-software">Downloading the free software</h2>
-<p>In order to use this template you will need to install some free open-source software on your computer.</p>
-<ol type="1">
-<li>Sign up for a free account at <a href="https://github.com" class="uri">https://github.com</a>. This a website for sharing open-source software, but it can also be used to serve your blog as a website for free.</li>
-<li><a href="https://desktop.github.com">Download Github Desktop</a> and install it on your machine. This should install the version control software git on your system, and you can use Github Desktop to easily push your blog from your local computer so that it can be viewed on Github.com.</li>
-<li><a href="https://cran.rstudio.com">Download R</a> and install it on your machine. R is a programming language capable of many things, and it needs to be on your machine before you can run R Studio.</li>
-<li><a href="https://www.rstudio.com/products/rstudio/download/#download">Download R Studio Desktop</a> and install it on your machine. R Studio is called an “IDE” or integrated development environment, that you can use to write your blog with quarto.</li>
-</ol>
-</section>
-<section id="make-a-quarto-blog-project" class="level2">
-<h2 class="anchored" data-anchor-id="make-a-quarto-blog-project">Make a quarto blog project</h2>
-<p>Once you have the software installed, the next step is to create a quarto blog project in R studio. The collection of files in this template is a pre-made quarto blog project that you can modify for your own purposes. You can also make one yourself in Rstudio.</p>
-<p>Assuming you have downloaded this template, and you have installed the above software, then you need to open <code>quartoCourseBlog.Rproj</code>.</p>
-<p><img src="images/Screen Shot 2022-10-24 at 10.33.12 AM.png" class="img-fluid"></p>
-</section>
-<section id="render-the-blog" class="level2">
-<h2 class="anchored" data-anchor-id="render-the-blog">Render the blog</h2>
-<p>To find out if everything is working, try rendering the blog. Go to the “Build” Tab and press “Render Website”.</p>
-<p><img src="images/Screen Shot 2022-10-24 at 10.49.05 AM.png" class="img-fluid"></p>
-<p>After the rendering is complete, you should be able to view your blog. It might show up in the viewer pane like this:</p>
-<p><img src="images/Screen Shot 2022-10-24 at 10.50.33 AM.png" class="img-fluid"></p>
-<p>And if you press the ‘window-with-an-arrow’ button, you can view the website in your default browser. Quarto websites automatically adjust for the size of the window, so it may appear differently in the viewer pane versus the browser.</p>
-</section>
-<section id="make-a-new-blog-post" class="level2">
-<h2 class="anchored" data-anchor-id="make-a-new-blog-post">Make a new blog post</h2>
-<p>All of the blog posts are located in the <code>posts</code> folder.</p>
-<p><img src="images/Screen Shot 2022-10-24 at 11.17.30 AM.png" class="img-fluid"></p>
-<p>To make a new post, copy an existing post and then modify it. For example, my <code>posts</code> folder currently contains one post, and it is inside the <code>my_first_post</code> folder.</p>
-<p><img src="images/Screen Shot 2022-10-24 at 11.19.22 AM.png" class="img-fluid"></p>
-<p>I can copy the folder and make a new one with the same contents from the Rstudio gear-box menu:</p>
-<p><img src="images/Screen Shot 2022-10-24 at 11.20.10 AM.png" class="img-fluid"></p>
-<p>I made a folder for a second post called <code>Example_assignment</code>.</p>
-<p><img src="images/Screen Shot 2022-10-24 at 11.22.43 AM.png" class="img-fluid"></p>
-<p>These are the two files inside the folder. The <code>.qmd</code> file is a plain text file where you will write the blog post. This folder can also be used to store other assets you might put in the post, such as pictures.</p>
-<p><img src="images/Screen Shot 2022-10-24 at 11.23.02 AM.png" class="img-fluid"></p>
-<section id="writing-a-post" class="level3">
-<h3 class="anchored" data-anchor-id="writing-a-post">Writing a post</h3>
-<p>To write a new post, open the .qmd file, edit the text, and then re-render the website. This is what the text in the .qmd file looked like when I copied it.</p>
-<p><img src="images/Screen Shot 2022-10-24 at 11.29.18 AM.png" class="img-fluid"></p>
-<p>The text at the top between the “—” is called YAML, and provides meta-data for your document. This is where you can change the title, date, name, and add keywords if you want.</p>
-<p>The rest of the document is for the main body of the post. For example, I changed the text to read:</p>
-<p><img src="images/Screen Shot 2022-10-24 at 11.39.27 AM.png" class="img-fluid"></p>
-</section>
-</section>
-<section id="re-render-to-see-your-changes" class="level2">
-<h2 class="anchored" data-anchor-id="re-render-to-see-your-changes">Re-render to see your changes</h2>
-<p>Render the website from the build tab again to see your new post.</p>
-</section>
-<section id="share-your-blog-on-github.com" class="level2">
-<h2 class="anchored" data-anchor-id="share-your-blog-on-github.com">Share your blog on github.com</h2>
-<p>To share your blog online you will have to publish it on a server that can be accessed by other people on the internet. There are multiple ways to do this step, and I recommend using Github pages. You can view more in-depth instructions from quarto here <a href="https://quarto.org/docs/publishing/github-pages.html" class="uri">https://quarto.org/docs/publishing/github-pages.html</a>.</p>
-<p>Here are the steps:</p>
-<ol type="1">
-<li>Open Github Desktop</li>
-<li>Go to preferences and sign in to your Github.com account</li>
-<li>“Add” your blog project folder to Github Desktop</li>
-<li>There should be an option for a commit message, write a note in there like “first commit”.</li>
-<li>Publish to github.com and <strong>uncheck private repository</strong> so that other people will be able to see your repository.</li>
-<li>You should now be able to see your new repository in your github.com profile, which means you should be able to see a copy of your blog files in the repository.</li>
-<li>Activate Github pages for your repository (under repository settings), and serve the page from the “docs” folder.</li>
-<li>Access the blog from the url generated by the github pages settings page.</li>
-</ol>
-</section>
-<section id="pushing-new-posts-to-github.com" class="level2">
-<h2 class="anchored" data-anchor-id="pushing-new-posts-to-github.com">Pushing new posts to github.com</h2>
-<p>Whenever you make changes to your blog project that you want to share online follow these steps:</p>
-<ol type="1">
-<li>Make changes to your blog, like writing a new post, or editing an old one.</li>
-<li>Render the website in R-studio. What you see here should be what you will see later on Github.com</li>
-<li>Open Github Desktop and <strong>Commit your changes</strong>, by writing brief commit title, and pressing commit.</li>
-<li>Then, use Github Desktop to <strong>Push your changes</strong> to github.com.</li>
-<li>Wait half a minute or so, and you should see your new content appear on the website.</li>
-</ol>
-</section>
-<section id="posit-cloud-formerly-rstudio-cloud" class="level2">
-<h2 class="anchored" data-anchor-id="posit-cloud-formerly-rstudio-cloud">Posit cloud (formerly Rstudio cloud)</h2>
-<p>I am planning to add a video overview of these steps soon. In the meantime, these instructions may be enough to get started with R studio cloud and github.com.</p>
-<ol type="1">
-<li>Sign up for a free account with posit cloud here <a href="https://posit.cloud/plans/free" class="uri">https://posit.cloud/plans/free</a></li>
-<li>Sign up for a free <a href="https://github.com" class="uri">https://github.com</a> account.</li>
-<li>Log in to Github, and search for this repository <a href="https://github.com/CrumpLab/quartoCourseBlog" class="uri">https://github.com/CrumpLab/quartoCourseBlog</a>.</li>
-</ol>
-<ul>
-<li>Click the green “Use this template” Button</li>
-<li>This will make a copy of the template in your github account, it will show up as one of your repositories</li>
-<li>Give your new repository a name</li>
-</ul>
-<ol start="4" type="1">
-<li>Activate Github pages for your repository (under repository settings), and serve the page from the “docs” folder. You should now be able to view the blog from the url given by github pages.</li>
-<li>Log into Posit Cloud</li>
-<li>Create a New Project, choose “New Project from Git Repository”</li>
-</ol>
-<ul>
-<li>enter the URL to the github repository you just made</li>
-</ul>
-<ol start="7" type="1">
-<li>Load the project, and edit/modify the files (see above for examples of creating new posts etc.)</li>
-<li>To send your changed files back to github.com you need to do a few steps</li>
-</ol>
-<ul>
-<li>From the Git tab: stage your changes, commit your changes, and push your changes using the green up arrow.</li>
-<li>You will also need to authenticate your git credentials, and allow Rstudio cloud to update your github repository</li>
-<li>In the terminal run these two lines, but replace with your name and email</li>
-</ul>
-<!-- -->
-<pre><code>git config --global user.name "Your Name"
-git config --global user.email "you@example.com"</code></pre>
-<ul>
-<li>When you “push” your changes back to Github using the green up arrow, you will be asked to enter a username and password. You can enter the username for your Github.com account, <strong>but your password won’t work</strong>. You need to set up a personal access token.</li>
-<li>Go to your github.com profile &gt; settings page. Scroll down, click on “&lt;&gt; Developer Settings”, on the left</li>
-<li>Click on personal access tokens, generate a new token, give it repo access. Save the text somewhere and use it as your github password when pushing from RStudio.</li>
-</ul>
-<ol start="9" type="1">
-<li>At this point you should be able to work on your blog in Rstudio Cloud, and push your changes to have them updated on github.com, which serves your blog online.</li>
-</ol>
-</section>
-<section id="more-quarto" class="level2">
-<h2 class="anchored" data-anchor-id="more-quarto">More quarto</h2>
-<p>See this growing list of quarto resources for much, much more:</p>
-<p><a href="https://github.com/mcanouil/awesome-quarto" class="uri">https://github.com/mcanouil/awesome-quarto</a></p>
+<p>Salem Custom Screen Printing — Blog &amp; Website A live website and blog for Salem Custom Screen Printing, a small, faith-driven custom apparel business serving individuals, churches, events, and youth camps.</p>
+<p>Live site: https://iquinones2.github.io/Salem-Blog/</p>
+<p>This site also serves as an ongoing personal development project — features, design, and functionality are added and refined over time. For more projects, see my personal portfolio .</p>
+<p>Built with Quarto — static site generator used for the site and blog structure</p>
+<p>CSS — custom styles (styles.css) layered on top of the lux Quarto theme</p>
+<p>JavaScript — custom post-sorting dropdown on the homepage listing</p>
+<p>GitHub Pages — static hosting and deployment</p>
+<p>Features Blog homepage with post listing, category filter (Quarto built-in), and search</p>
+<p>Custom sort dropdown (Date newest/oldest, Title A–Z / Z–A) — vanilla JavaScript, no framework</p>
+<p>Custom thumbnail styling and hover effects via styles.css</p>
+<p>About page linking the business story with the developer’s GitHub and personal portfolio</p>
+<p>Contact / social links (Instagram, Facebook, GitHub)</p>
+<p>Project-specific customizations Started from a Quarto course-blog template (see quartoCourseBlog.Rproj and the original readme.md in git history). Project-specific additions:</p>
+<p>Homepage post-sorting dropdown and its JavaScript logic (in index.qmd)</p>
+<p>Custom thumbnail / hover styling in styles.css</p>
+<p>About page copy, GitHub and personal-portfolio links, jolla About template config</p>
+<p>Blog post content for Salem (sale flyers, event write-ups, mission post)</p>
+<p>Attribution This project began from a Quarto course-blog template. Refer to the Quarto documentation at https://quarto.org for more on Quarto websites and blogs. Preserve any license or attribution notices from the original template when redistributing.</p>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
