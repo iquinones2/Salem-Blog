@@ -4,6 +4,11 @@ A live website and blog for Salem Custom Screen Printing, a small, faith-driven 
 
 ### Live site: https://iquinones2.github.io/Salem-Blog/
 
+<p align = "center">
+    <img src="images/aboutPage.png" alt="About page" width = "45%">
+    <img src="images/missionPage.png" alt="Mission-Post" width = "45%">
+</p>
+
 This site also serves as an ongoing personal development project — features, design, and functionality are added and refined over time. For more projects, see my [`personal portfolio.`](https://iquinones2.github.io/R-Data-Science-Portfolio/)
 
 ### Built with 
