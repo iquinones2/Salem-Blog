@@ -4,9 +4,9 @@ project:
 
 website:
   title: "Salem"
-  favicon: "images/Salem.jpg"
+  favicon: "images/Salem.png"
   navbar:
-    logo: "images/Salem.jpg"
+    logo: "images/Salem.png"
     right:
       - about.qmd
       - icon: instagram

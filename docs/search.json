@@ -4,7 +4,7 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "The content on this page is from about.qmd. Edit that file to change how this page looks.\n“About” pages are special quarto template pages, with multiple options: https://quarto.org/docs/websites/website-about.html.\nTry changing the template type from jolla to one of the other options for a different look and feel."
+    "text": "Salem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps — and this website doubles as my personal development project. I’m continuously building out new features, refining the look and feel, and expanding functionality, so it can serve as a live, evolving showcase of my skills for anyone who wants to see what I know and what I’m learning next."
   },
   {
     "objectID": "index.html",
@@ -117,5 +117,19 @@
     "title": "Beat the Holiday rush!",
     "section": "",
     "text": "🎄Family Christmas Bundle🎄"
+  },
+  {
+    "objectID": "posts/my_first_post/index.html",
+    "href": "posts/my_first_post/index.html",
+    "title": "Rooted Event",
+    "section": "",
+    "text": "Roots matter. Before anything can grow tall, it has to grow deep. That’s the heart behind Rooted, our pre-youth camp event based on Colossians 2:6-7, where we focused on staying grounded in Christ and being built up˝ in our faith."
+  },
+  {
+    "objectID": "posts/Salem's-Mission/index.html",
+    "href": "posts/Salem's-Mission/index.html",
+    "title": "Salem’s Mission",
+    "section": "",
+    "text": "Custom shirts, made with care.\nChicago, Illinois\n\nSalem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps. Every shirt we print carries more than ink- it carries a message. Whether it’s a fundraiser, a camp tee, or a gift, we’re here to help you share what matters most."
   }
 ]

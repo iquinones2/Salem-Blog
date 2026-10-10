@@ -5,15 +5,14 @@ about:
   template: jolla
   links:
     - icon: instagram
-      text: instagram
+      text: Instagram
       href: https://www.instagram.com/salem.csp5/
     - icon: facebook
-      text: facebook
-      href: https://www.facebook.com/profile.php?id=61590308556408
+      text: Facebook
+      href: https://www.facebook.com/profile.php?
+    - icon: github
+      text: GitHub
+      href: https://github.com/iquinones2/Salem-Blog.git
 ---
 
-The content on this page is from `about.qmd`. Edit that file to change how this page looks.
-
-"About" pages are special quarto template pages, with multiple options: <https://quarto.org/docs/websites/website-about.html>.
-
-Try changing the template type from `jolla` to one of the other options for a different look and feel.
+Salem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps — and this website doubles as my personal development project. I'm continuously building out new features, refining the look and feel, and expanding functionality, so it can serve as a live, evolving showcase of my skills for anyone who wants to see what I know and what I'm learning next.

@@ -4,5 +4,12 @@ author: "Salem"
 date: "2026-5-26"
 categories: [Mission]
 ---
+::: {.logo-hero}
+![](/images/SalemT.png){.logo-img fig-alt="Salem Custom Screen Printing logo"}
 
-###
+**Custom shirts, made with care.**
+
+*Chicago, Illinois*
+:::
+
+Salem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps. Every shirt we print carries more than ink- it carries a message. Whether it's a fundraiser, a camp tee, or a gift, we're here to help you share what matters most.

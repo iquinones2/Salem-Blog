@@ -85,3 +85,52 @@
     border-color: #2c7be5;
     box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.25);
 }
+
+/* Custom styling for post images */
+.logo-hero{
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    margin: 2rem 0;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #fafafa 0%, #eef2f7 100%);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+}
+
+.logo-img{
+    display: block;
+    margin: 0 auto 1.25rem;
+    width: clamp(180px, 40vw, 300px);   /* scales with the screen */
+    height: auto;
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
+    transition: transform 0.4s ease, filter 0.4s ease;
+    animation: logo-fade-up 0.9s ease both;
+}
+
+.logo-img:hover{
+    transform: scale(1.02) rotate(-1deg );
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.logo-hero p{
+    margin: 0.35rem 0;
+}
+
+.logo-hero strong{
+    display: block;
+    margin: 0.5rem 0;
+}
+
+.logo-hero em{
+    color: #666;
+    font-size: 0.95rem;
+}
+
+@keyframes logo-fade-up{
+    from{opacity: 0; transform: translateY(40px);}
+    to{opacity: 1; transform: translateY(0);}
+}
+
+@media (prefers-reduced-motion: reduce){
+    .logo-img{animation: none; transform: none;}
+}

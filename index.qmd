@@ -4,7 +4,7 @@ listing:
   contents: posts
   sort: "date desc"
   type: default
-  image-placeholder: "images/Salem.jpg"
+  image-placeholder: "images/Salem.png"
   categories: true
   sort-ui: false
   filter-ui: false
