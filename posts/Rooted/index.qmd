@@ -6,4 +6,12 @@ image: rooted.jpg
 categories: [Rooted]
 ---
 
+::: logo-hero
+![](rootedT.jpg){.logo-img fig-alt="Salem Custom Screen Printing logo"}
+
+**Rooted Event**
+
+*Chicago, Illinois*
+:::
+
 Roots matter. Before anything can grow tall, it has to grow deep. That's the heart behind Rooted, our pre-youth camp event based on Colossians 2:6-7, where we focused on staying grounded in Christ and being built up˝ in our faith.

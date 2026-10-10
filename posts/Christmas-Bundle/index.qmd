@@ -6,4 +6,23 @@ image: ChristmasB.jpg
 categories: [Sale]
 ---
 
-🎄Family Christmas Bundle🎄
+::: logo-hero
+![](ChristmasB.jpg){.logo-img fig-alt="Christmas Bundle logo" width="150"}
+
+**🎄Family Christmas Bundle🎄**
+
+*Chicago, Illinois*
+:::
+
+- 5 sweatshirts
+
+- One Sided
+
+- 3 Color Custom Design
+
+- No Set Up Fee
+
+- \$0.50 additional color
+
+\$100\
++plus shipping (USPS Flat rate fee)

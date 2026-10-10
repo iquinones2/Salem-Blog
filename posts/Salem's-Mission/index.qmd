@@ -4,7 +4,8 @@ author: "Salem"
 date: "2026-5-26"
 categories: [Mission]
 ---
-::: {.logo-hero}
+
+::: logo-hero
 ![](/images/SalemT.png){.logo-img fig-alt="Salem Custom Screen Printing logo"}
 
 **Custom shirts, made with care.**

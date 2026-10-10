@@ -6,4 +6,26 @@ image: OctoberImg.jpg
 categories: [Sale]
 ---
 
-Take advantage of our October sale!
+::: logo-hero
+![](OctoberImg.jpg){.logo-img fig-alt="October Sale logo" width="150"}
+
+**Take advantage of our October sale!**
+
+*Chicago, Illinois*
+:::
+
+Custom Design
+
+One Ink Color - One side
+
+No Set Up Fee
+
+Free Delivery Chicago Area
+
+Free Shipping on \$300 order
+
+Fast Turnaround
+
+Minimum 6 T-Shirts
+
+### \$16.50 per shirt
