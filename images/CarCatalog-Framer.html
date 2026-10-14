@@ -1,0 +1,571 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="framer-html-plugin" content="disable">
+		
+		<script>Object.defineProperty(window, 'framerEnvironment', { value: Object.freeze("production") });;
+</script>
+<script>
+window.treeInitData = {"file":"/projects/fNHvVnln3ZRGbJHEJBkb/tree/1791835481980000.crdt","isMPSSocket":true,"mode":"crdt","socketURL":"wss://api.framer.com/multiplayer/projects/fNHvVnln3ZRGbJHEJBkb/socket","syncURL":"https://api.framer.com/multiplayer/projects/fNHvVnln3ZRGbJHEJBkb/tree/sync","version":1791835481980000};
+Object.defineProperty(window, 'recaptchaSiteKey', { value: Object.freeze("6LcRWAYqAAAAAO5gUOuCftzMzi6K1qwQJq5g3lxj") });
+Object.defineProperty(window, 'castlePublishableAPIKey', { value: Object.freeze("pk_xYqGbB61EcFiSh4LUshpT4DGoEQMKQMB") });
+Object.defineProperty(window, 'framerProjectFeatures', { value: Object.freeze({"crdt":true,"yieldThirdPartyScripts":true}) });
+</script>
+<script>Object.defineProperty(window, 'framerRelease', { value: Object.freeze({"channel":"stable"}) });;</script>
+<script>Object.defineProperty(window, 'framerProject', { value: Object.freeze({"id":"fNHvVnln3ZRGbJHEJBkb","archived":false,"archivedAt":null,"archivedBy":null,"collection":null,"createdAt":"0001-01-01T00:00:00Z","duplicatedFromId":null,"lastOpenedAt":null,"owner":{"id":"","initials":"","isFramerEmployee":false,"isPartner":false,"isFramerExpert":false,"name":"","email":""},"publicAccess":"view","shareLinks":null,"space":{"id":"3130a0f1-907b-3e11-883d-9569d66bd4f4","displayName":null,"icon":null,"ownerId":"","scope":""},"title":"Gracious Forest","updatedAt":"0001-01-01T00:00:00Z","url":"","userRole":"owner","canvasFeatures":{"yieldThirdPartyScripts":true},"type":"","remixId":null,"isMarketplaceTemplate":false,"accessToken":"","settings":null,"releaseChannel":null,"deploymentBuildHash":null,"license":{"id":"","expirationDate":null,"featureFlags":null,"ownerId":"","ownerType":"","type":"","unlimitedEditors":false,"isTrial":false,"trialExpirationDate":null}}) });;
+</script>
+<script>Object.defineProperty(window, 'framerUser', { value: Object.freeze({"id":"4662cd83-5acf-48ef-95f4-c5ca7b2462a9","initials":"IQ","isFramerEmployee":false,"isPartner":false,"isFramerExpert":false,"name":"Isai Quinones","email":"iq765019@gmail.com","intercomUserHash":"a4ee89d297ad5c7343c9eb59dbe531ba33fed268b7ed74a73b1e4865130ba423","spaces":[{"id":"23af10da-5aef-3ab1-9665-3deee5568278","icon":null,"avatar":null,"isDefault":true,"ownerId":"4662cd83-5acf-48ef-95f4-c5ca7b2462a9","permissions":{"read":true,"write":true},"scope":"user","organization":null},{"id":"3130a0f1-907b-3e11-883d-9569d66bd4f4","icon":null,"avatar":null,"isDefault":false,"ownerId":"be658d64-ec12-4f7d-a513-73dd2a743dad","permissions":{"read":true,"write":true},"scope":"organization","displayName":"Isai's Workspace","license":{"id":"b97aadcf-54c8-4678-a9d5-7df46892c3f0","expirationDate":null,"featureFlags":{"blockEditorBar":"off","canAddCustomDomain":"upsell","canChangeAutoJoinDefaultRole":"on","canChangeAutoJoinTeam":"on","canChangeCommentNotifPreferences":"upsell","canChangeDefaultProjectAccess":"upsell","canChangeDefaultPrototypeAccess":"upsell","canChangeMoveProjectPermissions":"upsell","canCreateCustomCollection":"upsell","canExportToHtml":"upsell","canHidePreviewInterface":"upsell","canInviteEditors":"on","canPublishTeamPackages":"upsell","canRestrictEmailDomain":"upsell","canRestrictPrivatePackages":"upsell","canRestrictPublicPackages":"upsell","canUseCustomTemplates":"upsell","canUseEditorPermissions":"off","canUseFramerX":"upsell","canUsePrivateLink":"upsell","canUsePrototypePassword":"upsell","canUseRevampedDashboard":"off","canUseTeamPlugins":"off","isAutoRenew":"on","showSitesUpsell":"on","showWatermarkOnPublishedSite":"on"},"ownerId":"be658d64-ec12-4f7d-a513-73dd2a743dad","ownerType":"team","type":"free","unlimitedEditors":false,"isTrial":false,"trialExpirationDate":null},"configuration":{"disablePublicStore":false,"disablePrivateStore":false,"disableMoveProjects":false,"restrictEmailDomain":false,"projectsAccessLevel":"public","prototypesAccessLevel":"public","autoJoinTeam":false,"autoJoinDefaultRole":"editor","joinLinkEnabled":true,"experiments":null,"hidePackages":true,"allowSitesAccess":false},"role":"admin","joinedAt":"2026-10-07T19:01:51.988931Z","organization":null}],"defaultSpaceId":"23af10da-5aef-3ab1-9665-3deee5568278","organizationPermissions":null,"isOnLatestTerms":true,"achievements":{},"isApiUser":false}) });</script>
+<script>
+			window["__app-start-time"] = Date.now()
+			const start = performance.now();
+			window["__perf-start-time"] = start
+
+			if (window.treeInitData) {
+
+				const projectId = window.framerProject?.id
+
+				function prefetchFile() {
+					if (!window.treeInitData.file) return
+
+					window.treeInitData.prefetchPromise = fetch(window.treeInitData.file).then(function (res) {
+						const result = {
+							status: res.status,
+							uncompressedContentLength: parseInt(res.headers.get("Uncompressed-Content-Length") ?? "0", 10) || 0,
+							duration: undefined,
+							text: undefined,
+							buffer: undefined,
+						}
+
+						result.buffer = res.arrayBuffer()
+						result.duration = result.buffer.then(function () { return performance.now() - start })
+
+						return result
+					});
+				}
+
+				function prefetchTreeSync() {
+					if (!projectId) return false
+
+					var cachedVersion = '0'
+					try {
+						cachedVersion = localStorage.getItem('crdt-tree-version:' + projectId) || '0'
+					} catch (e) {
+						return false
+					}
+
+					if (typeof window.treeInitData.syncURL !== 'string') return false
+					const syncUrl = new URL(window.treeInitData.syncURL)
+					syncUrl.searchParams.set('version', cachedVersion)
+
+					window.treeInitData.prefetchSyncPromise = fetch(syncUrl, { credentials: 'include' }).then(function (res) {
+						const strategy = res.headers.get('Sync-Strategy')
+						const result = {
+							status: res.status,
+							headers: res.headers,
+							uncompressedContentLength: parseInt(res.headers.get("Uncompressed-Content-Length") ?? "0", 10) || 0,
+							syncStrategy: strategy ?? undefined,
+							duration: undefined,
+							updates: undefined,
+							snapshot: undefined,
+						}
+						if (strategy === 'incremental') {
+							result.updates = res.json()
+							result.duration = result.updates.then(function () { return performance.now() - start })
+						} else if (strategy === 'snapshot') {
+							result.snapshot = res.arrayBuffer()
+							result.duration = result.snapshot.then(function () { return performance.now() - start })
+						} else {
+							res.text().catch(function () {})
+							result.duration = Promise.resolve(performance.now() - start)
+						}
+
+						return result
+					})
+
+					return true
+				}
+
+				prefetchTreeSync() || prefetchFile()
+			}
+		</script>
+		<link rel="preload" as="script" href="/bootstrap.328021728941a1ee3775af353d25af3a1467090c.js" />
+		<script src="/bootstrap.328021728941a1ee3775af353d25af3a1467090c.js"></script>
+		
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<!-- Google Tag Manager -->
+<script>
+	(function() {
+		// Initialize dataLayer array if it doesn't exist
+		window.dataLayer = window.dataLayer || [];
+
+		// Push initial GTM data
+		window.dataLayer.push({
+			'gtm.start': new Date().getTime(),
+			event: 'gtm.js'
+		});
+
+		// Instead of checking for production build (framerEnvironment === 'production'), we check for all the other
+		// environments. This is done in case FramerWeb isn't on production and framerEnvironment isn't set.
+		// Currently, in all other environments except local we default to the production GTM URL anyhow.
+		// This can be changed after we successfully deploy the framerEnvironment change in FramerWeb.
+		const gtmUrl = window.framerEnvironment === 'development' ||
+		window.framerEnvironment === 'test' ||
+		window.framerEnvironment === 'local' ? "https://analytics.staging.framer.com/gtm.js?id=GTM-T4JTT8T2" : "https://analytics.framer.com/gtm.js?id=GTM-5VVBTMRW";
+
+		// Create and insert GTM script
+		if (gtmUrl) {
+			const gtmScript = document.createElement('script');
+			gtmScript.async = true;
+			gtmScript.src = gtmUrl;
+			const firstScript = document.getElementsByTagName('script')[0];
+			firstScript.parentNode.insertBefore(gtmScript, firstScript);
+		}
+	})();
+</script>
+<!-- End Google Tag Manager -->
+<title>Gracious Forest – Framer</title>
+
+	<link rel="preconnect" href="https://app.framerstatic.com/" />
+
+<script async src="https://www.dubcdn.com/analytics/script.js" data-domains='{"refer":"framer.link"}'></script>
+<link rel="icon" media="(prefers-color-scheme: light)" sizes="16x16" href="https://app.framerstatic.com/favicon-Z4ADTXEQ.png" />
+<link rel="icon" media="(prefers-color-scheme: light)" sizes="32x32" href="https://app.framerstatic.com/favicon@2x-3BPMD6SJ.png" />
+<link rel="icon" media="(prefers-color-scheme: dark)" sizes="32x32" href="https://app.framerstatic.com/favicon-light@2x-HMWCNIXJ.png" />
+<link rel="mask-icon" color="#000" href="https://app.framerstatic.com/safari-pinned-tab-QRUY7OLH.svg" />
+<link rel="apple-touch-icon" sizes="192x192" href="/s/icon-192.png">
+<link rel="manifest" href="/s/manifest.json">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gracious Forest – Framer">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)" data-color="#fff">
+<meta name="theme-color" content="#111" media="(prefers-color-scheme: dark)" data-color="#111">
+<meta name="robots" content="noindex">
+
+		
+		<link href="https://app.framerstatic.com/web.CHYJ3GRO.css" rel="stylesheet" />
+		
+		<link href="https://app.framerstatic.com/chunk-NFM2P6LK.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-GRQGDCSP.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3XKFIMGS.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-JE36PPYT.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IOTIWLVX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-GI2XJNO5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-PRWQ6DMC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-D3BIVQHH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-NTTGSJUB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UUJZFRP4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-L2QYKMOJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-WLHSDIGQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-DXLIW4OY.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-CNRFJG35.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-CRMUNA62.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-STDMHL4N.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SYMA5HVG.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-G4N42CTN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MQASRWR5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VJ7UYMJI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YRQ7G4QH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VHFKZWVR.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-V2WCKTUH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AYYBTPZU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UYIYJ4FN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-LA34HORX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-WRBBN7SY.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-6CK5ILIF.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SWYZG2NI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-K3IJ2B65.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EQXTYSGC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2FCXHKEL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XD24P57D.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EYMNQYLM.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-RNHTTH2C.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-KQKA2AEH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UZNETSBG.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-6TFWVVAP.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YSP5ZHDJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AYNVEX5D.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-LUZ6ND5K.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UF7AR6JO.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EQBCTBZ3.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-4JY5UMT2.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VBCXFFMV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SJBKDMQK.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5XGI6M6M.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EFJO7WFE.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-NPMAB7EW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SJWGZSVD.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-REJ2XCEK.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AGEJWKJT.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-WC34TENX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3WKMMIQB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AUNF3KWQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MYL546Y2.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-H7PLXASY.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-D3SZBJZX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-KHLE6F5R.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SYL6OKHD.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-RM2JK3Y4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-QFU6OGL3.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IBBQFOLQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3PIOJLHR.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-K6L5GVTR.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-DWEQS5LX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-RLLM7AWN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-BIHMMN5H.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7GKAI4PF.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MXPUJWL6.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-6UPXFL47.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VZDWLQX4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EKS27OYS.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-QMGWPW4M.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IQXFDGVQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VPDJYJ6F.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-DWDPUGKA.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-Q652OIYH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SPYOA764.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-P5P54LX6.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SUC3V7IB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7ZCOVLUS.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XC5TQVOZ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-CYM3IYDJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-NK27ORTN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MYSAMYRY.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2BVRJ33D.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FRD7D5R7.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YS3B4HMG.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3Z5TYUWO.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2Z4UPA7G.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FKUHKRG7.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SFZVNOZU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IJMXIQA5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XK3MB4BJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-24G7FGVN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-GBWZWM2Q.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ZSTBDWBI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-6QWQGXVR.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-KSF673QJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5Y36GTP3.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-CO7HGBP2.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5G5BBHP4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-D3YGUW42.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-4HRYW54D.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7WJ42D6X.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-V3C5CSFI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MEE3X3PB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SK6YUUGH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-OUGQSO5R.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AD3YVV5D.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-C3AMU6DP.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-RLQVLRKH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XUC3V4BL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5DEU3X5O.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-P6UIS6J5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-W5GAVU6R.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EZMDKA7N.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FENFGJIW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2PQMM6MF.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-JCI24TOB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ISW56VHA.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YGNPNKXU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3SJZ5A2X.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SCCCCPCG.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5IS57OE7.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FCOEVT45.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YY75G3LC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-6UNIYGUJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VD6KMVU6.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3P25GE3X.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UORGKLIV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XNIFBQQE.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AVBVBFGV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SDTFARWR.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ZMZKTDME.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-OCO2IR4V.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-KZABOZE4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-WPWSHZF5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XDRS2H5Y.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EKYJNLIX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ALPJL5PK.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-GEQC72QR.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SJ5ZASSS.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-LVTM6NBN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2FKRQCOF.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SFAGFBDE.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-N2DJHBJE.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-U4GPIDPE.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-47P32JLD.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-P6Q3LWLD.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-POPDNPJQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-TS24LVSZ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AHBUMA74.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SFPZ5MIK.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-TWCKYTZC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SPWSWTND.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7VQRZJT4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2BM47LJQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-OGQCKB6U.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-GIVDUJ7Q.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-C52VUY2U.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3D27PQCY.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3DO2FQVH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-J3A5W6BK.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EHVYGNVJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UXHDX4NH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-NIGOWEUD.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-Q5SPHIEU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2TDYTTQ7.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-RXOMPSWS.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EVPGOSCR.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XNZRDAH2.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-K7B7QU56.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7LRTGYQX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-Y67UKV5U.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XBOVRXNZ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-WAYT62H3.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-R5BXUDES.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-HI2QWT7C.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-CIVMQAQN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-RNLIMETT.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-52CBT3QP.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FLCJKSVU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-DPOXHEAJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FIJLBKPU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VGQZRQYU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-4HVNGOMT.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5U4SUQEI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SAZULEG5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UFURJCOF.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-HWCDZFYI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-73DCT4FW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-WNINOZIC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-LBKOUUFL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IQYA54YB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YSODPKGE.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-KW4FVXGL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-OSNFFKZS.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2XPBDQIU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-HQMZV6DP.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UZPQZTUB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2XVRQU4X.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-R3RMO3B5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IF6BIU47.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IKSWA65Q.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FUQZY6JN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-OTUO75AF.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UIFMGD2G.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7IYV3HGI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XMJQPOQ4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-GDFKMBSL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-6YMJ2OXG.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MEHHXHQ4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-NIJCPVF6.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FJJSKKL7.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IY2SJSV2.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-P6YTGKXW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-A7KRTSRE.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-QF4YKA33.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ISHMWGHU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3Y4KXJMZ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-FG6DIZP6.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2RBF7LLL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-RVHTHUFQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-LQ3A36M5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-T3CKBAA5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ZFIJZVWL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MO7PGG2C.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ABHAING4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-OYH4RS7C.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5AIBXXUC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UIPUSC4H.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-Q2PJDNAB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-OKNBGRIB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-WOEOGJ2W.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-O4BUMGKN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-S52JQCJN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3FEMSRDV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-Q3MDNIPO.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ZT33EFVX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MPTRKDNO.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-D5APHT3R.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-M62QVFDB.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-SVFLCLSK.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3Y5V6HL4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ROQE7JSW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-DNKCRLOE.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7F5VI2YN.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2XLTWAY2.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2IMMZADX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EKUODPY4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-APEGSIVX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IGYI2SV6.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-DI6KJHGG.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-4SYF3P4H.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-EADBTXFC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-RTSMLX2G.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YVHLBHVP.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MUEXN2M3.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YASVRFFV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-E626CM6J.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2GKQPHNT.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-BFA4WDJC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IMCYOHOW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-V7FUNARM.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-GFSU36YQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-475FRVEJ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ANOKJJD5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5PZ3RZ75.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-QBRM3VLO.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-Y4MYLVWI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UKL4UKRI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MHD5KDQZ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-NKGL5432.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-4IBYXGZW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-QPV65JQF.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-2D3I2BJQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-Y57I7XXL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-OZ37QXB2.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-J2KJZEGI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-TMSZ4A2C.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-4SDSJ6FK.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-LP53KOPL.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-KTG2HEZP.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-34ZUQLVW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AXQJWN77.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-LP4DAYF4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-L2H67KTU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-MFRD7CLI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YWQZ4FO5.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UC2I2A2I.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UA4TBFVH.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-V55TRQR3.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-M7MSJMIU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-UU4QTGV4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-IMDW7BLV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-3O5FSFD3.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ZG6YGUJU.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-DJNZE3W6.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7IIK3QC7.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-5K3U5XS4.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VABGJIUO.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-QD54SSXV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-72GGR2CO.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-26JSVLKQ.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-O6DHR6CG.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-A5N7LIGV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-CTRJM3QT.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-GWKMAOIO.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AZXT5MI7.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7HDKGTBG.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-XFC6OVIX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VF4EG3QY.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-AI3LETBP.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-VKSTDIJW.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-7D567QDI.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-YOFNDIFC.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-6US2BCGV.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-ZLVYGMXX.mjs" rel="modulepreload">
+<link href="https://app.framerstatic.com/chunk-WBTAMOXF.mjs" rel="modulepreload">
+	</head>
+	<body class="notranslate">
+		<div id="root">
+			<!--
+
+-->
+
+<style>
+	body * {
+		box-sizing: border-box;
+	}
+	body {
+		min-height: 100%;
+		padding: 0;
+		margin: 0;
+		background: #fff;
+	}
+	.center {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		text-align: center;
+		transform: translate(-50%, -50%);
+	}
+	.progress {
+		position: relative;
+		width: 160px;
+		height: 2px;
+		border-radius: 1px;
+		background-color: rgba(0, 0, 0, 0.1);
+		overflow: hidden;
+	}
+
+	body.framer-theme-dark {
+		background: #111;
+		color-scheme: dark;
+	}
+
+	body.framer-theme-dark .progress {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+</style>
+
+<div class="center">
+	<div class="progress"></div>
+</div>
+
+		</div>
+
+		
+		<!--
+
+
+-->
+
+
+	<script>
+		// Keep these keys in sync with DarkModeProvider.tsx
+		var userDarkMode = localStorage.getItem("dark-mode") === "true"
+		var overrideSystem = localStorage.getItem("dark-mode-override-system") === "true"
+		var systemDarkMode = matchMedia("(prefers-color-scheme: dark)").matches
+		var isDarkMode = overrideSystem ? userDarkMode : systemDarkMode
+		if (isDarkMode) {
+			document.body.classList.add("framer-theme-dark")
+		}
+
+		// Set release channel as class on body.
+		var framerReleaseChannel = window.framerRelease && window.framerRelease.channel
+		if (framerReleaseChannel) {
+			document.body.classList.add("framer-release-" + framerReleaseChannel)
+		}
+
+	</script>
+
+
+
+		
+			<script src="/s/app.328021728941a1ee3775af353d25af3a1467090c/scripts/react/react.production.min.js"></script>
+<script src="/s/app.328021728941a1ee3775af353d25af3a1467090c/scripts/react-dom/react-dom.production.min.js"></script>
+<script src="/s/app.328021728941a1ee3775af353d25af3a1467090c/scripts/react-dom/react-dom-server-legacy.browser.production.min.js"></script>
+		
+
+		
+		
+		
+		<script>
+			window.exportAssets = Object.freeze({
+				library: "https://app.framerstatic.com/framer.IDHEQ73L.mjs",
+				framerMotion: "https://app.framerstatic.com/framer-motion.7WISRKWG.mjs",
+			})
+		</script>
+
+		
+		<script src="https://app.framerstatic.com/web.MGWUZTNR.mjs" type="module"></script>
+	</body>
+</html>

@@ -8,6 +8,7 @@ website:
   navbar:
     logo: "images/Salem.png"
     right:
+      - subscribe.qmd
       - about.qmd
       - icon: instagram
         href: https://www.instagram.com/salem.csp5/

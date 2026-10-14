@@ -1,0 +1,342 @@
+---
+title: "Join the Salem list"
+page-layout: full
+---
+
+Get updates on new designs, events, and custom order openings.
+
+```{=html}
+<form id="sub-form" class="sub-form" action="#">
+    <div>
+        <label for="first">First Name</label>
+        <input type="text" id="first" name="first"  autocomplete="given-name" required>
+    </div>
+    <div>
+        <label for="last">Last name</label>
+        <input type="text" id="last" name="last" autocomplete="family-name" required>
+    </div>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com" required>
+
+    <label for="phone">Phone<span class="hint">(optional)</span></label>
+    <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="(555) 123-4567">
+
+    <label>Birthday <span class="hint">(Optional, month and day only)</span></label>
+    <div class="sub-row">
+        <div>
+            <select id="bmonth" name="bmonth" aria-label="Birthday month">
+                <option value="">Month</option>
+                <option>January</option>
+                <option>February</option>
+                <option>March</option>
+                <option>April</option>
+                <option>May</option>
+                <option>June</option>
+                <option>July</option>
+                <option>August</option>
+                <option>September</option>
+                <option>October</option>
+                <option>November</option>
+                <option>December</option>
+            </select>
+        </div>
+        <div>
+            <input type="number" id="bday" name="bday" min="1" max="31" placeholder="Day" aria-label = "Birthday day">
+        </div>
+    </div>
+
+    <label>What are you interested in? <span class="hint">(Optional)</span></label>
+    <div class="sub-checks">
+        <label><input type="checkbox" name="interest" value="Church and Youth Events"> Church and Youth Events</label>
+        <label><input type="checkbox" name="interest" value="Team and group orders"> Team and Group Orders</label>
+        <label><input type="checkbox" name="interest" value="Fundraisers"> Fundraisers</label>
+        <label><input type="checkbox" name="interest" value="Personal gifts"> Personal Gifts</label>
+    </div>
+
+    <label for="source">How did you hear about Salem? <span class="hint">(Optional)</span></label>
+    <select id="source" name="source">
+        <option value="">Choose One</option>
+        <option>Friend or Family</option>
+        <option>Church or Event</option>
+        <option>Instagram</option>
+        <option>Facebook</option>
+        <option>LinkedIn</option>
+        <option>Other</option>
+    </select>
+
+    <label class="sub-consent" for="consent">
+        <input type="checkbox" id="consent" name="consent" required>
+        <span>I agree to reveive emails from Salem Custom Screen Printing and understand I can unsubscribe at any time.</span>
+    </label>
+
+    <button type="submit" class="sub-btn">Subscribe</button>
+</form>
+
+
+<style>
+  .sub-form {
+    --sf-bg: #ffffff;
+    --sf-border: #e3e6ea;
+    --sf-field: #ffffff;
+    --sf-field-border: #cfd4da;
+    --sf-text: #1a1a1a;
+    --sf-muted: #6b7280;
+    --sf-accent: #1a1a1a;
+    --sf-focus: #2c7be5;
+    --sf-error: #c0392b;
+    --sf-soft: #f5f6f8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .sub-form {
+      --sf-bg: #1e1f22;
+      --sf-border: #34363b;
+      --sf-field: #2a2c30;
+      --sf-field-border: #43464c;
+      --sf-text: #f1f1f1;
+      --sf-muted: #a0a4ab;
+      --sf-accent: #f1f1f1;
+      --sf-soft: #26282c;
+    }
+    .sub-btn { color: #1a1a1a; }
+  }
+
+  /* Card */
+  .sub-form {
+    width: 100%
+    margin: 1.5rem 0 2.5rem;
+    padding: 2rem 2rem 1.75rem;
+    border-radius: 18px;
+    background: var(--sf-bg);
+    color: var(--sf-text);
+    border: 1px solid var(--sf-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Labels */
+  .sub-form label {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin: 1.1rem 0 0.35rem;
+  }
+  .sub-form .hint {
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--sf-muted);
+    margin-left: 0.25rem;
+  }
+
+  /* Text inputs and dropdowns */
+  .sub-form input[type="text"],
+  .sub-form input[type="email"],
+  .sub-form input[type="tel"],
+  .sub-form input[type="number"],
+  .sub-form select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.7rem 0.9rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--sf-text);
+    background-color: var(--sf-field);
+    border: 1px solid var(--sf-field-border);
+    border-radius: 10px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .sub-form input::placeholder { color: var(--sf-muted); opacity: 0.8; }
+
+  .sub-form input:hover,
+  .sub-form select:hover { border-color: var(--sf-muted); }
+
+  .sub-form input:focus,
+  .sub-form select:focus {
+    outline: none;
+    border-color: var(--sf-focus);
+    box-shadow: 0 0 0 4px rgba(44, 123, 229, 0.2);
+  }
+
+  /* Red outline only after the person has typed something wrong */
+  .sub-form input:user-invalid,
+  .sub-form select:user-invalid {
+    border-color: var(--sf-error);
+    box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.15);
+  }
+
+  /* Custom dropdown arrow */
+  .sub-form select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.5rem;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+  }
+
+  /* Side-by-side rows */
+  .sub-row { display: flex; gap: 0.9rem; }
+  .sub-row > div { flex: 1; }
+
+  /* Interest options as clickable pills */
+  .sub-checks { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .sub-checks label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid var(--sf-field-border);
+    border-radius: 999px;
+    background: var(--sf-field);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .sub-checks label:hover { border-color: var(--sf-muted); }
+  .sub-checks label:has(input:checked) {
+    background: var(--sf-accent);
+    border-color: var(--sf-accent);
+    color: var(--sf-bg);
+  }
+  .sub-checks input { accent-color: var(--sf-focus); cursor: pointer; }
+
+  /* Consent box */
+  .sub-consent {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-top: 1.5rem !important;
+    padding: 0.9rem 1rem;
+    font-size: 0.85rem !important;
+    font-weight: 400 !important;
+    line-height: 1.45;
+    color: var(--sf-muted);
+    background: var(--sf-soft);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .sub-consent input {
+    margin-top: 0.15rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+    accent-color: var(--sf-focus);
+  }
+
+  /* Button */
+  .sub-btn {
+    width: 100%;
+    margin-top: 1.25rem;
+    padding: 0.85rem 1.4rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    letter-spacing: 0.02em;
+    color: #ffffff;
+    background: var(--sf-soft);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .sub-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18); }
+  .sub-btn:active { transform: translateY(0); box-shadow: none; }
+  .sub-btn:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(44, 123, 229, 0.3); }
+
+  /* Phones: stack the side-by-side fields */
+  @media (max-width: 520px) {
+    .sub-form { padding: 1.5rem 1.25rem; border-radius: 14px; }
+    .sub-row { flex-direction: column; gap: 0; }
+    .sub-row > div + div > :not(label):first-child { margin-top: 0.6rem; }
+  }
+</style>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const monthInput = document.getElementById("bmonth");
+    const dayInput = document.getElementById("bday");
+    const form = document.getElementById("sub-form");
+
+    function validateBirthday() {
+        const month = monthInput.value;
+        const day = dayInput.value;
+
+        // Birthday is optional if both fields are empty.
+        if (month === "" && day === "") {
+            monthInput.setCustomValidity("");
+            dayInput.setCustomValidity("");
+            return true;
+        }
+
+        // If one field is filled, require the other.
+        if (month === "" || day === "") {
+            monthInput.setCustomValidity(
+                month === ""
+                    ? "Please select a birthday month."
+                    : ""
+            );
+
+            dayInput.setCustomValidity(
+                day === ""
+                    ? "Please enter a birthday day."
+                    : ""
+            );
+
+            return false;
+        }
+
+        // January = 0, February = 1, etc.
+        const monthIndex = monthInput.selectedIndex - 1;
+
+        // Use a non-leap year, so February has 28 days.
+        const daysInMonth = new Date(
+            2001,
+            monthIndex + 1,
+            0
+        ).getDate();
+
+        const dayNumber = Number(day);
+
+        if (
+            !Number.isInteger(dayNumber) ||
+            dayNumber < 1 ||
+            dayNumber > daysInMonth
+        ) {
+            dayInput.setCustomValidity(
+                `${month} has only ${daysInMonth} days. Please enter a valid day.`
+            );
+            monthInput.setCustomValidity("");
+            return false;
+        }
+
+        // Clear previous validation errors.
+        monthInput.setCustomValidity("");
+        dayInput.setCustomValidity("");
+        return true;
+    }
+
+    // Validate when either birthday field changes.
+    monthInput.addEventListener("change", validateBirthday);
+    dayInput.addEventListener("input", validateBirthday);
+
+    // Validate before submitting the form.
+    form.addEventListener("submit", function (event) {
+        if (!validateBirthday()) {
+            event.preventDefault();
+
+            if (monthInput.validity.customError) {
+                monthInput.reportValidity();
+            } else {
+                dayInput.reportValidity();
+            }
+        }
+    });
+});
+</script>
+```
+
+\
