@@ -1,0 +1,11 @@
+<header id="title-block-header" class="quarto-title-block salem-post-header">
+  <p class="section-label">$for(categories)$$categories$$sep$, $endfor$$if(date)$ · $date$$endif$</p>
+  <h1 class="title">$title$</h1>
+$if(description)$
+  <p class="post-description">$description$</p>
+$endif$
+  <div class="post-byline">
+    <span>By $for(by-author)$$it.name.literal$$sep$, $endfor$</span>
+    <a href="../../index.html#journal">← Back to the journal</a>
+  </div>
+</header>

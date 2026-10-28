@@ -4,5 +4,10 @@
 # (see https://quarto.org/docs/projects/code-execution.html#freeze)
 freeze: true
 
-# Enable banner style title blocks
-title-block-banner: true
+# Salem editorial post layout (matches the homepage design)
+body-classes: salem-post
+title-block-banner: false
+date-format: "MMM D, YYYY"
+template-partials:
+  - ../_partials/title-block.html
+include-after-body: ../_partials/salem-footer.html

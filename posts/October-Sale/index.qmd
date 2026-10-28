@@ -7,26 +7,28 @@ description: "Take advantage of our October sale!"
 categories: [Sale]
 ---
 
-::: logo-hero
-![](OctoberImg.jpg){.logo-img fig-alt="October Sale logo" width="150"}
-
-**Take advantage of our October sale!**
-
-*Chicago, Illinois*
+:::::: {.offer-split .column-page}
+::: offer-flyer
+![](OctoberImg.jpg){fig-alt="October Sale flyer"}
 :::
 
-Custom Design
+:::: offer-panel
+[October sale · Chicago, Illinois]{.section-label}
 
-One Ink Color - One side
+::: shirt-price
+[\$16.50]{.price} [per shirt]{.price-unit}
+:::
 
-No Set Up Fee
+Your custom design. One ink color, one side.
 
-Free Delivery Chicago Area
+[Minimum 6 T-shirts · No setup fee]{.offer-minimum}
 
-Free Shipping on \$300 order
+------------------------------------------------------------------------
 
-Fast Turnaround
+Free delivery in the Chicago area\
+Free shipping on \$300 orders\
+Fast turnaround
 
-Minimum 6 T-Shirts
-
-### \$16.50 per shirt
+[Get a quote](https://ig.me/m/salem.csp5){.btn-light}
+::::
+::::::
