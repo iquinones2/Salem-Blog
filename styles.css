@@ -134,3 +134,870 @@
 @media (prefers-reduced-motion: reduce){
     .logo-img{animation: none; transform: none;}
 }
+/* ==========================================================
+   Salem design tokens (Figma: "Salem — Custom shirts, made with care")
+   ========================================================== */
+:root{
+    --salem-paper: #f7f8f6;
+    --salem-navy: #1b2a41;
+    --salem-blue: #2f5d8c;
+    --salem-line: #c0c5cc;
+    --salem-muted: #657066;
+    --salem-rust: #a44e30;
+    --salem-white: #ffffff;
+    --salem-serif: "DM Serif Display", Georgia, serif;
+    --salem-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body{
+    background-color: var(--salem-paper);
+}
+
+/* ---------- Sticky header (site-wide navbar) ---------- */
+#quarto-header .navbar{
+    background-color: var(--salem-paper);
+    border-bottom: 1px solid var(--salem-line);
+    padding: 16px 64px;
+    box-shadow: none;
+}
+
+#quarto-header .navbar-brand{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
+
+#quarto-header .navbar-title{
+    font-family: var(--salem-serif);
+    font-size: 43px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    color: var(--salem-navy);
+}
+
+/* "CUSTOM SCREEN / PRINTING" descriptor beside the wordmark */
+#quarto-header .navbar-brand::after{
+    content: "CUSTOM SCREEN\A PRINTING";
+    white-space: pre;
+    padding-left: 12px;
+    border-left: 1px solid var(--salem-line);
+    font-family: var(--salem-sans);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--salem-navy);
+}
+
+#quarto-header .navbar-nav{
+    align-items: center;
+    gap: 24px;
+}
+
+#quarto-header .nav-link{
+    padding: 0 !important;
+    font-family: var(--salem-sans);
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--salem-navy);
+}
+
+#quarto-header .nav-link:hover,
+#quarto-header .nav-link.active{
+    color: var(--salem-blue);
+}
+
+/* "Join the Salem list" outlined button */
+#quarto-header .nav-link[href$="subscribe.html"]{
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px !important;
+    border: 1px solid var(--salem-navy);
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+#quarto-header .nav-link[href$="subscribe.html"]::after{
+    content: "";
+    width: 19px;
+    height: 19px;
+    background: url("images/icons/arrow-up-right.svg") no-repeat center;
+}
+
+#quarto-header .navbar-toggler{
+    border-color: var(--salem-line);
+}
+
+/* ==========================================================
+   Homepage
+   ========================================================== */
+.salem-home #quarto-content{
+    margin: 0;
+    padding: 0;
+    font-family: var(--salem-sans);
+    letter-spacing: 0;
+    color: var(--salem-navy);
+}
+
+.salem-home #quarto-content p{
+    margin: 0;
+}
+
+.salem-home #quarto-content h1,
+.salem-home #quarto-content h2,
+.salem-home #quarto-content h3{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: var(--salem-serif);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: inherit;
+}
+
+.salem-home #quarto-content a{
+    color: inherit;
+    text-decoration: none;
+}
+
+.salem-home section{
+    padding-left: 64px;
+    padding-right: 64px;
+}
+
+.salem-home .section-label{
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.salem-home .section-heading{
+    font-size: 56px;
+    line-height: 1.1;
+}
+
+/* ---------- Welcome to Salem ---------- */
+.home-intro{
+    display: flex;
+    align-items: flex-end;
+    gap: 80px;
+    padding-top: 42px;
+    padding-bottom: 44px;
+}
+
+.home-intro .promise{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 0 1 810px;
+}
+
+.home-intro .hero-heading{
+    font-size: 100px;
+    line-height: 0.99;
+}
+
+.home-intro .welcome-note{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 7px;
+}
+
+.home-intro .welcome-note p{
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.journal-invitation{
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--salem-muted) !important;
+}
+
+/* ---------- October studio special ---------- */
+.october-special{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 32px;
+}
+
+.featured-story{
+    display: flex;
+    min-height: 518px;
+}
+
+.apparel-photo{
+    position: relative;
+    flex: 0 0 61%;
+    display: flex;
+    align-items: flex-end;
+    padding: 24px;
+    overflow: hidden;
+}
+
+.apparel-photo img{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.caption-badge{
+    position: relative;
+    padding: 9px 14px;
+    border-radius: 4px;
+    background: var(--salem-paper);
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.october-offer{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 36px;
+    background: var(--salem-navy);
+    color: var(--salem-paper);
+}
+
+.october-offer .section-label,
+.october-offer .price-unit,
+.october-offer .offer-minimum{
+    color: var(--salem-line);
+}
+
+.salem-home .offer-title{
+    font-size: 56px;
+    line-height: 1;
+}
+
+.shirt-price{
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.shirt-price .price{
+    font-family: var(--salem-serif);
+    font-size: 64px;
+    line-height: 1;
+}
+
+.shirt-price .price-unit{
+    font-size: 13px;
+}
+
+.offer-details{
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    width: 100%;
+}
+
+.offer-details .offer-spec{
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.offer-details .offer-minimum{
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.offer-details hr{
+    margin: 0;
+    border: 0;
+    border-top: 1px solid var(--salem-blue);
+    opacity: 1;
+}
+
+.offer-details .offer-delivery{
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.btn-light,
+.btn-accent{
+    display: inline-flex;
+    align-items: center;
+    gap: 24px;
+    height: 48px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 4px;
+    font-family: var(--salem-sans);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-light{
+    background: var(--salem-paper);
+    color: var(--salem-navy) !important;
+}
+
+.btn-accent{
+    background: var(--salem-blue);
+    color: var(--salem-paper);
+}
+
+.btn-light:hover,
+.btn-accent:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(27, 42, 65, 0.2);
+}
+
+.feature-footnote{
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 11px;
+    color: var(--salem-muted);
+}
+
+/* ---------- How it works ---------- */
+.how-it-works,
+.salem-journal{
+    display: flex;
+    flex-direction: column;
+    padding-top: 40px;
+    padding-bottom: 76px;
+}
+
+.salem-home #quarto-content .how-it-works .section-heading{
+    margin: 10px 0 28px;
+}
+
+.step-cards{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.step-card,
+.zelle-note{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+    background: var(--salem-white);
+    border: 1px solid var(--salem-line);
+    border-radius: 4px;
+}
+
+.step-card{
+    gap: 16px;
+}
+
+.step-badge{
+    padding: 6px 10px;
+    border-radius: 100px;
+    background: var(--salem-blue);
+    color: var(--salem-paper);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.salem-home .step-card h3{
+    font-size: 29px;
+    line-height: 1.15;
+}
+
+.step-card p,
+.zelle-note p:not(.section-label){
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.zelle-note{
+    gap: 8px;
+}
+
+/* ---------- The Salem journal ---------- */
+.journal-heading{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 28px;
+}
+
+.salem-home #quarto-content .journal-heading .section-heading{
+    margin-top: 10px;
+}
+
+.journal-intro{
+    max-width: 315px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--salem-muted);
+}
+
+.journal-controls{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 17px 0;
+    margin-bottom: 28px;
+    border-top: 1px solid var(--salem-line);
+    border-bottom: 1px solid var(--salem-line);
+}
+
+.category-filters{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.category-filter{
+    padding: 9px 16px;
+    border: 1px solid var(--salem-line);
+    border-radius: 100px;
+    background: var(--salem-paper);
+    color: var(--salem-navy);
+    font-family: var(--salem-sans);
+    font-size: 13px;
+    line-height: normal;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.category-filter:hover{
+    border-color: var(--salem-navy);
+}
+
+.category-filter[aria-pressed="true"]{
+    background: var(--salem-blue);
+    border-color: var(--salem-blue);
+    color: var(--salem-paper);
+    font-weight: 600;
+}
+
+.salem-home #sort-post{
+    padding: 0 24px 0 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: url("images/icons/chevron-down.svg") no-repeat right center;
+    font-family: var(--salem-sans);
+    font-size: 13px;
+    color: var(--salem-muted);
+}
+
+.salem-home #sort-post:focus-visible{
+    outline: 2px solid var(--salem-blue);
+    outline-offset: 4px;
+}
+
+.story-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.journal-story{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+.journal-story[hidden]{
+    display: none;
+}
+
+.story-image{
+    height: 254px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.story-image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.journal-story:hover .story-image img{
+    transform: scale(1.03);
+}
+
+.mission-artwork{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 28px;
+    background: var(--salem-navy);
+    text-align: center;
+}
+
+.mission-artwork img{
+    width: 36px;
+    height: 36px;
+    transform: none !important;
+}
+
+.salem-home .mission-motto{
+    font-family: var(--salem-serif);
+    font-size: 45px;
+    line-height: 1.04;
+    color: var(--salem-paper);
+}
+
+.studio-signature{
+    font-size: 9px;
+    color: var(--salem-line);
+}
+
+.story-details{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.story-meta,
+.story-link{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.story-category{
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.story-category.is-sale{
+    color: var(--salem-rust);
+}
+
+.story-date,
+.story-link span{
+    font-size: 11px;
+    color: var(--salem-muted);
+}
+
+.salem-home .story-title{
+    font-size: 29px;
+    line-height: 1.15;
+}
+
+.journal-story:hover .story-title{
+    color: var(--salem-blue);
+}
+
+.story-description{
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--salem-muted);
+}
+
+.story-link{
+    padding-top: 6px;
+}
+
+/* ---------- More than ink ---------- */
+.more-than-ink{
+    display: flex;
+    align-items: center;
+    gap: 72px;
+    padding-top: 64px;
+    padding-bottom: 64px;
+}
+
+.studio-portrait{
+    flex: 0 0 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+}
+
+.studio-portrait img{
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+}
+
+.studio-portrait figcaption{
+    font-size: 11px;
+    color: var(--salem-muted);
+}
+
+.our-purpose{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+}
+
+.salem-home .mission-statement{
+    font-size: 49px;
+    line-height: 1.08;
+}
+
+.our-purpose p:not(.section-label){
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.text-link{
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--salem-navy);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ---------- Stay in the Salem circle (newsletter + footer) ---------- */
+.salem-circle{
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: 62px;
+    padding-bottom: 28px;
+    background: var(--salem-navy);
+    color: var(--salem-paper);
+}
+
+.salem-circle .section-label,
+.newsletter-invitation p:last-child,
+.email-reassurance,
+.brand-signoff > p,
+.footer-small-print{
+    color: var(--salem-line);
+}
+
+.newsletter-signup{
+    display: flex;
+    align-items: center;
+    gap: 100px;
+}
+
+.newsletter-invitation{
+    flex: 0 1 620px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.salem-circle .section-heading{
+    font-size: 55px;
+}
+
+.newsletter-invitation p:last-child{
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.email-form{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.email-form label{
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.email-row{
+    display: flex;
+    gap: 8px;
+}
+
+.email-row input{
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 15px;
+    border: 1px solid var(--salem-blue);
+    border-radius: 4px;
+    background: var(--salem-paper);
+    color: var(--salem-navy);
+    font-family: var(--salem-sans);
+    font-size: 13px;
+}
+
+.email-row input::placeholder{
+    color: var(--salem-muted);
+}
+
+.email-row input:focus{
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(47, 93, 140, 0.5);
+}
+
+.email-reassurance{
+    font-size: 10px;
+}
+
+.section-rule{
+    margin: 0;
+    border: 0;
+    border-top: 1px solid var(--salem-blue);
+    opacity: 1;
+}
+
+.footer-nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.brand-signoff{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.brand-signoff > p{
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.salem-brand{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.salem-brand .wordmark{
+    font-family: var(--salem-serif);
+    font-size: 43px;
+    line-height: 1;
+}
+
+.salem-brand .brand-descriptor{
+    padding-left: 12px;
+    border-left: 1px solid var(--salem-blue);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.footer-links{
+    display: flex;
+    gap: 90px;
+}
+
+.footer-links > div{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.footer-links a{
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.footer-links a:hover{
+    text-decoration: underline !important;
+}
+
+.footer-small-print{
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 10px;
+}
+
+/* ---------- Floating chat button ---------- */
+.chat-button{
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 100px;
+    background: var(--salem-blue);
+    color: var(--salem-paper) !important;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(27, 42, 65, 0.15);
+}
+
+.chat-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background: var(--salem-paper);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px){
+    .home-intro .hero-heading{ font-size: 80px; }
+    .story-grid{ grid-template-columns: repeat(2, 1fr); }
+    .newsletter-signup{ gap: 48px; }
+}
+
+@media (max-width: 991px){
+    #quarto-header .navbar{ padding: 12px 24px; }
+    #quarto-header .navbar-nav{ align-items: flex-start; gap: 16px; padding: 16px 0; }
+    .salem-home section{ padding-left: 24px; padding-right: 24px; }
+    .home-intro,
+    .featured-story,
+    .more-than-ink,
+    .newsletter-signup{ flex-direction: column; align-items: stretch; }
+    .home-intro{ gap: 32px; }
+    .home-intro .promise,
+    .newsletter-invitation{ flex-basis: auto; }
+    .apparel-photo{ flex-basis: auto; min-height: 360px; }
+    .studio-portrait{ flex-basis: auto; }
+    .more-than-ink{ gap: 40px; }
+    .step-cards{ grid-template-columns: 1fr; }
+    .journal-heading{ flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 600px){
+    #quarto-header .navbar-title{ font-size: 32px; }
+    .salem-home section{ padding-left: 16px; padding-right: 16px; }
+    .home-intro .hero-heading{ font-size: 54px; }
+    .salem-home .section-heading,
+    .salem-home .offer-title,
+    .salem-circle .section-heading{ font-size: 40px; }
+    .salem-home .mission-statement{ font-size: 34px; }
+    .october-offer{ padding: 24px; }
+    .story-grid{ grid-template-columns: 1fr; }
+    .journal-controls{ flex-direction: column; align-items: flex-start; }
+    .email-row{ flex-direction: column; }
+    .footer-nav,
+    .feature-footnote,
+    .footer-small-print{ flex-direction: column; }
+    .footer-links{ gap: 48px; }
+    .chat-button{ right: 16px; bottom: 16px; }
+}

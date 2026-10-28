@@ -1,0 +1,33 @@
+```{=html}
+<div class="story-grid">
+<% for (const item of items) {
+  const cats = item.categories || [];
+  const primary = cats.length ? String(cats[0]) : "";
+  const authors = [].concat(item.author || []).join(", ");
+%>
+  <a class="journal-story" href="<%- item.path %>" <%= metadataAttrs(item) %> data-cats="<%= cats.join('|') %>" data-title="<%= item.title %>">
+    <% if (item.image) { %>
+    <div class="story-image"><img src="<%- item.image %>" alt="" loading="lazy"></div>
+    <% } else { %>
+    <div class="story-image mission-artwork">
+      <img src="images/icons/sprout.svg" width="36" height="36" alt="">
+      <p class="mission-motto">More than<br>ink.</p>
+      <p class="studio-signature">THE SALEM <%= primary.toUpperCase() %></p>
+    </div>
+    <% } %>
+    <div class="story-details">
+      <div class="story-meta">
+        <span class="story-category<%= primary.toLowerCase() === 'sale' ? ' is-sale' : '' %>"><%= primary %></span>
+        <span class="story-date"><%= item.date %></span>
+      </div>
+      <h3 class="story-title"><%= item.title %></h3>
+      <% if (item.description) { %><p class="story-description"><%= item.description %></p><% } %>
+      <div class="story-link">
+        <span>By <%= authors || "Salem" %></span>
+        <img src="images/icons/arrow-up-right.svg" width="19" height="19" alt="">
+      </div>
+    </div>
+  </a>
+<% } %>
+</div>
+```

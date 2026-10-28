@@ -2,7 +2,8 @@
 title: "Fall is here!"
 author: "Salem"
 date: "2026-9-23"
-image: OctoberImg.jpg
+image: fall-thumb.jpg
+description: "Take advantage of our October sale!"
 categories: [Sale]
 ---
 

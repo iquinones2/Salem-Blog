@@ -2,7 +2,8 @@
 title: "Beat the Holiday rush!"
 author: "Salem"
 date: "2026-9-22"
-image: ChristmasB.jpg
+image: holiday-thumb.jpg
+description: "Family Christmas Bundle"
 categories: [Sale]
 ---
 

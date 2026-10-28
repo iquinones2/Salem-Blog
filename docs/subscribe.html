@@ -30,7 +30,6 @@ ul.task-list li input[type="checkbox"] {
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
@@ -74,6 +73,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
 
 <link rel="stylesheet" href="styles.css">
@@ -86,10 +88,6 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./images/Salem.png" alt="" class="navbar-logo light-content">
-    <img src="./images/Salem.png" alt="" class="navbar-logo dark-content">
-    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Salem</span>
     </a>
@@ -101,22 +99,28 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./subscribe.html" aria-current="page"> 
-<span class="menu-text">Join the Salem list</span></a>
+    <a class="nav-link" href="./index.html#shop"> 
+<span class="menu-text">Shop</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html#journal"> 
+<span class="menu-text">Journal</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://www.instagram.com/salem.csp5/"> <i class="bi bi-instagram" role="img">
-</i> 
-<span class="menu-text"></span></a>
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.instagram.com/salem.csp5/"> 
+<span class="menu-text">Instagram</span></a>
   </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://www.facebook.com/profile.php?id=61590308556408"> <i class="bi bi-facebook" role="img">
-</i> 
-<span class="menu-text"></span></a>
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.facebook.com/profile.php?id=61590308556408"> 
+<span class="menu-text">Facebook</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./subscribe.html" aria-current="page"> 
+<span class="menu-text">Join the Salem list</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -407,6 +411,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const monthInput = document.getElementById("bmonth");
     const dayInput = document.getElementById("bday");
     const form = document.getElementById("sub-form");
+
+    // Prefill email when arriving from the homepage signup
+    const emailParam = new URLSearchParams(window.location.search).get("email");
+    if (emailParam) document.getElementById("email").value = emailParam;
 
     function validateBirthday() {
         const month = monthInput.value;

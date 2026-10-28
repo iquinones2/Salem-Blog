@@ -2,7 +2,8 @@
 title: "Rooted Event"
 author: "Salem"
 date: "2026-5-27"
-image: rooted.jpg
+image: rooted-thumb.jpg
+description: "Apparel with a shared purpose."
 categories: [Rooted]
 ---
 

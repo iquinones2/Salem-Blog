@@ -6,18 +6,29 @@ website:
   title: "Salem"
   favicon: "images/Salem.png"
   navbar:
-    logo: "images/Salem.png"
+    pinned: true
     right:
-      - subscribe.qmd
-      - about.qmd
-      - icon: instagram
+      - text: Shop
+        href: index.qmd#shop
+      - text: Journal
+        href: index.qmd#journal
+      - text: About
+        href: about.qmd
+      - text: Instagram
         href: https://www.instagram.com/salem.csp5/
-      - icon: facebook
+      - text: Facebook
         href: https://www.facebook.com/profile.php?id=61590308556408
+      - text: Join the Salem list
+        href: subscribe.qmd
 format:
   html:
     theme: lux
     css: styles.css
+    include-in-header:
+      text: |
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 editor: visual
 
