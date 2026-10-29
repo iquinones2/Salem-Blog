@@ -1,0 +1,204 @@
+---
+pagetitle: "Shop — Build your shirt · Salem"
+page-layout: custom
+body-classes: salem-home salem-about salem-shop
+resources:
+  - shop/*.js
+  - images/shop/*
+---
+
+```{=html}
+<section class="about-intro">
+  <p class="section-label">Your idea / Our ink</p>
+  <h1 class="about-heading">Make it your own.</h1>
+  <p class="about-lede">A shirt for your message. Choose a starting point below, then send your idea to Salem for a custom quote. Nothing is charged here.</p>
+</section>
+
+<section class="shirt-styles" aria-labelledby="styles-heading">
+  <p class="section-label" id="styles-heading">Shirt styles</p>
+  <div class="style-cards" id="style-cards"></div>
+</section>
+
+<section class="shirt-configuration" id="customizer">
+  <div class="preview-column">
+    <div class="mockup-frame" id="mockup-frame">
+      <div class="shirt-render" id="shirt-render">
+        <div class="shirt-tint"></div>
+        <img class="shirt-shading" alt="">
+        <img class="shirt-photo" alt="" hidden>
+      </div>
+      <div class="print-area" id="print-area" role="group" aria-label="Print area"></div>
+      <p class="preview-badge" id="preview-badge">FRONT · DESIGN PREVIEW</p>
+      <p class="visually-hidden" id="preview-description" aria-live="polite"></p>
+    </div>
+
+    <div class="preview-toolbar">
+      <div class="side-toggle" role="group" aria-label="Shirt side">
+        <button type="button" data-side="front" aria-pressed="true">Front</button>
+        <button type="button" data-side="back" aria-pressed="false">Back</button>
+      </div>
+      <div class="edit-actions">
+        <button type="button" class="tool-button" id="undo-button" disabled>Undo</button>
+        <button type="button" class="tool-button" id="delete-button" disabled>Delete</button>
+        <button type="button" class="tool-button" id="reset-button">Reset</button>
+      </div>
+    </div>
+
+    <div class="selected-colors">
+      <span id="selected-shirt">Shirt: Navy</span>
+      <span id="selected-ink">Ink: Warm white</span>
+    </div>
+    <p class="mockup-note">Mockup intent · Current selections shown. Screen colors and print scale are approximate; Salem confirms the final artwork.</p>
+
+    <div class="summary-card" aria-labelledby="summary-heading">
+      <p class="section-label" id="summary-heading">Your shirt / Summary</p>
+      <p class="summary-title" id="summary-title">Classic crew tee</p>
+      <dl class="summary-list" id="summary-list"></dl>
+      <p class="summary-note">The October offer is $16.50 per shirt for a qualifying one-color, one-sided order (minimum 6). Salem confirms your custom quote before any payment.</p>
+      <button type="button" class="btn-light" id="download-button">
+        Download preview
+        <img src="images/icons/arrow-right-dark.svg" width="19" height="19" alt="">
+      </button>
+    </div>
+  </div>
+
+  <div class="shirt-options">
+    <p class="section-label">01 / Choose your shirt</p>
+    <h2 class="options-heading" id="customizer-heading" tabindex="-1">Start with the details.</h2>
+
+    <div class="form-field">
+      <label for="garment-select">Garment</label>
+      <select id="garment-select" class="field-input"></select>
+    </div>
+
+    <div class="color-selection">
+      <p class="field-label" id="shirt-color-label">Shirt color · <span id="shirt-color-name">Navy</span></p>
+      <div class="color-swatches" id="shirt-swatches" role="radiogroup" aria-labelledby="shirt-color-label"></div>
+    </div>
+
+    <div class="color-selection">
+      <p class="field-label" id="size-label">Size · <span id="size-name">not chosen</span></p>
+      <div class="size-options" id="size-options" role="radiogroup" aria-labelledby="size-label"></div>
+      <p class="field-hint">Note the size you’d want. Share your full size breakdown with the shop.</p>
+    </div>
+
+    <p class="section-label">02 / Add your message</p>
+    <div class="artwork-mode">
+      <button type="button" class="btn-accent" id="add-text-button">
+        Text entry
+        <img src="images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
+      </button>
+      <button type="button" class="btn-outline" id="upload-button">
+        Upload art
+        <img src="images/icons/arrow-up-right.svg" width="19" height="19" alt="">
+      </button>
+      <input type="file" id="art-file" accept="image/png,image/jpeg,image/svg+xml,.png,.jpg,.jpeg,.svg" hidden>
+    </div>
+
+    <div class="form-field">
+      <label for="shirt-text">Your shirt text</label>
+      <textarea id="shirt-text" class="field-input" rows="3" placeholder="GATHER IN GRACE"></textarea>
+    </div>
+
+    <div class="text-controls">
+      <div class="form-field">
+        <label for="text-font">Font</label>
+        <select id="text-font" class="field-input"></select>
+      </div>
+      <div class="form-field">
+        <label for="text-size">Text size · <span id="text-size-value">12</span></label>
+        <input type="range" id="text-size" min="4" max="30" step="1" value="12">
+      </div>
+    </div>
+
+    <div class="color-selection">
+      <p class="field-label" id="ink-color-label">Ink color · <span id="ink-color-name">Warm white</span></p>
+      <div class="color-swatches" id="ink-swatches" role="radiogroup" aria-labelledby="ink-color-label"></div>
+    </div>
+
+    <button type="button" class="art-drop" id="art-drop">
+      <span class="art-drop-title">↑ Or choose an artwork file</span>
+      <span class="art-drop-hint">PNG, JPG, or SVG. Drop a file here or press to browse. Your file stays in this browser; nothing is sent.</span>
+    </button>
+
+    <p class="field-hint" id="layer-help">Drag a design to move it. Use the corner handle to resize and the top handle to rotate. With a keyboard: Tab to a design, arrow keys move, + and − resize, [ and ] rotate, Delete removes.</p>
+    <p class="visually-hidden" id="customizer-status" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<section class="quote-request">
+  <div class="quote-explanation">
+    <p class="section-label">03 / Send to Salem</p>
+    <h2 class="section-heading">Let’s make a plan.</h2>
+    <p>We’ll review your request, confirm the artwork, discuss your deadline and pickup or delivery needs, and give you a custom quote.</p>
+    <div class="zelle-instructions">
+      <p class="section-label">Zelle · After your final quote</p>
+      <p>Salem confirms your custom quote, artwork, timing, and order reference before payment. Use only the recipient details confirmed directly by the shop, and include your order reference in the payment note.</p>
+      <p class="quote-fine-print">Do not send payment from this preview. No checkout or transaction takes place here.</p>
+    </div>
+    <p class="quote-fine-print">This is a static design preview, not a purchase or a confirmed order.</p>
+  </div>
+  <form class="quote-form" id="quote-form" novalidate>
+    <div class="form-field">
+      <label for="quote-name">Name</label>
+      <input class="field-input" id="quote-name" name="name" autocomplete="name" placeholder="Your name" required>
+    </div>
+    <div class="form-field">
+      <label for="quote-email">Email address</label>
+      <input class="field-input" id="quote-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+    </div>
+    <div class="form-field">
+      <label for="quote-deadline">Requested deadline</label>
+      <input class="field-input" id="quote-deadline" name="deadline" type="date">
+    </div>
+    <div class="form-field">
+      <label for="quote-notes">Sizes, pickup, and anything else</label>
+      <textarea class="field-input" id="quote-notes" name="notes" rows="4" placeholder="Tell us your size breakdown and how you’d like to receive your shirts."></textarea>
+    </div>
+    <button type="submit" class="btn-accent quote-submit">
+      Request my custom quote
+      <img src="images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
+    </button>
+    <p class="quote-fine-print" id="quote-status" role="status" aria-live="polite">By sending, you’re asking Salem to review your idea. No payment is due.</p>
+  </form>
+</section>
+
+<section class="salem-circle">
+  <div class="footer-nav">
+    <div class="brand-signoff">
+      <div class="salem-brand">
+        <span class="wordmark">SALEM</span>
+        <span class="brand-descriptor">CUSTOM SCREEN<br>PRINTING</span>
+      </div>
+      <p>Chicago, Illinois<br>Custom shirts, made with care.</p>
+    </div>
+    <div class="footer-links">
+      <div>
+        <p class="section-label">Explore</p>
+        <a href="shop.html">Shop</a>
+        <a href="index.html#journal">The journal</a>
+        <a href="about.html">About Salem</a>
+        <a href="subscribe.html">Join the Salem list</a>
+      </div>
+      <div>
+        <p class="section-label">Follow along</p>
+        <a href="https://www.instagram.com/salem.csp5/" target="_blank" rel="noopener">Instagram ↗</a>
+        <a href="https://www.facebook.com/profile.php?id=61590308556408" target="_blank" rel="noopener">Facebook ↗</a>
+      </div>
+    </div>
+  </div>
+  <hr class="section-rule">
+  <div class="footer-small-print">
+    <span>© 2026 Salem Custom Screen Printing</span>
+    <span>Made with care. Worn with purpose.</span>
+  </div>
+</section>
+
+<a class="chat-button" href="https://ig.me/m/salem.csp5" target="_blank" rel="noopener">
+  <img src="images/icons/message-circle-light.svg" width="20" height="20" alt="">
+  Chat with Salem
+</a>
+
+<script src="shop/shirt-styles.js"></script>
+<script src="shop/customizer.js"></script>
+```

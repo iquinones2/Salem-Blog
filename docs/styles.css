@@ -145,6 +145,8 @@
     --salem-muted: #657066;
     --salem-rust: #a44e30;
     --salem-white: #ffffff;
+    --salem-mist: #eaedef;
+    --salem-slate: #52616a;
     --salem-serif: "DM Serif Display", Georgia, serif;
     --salem-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
@@ -1240,4 +1242,740 @@ body{
     .post-byline{ flex-direction: column; align-items: flex-start; }
     .offer-flyer{ padding: 24px; }
     .offer-panel{ padding: 24px; }
+}
+
+/* ==========================================================
+   About page (builds on the .salem-home resets)
+   ========================================================== */
+.salem-about #quarto-header .nav-link.active{
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.btn-outline{
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1px solid var(--salem-navy);
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+}
+
+.btn-outline:hover{
+    background: rgba(27, 42, 65, 0.06);
+}
+
+.about-intro,
+.community-invitation,
+.newsletter-invitation-band,
+.about-copy{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.salem-about .about-heading{
+    font-size: 88px;
+    line-height: 1.08;
+}
+
+.about-lede{
+    max-width: 640px;
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.salem-about .section-heading{
+    line-height: 1.08;
+}
+
+.studio-story,
+.care-in-the-making{
+    display: flex;
+    align-items: center;
+    gap: 64px;
+}
+
+.about-photo{
+    flex: 0 0 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+}
+
+.about-photo img{
+    width: 100%;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.studio-photograph{ height: 560px; }
+.print-table-photograph{ height: 400px; }
+
+.about-photo figcaption{
+    font-size: 12px;
+    line-height: 1.65;
+    color: #52616a;
+}
+
+.about-copy{
+    flex: 1;
+    min-width: 0;
+}
+
+.studio-story .about-copy p:not(.section-label){
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.care-in-the-making{
+    background: var(--salem-navy);
+    color: var(--salem-paper);
+}
+
+.care-in-the-making .section-label,
+.care-in-the-making p,
+.care-in-the-making .about-photo figcaption{
+    color: var(--salem-line);
+}
+
+.care-in-the-making .about-copy p:not(.section-label),
+.community-invitation p:not(.section-label),
+.newsletter-invitation-band p:not(.section-label){
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.salem-about #quarto-content .community-invitation p a,
+.salem-about #quarto-content .social-channels a{
+    color: var(--salem-blue);
+    text-decoration: underline;
+}
+
+.social-channels{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    font-size: 15px;
+}
+
+.newsletter-invitation-band{
+    background: #eaedef;
+}
+
+/* Scoped under #quarto-content to beat Bootstrap's `#quarto-content>*` padding */
+.salem-about #quarto-content > section{
+    padding-top: 64px;
+    padding-bottom: 64px;
+}
+
+.salem-about #quarto-content > .studio-story{ padding-top: 0; }
+
+.salem-about #quarto-content > .newsletter-invitation-band{
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+.salem-about #quarto-content > .salem-circle{
+    gap: 32px;
+    padding-top: 48px;
+    padding-bottom: 112px;
+}
+
+.salem-about .chat-button{
+    gap: 8px;
+    padding: 16px;
+}
+
+@media (max-width: 1200px){
+    .about-photo{ flex-basis: 460px; }
+}
+
+@media (max-width: 991px){
+    .studio-story,
+    .care-in-the-making{ flex-direction: column; align-items: stretch; gap: 40px; }
+    .care-in-the-making .about-photo{ order: -1; }
+    .about-photo{ flex-basis: auto; }
+    .studio-photograph{ height: 420px; }
+    .print-table-photograph{ height: 320px; }
+    .salem-about .about-heading{ font-size: 64px; }
+}
+
+@media (max-width: 600px){
+    .salem-about #quarto-content > section{ padding-top: 40px; padding-bottom: 40px; }
+    .salem-about #quarto-content > .studio-story{ padding-top: 0; }
+    .salem-about .about-heading{ font-size: 48px; }
+    .salem-about .section-heading{ font-size: 36px; }
+    .studio-photograph{ height: 320px; }
+    .print-table-photograph{ height: 240px; }
+    .salem-about #quarto-content > .salem-circle{ padding-bottom: 96px; }
+}
+
+/* ==========================================================
+   Shop · Build your shirt (builds on the About page layout)
+   ========================================================== */
+.salem-shop #quarto-content > .shirt-styles{ padding-top: 0; }
+
+.style-cards{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 16px;
+}
+
+.style-card{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 0 0 16px;
+    border: 1px solid var(--salem-line);
+    border-radius: 4px;
+    background: var(--salem-white);
+    color: var(--salem-navy);
+    font-family: var(--salem-sans);
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.style-card:hover{ box-shadow: 0 6px 14px rgba(27, 42, 65, 0.12); }
+
+.style-card[aria-pressed="true"]{
+    border-color: var(--salem-blue);
+    box-shadow: inset 0 0 0 2px var(--salem-blue);
+}
+
+.style-card-image{
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 8px;
+    background: var(--salem-mist);
+}
+
+.style-card-image .shirt-render{ inset: 0 12%; }
+.style-card-photo{ width: 100%; height: 100%; object-fit: cover; }
+
+.style-card-name{
+    padding: 0 16px;
+    font-family: var(--salem-serif);
+    font-size: 24px;
+    line-height: 1.1;
+}
+
+.style-card-description,
+.style-card-action{
+    padding: 0 16px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.style-card-description{ color: var(--salem-slate); }
+.style-card-action{ margin-top: auto; font-weight: 600; color: var(--salem-blue); }
+
+/* ---------- Shirt render: tinted mockup or photo ---------- */
+.shirt-render{
+    position: absolute;
+    inset: 0;
+}
+
+.shirt-render > *{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.shirt-render [hidden]{ display: none; }
+
+.shirt-tint{
+    -webkit-mask: var(--mockup) center / contain no-repeat;
+    mask: var(--mockup) center / contain no-repeat;
+}
+
+.shirt-shading{ mix-blend-mode: multiply; pointer-events: none; }
+.shirt-photo{ object-fit: cover; }
+
+/* ---------- Customizer ---------- */
+.shirt-configuration{
+    display: flex;
+    align-items: flex-start;
+    gap: 48px;
+    scroll-margin-top: 96px;
+}
+
+.salem-shop #quarto-content > .shirt-configuration{ padding-top: 16px; }
+
+.preview-column{
+    flex: 0 0 584px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 96px;
+}
+
+.mockup-frame{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--salem-mist);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.preview-badge{
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    padding: 8px;
+    border-radius: 4px;
+    background: var(--salem-paper);
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.print-area{
+    position: absolute;
+    border: 1px dashed rgba(82, 97, 106, 0.55);
+    outline: 1px dashed rgba(247, 248, 246, 0.55);
+    outline-offset: -2px;
+}
+
+.design-layer{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    touch-action: none;
+}
+
+.design-layer:active{ cursor: grabbing; }
+
+.design-layer img{
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.layer-text{
+    white-space: pre;
+    text-align: center;
+    pointer-events: none;
+}
+
+.design-layer.is-selected,
+.design-layer:focus-visible{
+    outline: 2px solid var(--salem-blue);
+    outline-offset: 2px;
+}
+
+.layer-handle{
+    position: absolute;
+    display: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--salem-white);
+    border-radius: 50%;
+    background: var(--salem-blue);
+    box-shadow: 0 2px 6px rgba(27, 42, 65, 0.3);
+    touch-action: none;
+}
+
+.design-layer.is-selected .layer-handle{ display: block; }
+
+.handle-resize{ right: -14px; bottom: -14px; cursor: nwse-resize; }
+
+.handle-rotate{ top: -40px; left: calc(50% - 12px); cursor: grab; }
+
+.handle-rotate::after{
+    content: "";
+    position: absolute;
+    top: 22px;
+    left: 9px;
+    width: 2px;
+    height: 16px;
+    background: var(--salem-blue);
+}
+
+@media (pointer: coarse){
+    .layer-handle{ width: 32px; height: 32px; }
+    .handle-resize{ right: -18px; bottom: -18px; }
+    .handle-rotate{ top: -48px; left: calc(50% - 16px); }
+    .handle-rotate::after{ top: 30px; left: 13px; }
+}
+
+.preview-toolbar{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.side-toggle,
+.edit-actions{
+    display: flex;
+    gap: 8px;
+}
+
+.side-toggle button,
+.tool-button{
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid var(--salem-line);
+    border-radius: 4px;
+    background: var(--salem-white);
+    color: var(--salem-navy);
+    font-family: var(--salem-sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.side-toggle button[aria-pressed="true"]{
+    border-color: var(--salem-navy);
+    background: var(--salem-navy);
+    color: var(--salem-paper);
+}
+
+.tool-button:hover:not(:disabled){ border-color: var(--salem-navy); }
+.tool-button:disabled{ opacity: 0.45; cursor: not-allowed; }
+
+.selected-colors{
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.mockup-note,
+.field-hint,
+.quote-fine-print{
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--salem-slate);
+}
+
+/* Summary panel (the design's estimate card) */
+.summary-card{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    background: var(--salem-navy);
+    color: var(--salem-paper);
+}
+
+.summary-card .section-label,
+.summary-note{ color: var(--salem-line); }
+
+.summary-title{
+    font-family: var(--salem-serif);
+    font-size: 40px;
+    line-height: 1.08;
+}
+
+.summary-list{
+    width: 100%;
+    margin: 0;
+}
+
+.summary-list > div{
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    column-gap: 16px;
+    padding: 8px 0;
+    border-top: 1px solid rgba(192, 197, 204, 0.25);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.summary-list dt{ font-weight: 600; color: var(--salem-line); }
+.summary-list dd{ grid-column: 2; margin: 0; overflow-wrap: anywhere; }
+
+.summary-note{ font-size: 12px; line-height: 1.65; }
+
+.summary-card .btn-light:disabled{ opacity: 0.6; cursor: wait; }
+
+/* Options column */
+.shirt-options{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.salem-shop .options-heading{
+    font-size: 36px;
+    line-height: 1.08;
+}
+
+.options-heading:focus{ outline: none; }
+
+.form-field{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-field label,
+.field-label{
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.field-label{ font-size: 14px; }
+
+.field-input{
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1px solid var(--salem-line);
+    border-radius: 4px;
+    background: var(--salem-white);
+    color: var(--salem-navy);
+    font-family: var(--salem-sans);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+textarea.field-input{ min-height: 112px; resize: vertical; }
+
+.field-input:focus{
+    outline: none;
+    border-color: var(--salem-blue);
+    box-shadow: inset 0 0 0 2px var(--salem-blue);
+}
+
+.field-input::placeholder{ color: var(--salem-slate); }
+
+.color-selection{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.color-swatches,
+.size-options{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.labeled-swatch{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 48px;
+}
+
+.swatch-button{
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 1px solid var(--salem-line);
+    border-radius: 50%;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 4px var(--salem-paper);
+    cursor: pointer;
+}
+
+.swatch-button[aria-checked="true"]{
+    border: 2px solid var(--salem-navy);
+}
+
+.swatch-button:focus-visible,
+.size-button:focus-visible,
+.style-card:focus-visible,
+.art-drop:focus-visible{
+    outline: 3px solid var(--salem-blue);
+    outline-offset: 3px;
+}
+
+.swatch-label{
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.swatch-picker{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 48px;
+    height: 48px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.size-options{ gap: 8px; }
+
+.size-button{
+    min-width: 56px;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--salem-line);
+    border-radius: 4px;
+    background: var(--salem-white);
+    color: var(--salem-navy);
+    font-family: var(--salem-sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.size-button[aria-checked="true"]{
+    border-color: var(--salem-navy);
+    background: var(--salem-navy);
+    color: var(--salem-paper);
+}
+
+.artwork-mode{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.artwork-mode .btn-accent{ gap: 16px; padding: 0 16px; }
+
+.salem-shop .btn-outline{
+    background: transparent;
+    color: var(--salem-navy);
+    font-family: var(--salem-sans);
+    cursor: pointer;
+}
+
+.text-controls{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: end;
+}
+
+.text-controls input[type="range"]{
+    width: 100%;
+    min-height: 48px;
+    accent-color: var(--salem-blue);
+}
+
+.art-drop{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 24px;
+    border: 1px dashed var(--salem-line);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--salem-navy);
+    font-family: var(--salem-sans);
+    text-align: left;
+    cursor: pointer;
+}
+
+.art-drop:hover,
+.art-drop.is-dragging{
+    border-color: var(--salem-blue);
+    background: rgba(47, 93, 140, 0.05);
+}
+
+.art-drop-title{ font-size: 14px; font-weight: 600; color: var(--salem-blue); }
+.art-drop-hint{ font-size: 12px; line-height: 1.65; color: var(--salem-slate); }
+
+/* ---------- 03 / Send to Salem ---------- */
+.quote-request{
+    display: flex;
+    align-items: flex-start;
+    gap: 48px;
+    background: var(--salem-white);
+}
+
+.quote-explanation{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.quote-explanation > p:not(.section-label):not(.quote-fine-print){
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.zelle-instructions{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    border: 1px solid var(--salem-line);
+    border-radius: 4px;
+    background: var(--salem-mist);
+}
+
+.zelle-instructions p:not(.section-label):not(.quote-fine-print){
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.quote-form{
+    flex: 0 0 584px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.quote-submit{ justify-content: center; gap: 16px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px){
+    .preview-column,
+    .quote-form{ flex-basis: 460px; }
+}
+
+@media (max-width: 991px){
+    .shirt-configuration,
+    .quote-request{ flex-direction: column; align-items: stretch; gap: 40px; }
+    /* Keep the preview next to the controls; summary moves below them */
+    .shirt-configuration{ gap: 16px; }
+    .preview-column{ display: contents; }
+    .shirt-options{ order: 1; margin-top: 24px; }
+    .summary-card{ order: 2; margin-top: 24px; }
+    .quote-form{ flex-basis: auto; }
+    .style-cards{
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(240px, 72%);
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 8px;
+    }
+    .style-card{ scroll-snap-align: start; }
+}
+
+@media (max-width: 600px){
+    .preview-badge{ top: 12px; left: 12px; font-size: 11px; }
+    .text-controls{ grid-template-columns: 1fr; }
+    .summary-title{ font-size: 32px; }
+    .salem-shop .options-heading{ font-size: 30px; }
+    .preview-toolbar{ flex-direction: column; }
+    .side-toggle button,
+    .tool-button{ flex: 1; min-height: 44px; }
 }

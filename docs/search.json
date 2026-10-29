@@ -1,24 +1,10 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "posts/Rooted/index.html",
+    "href": "posts/Rooted/index.html",
+    "title": "Rooted Event",
     "section": "",
-    "text": "Salem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps. Every shirt we print carries more than ink — it carries a message. Whether it’s a fundraiser, a camp tee, or a gift, we’re here to help you share what matters most.\nThis website doubles as my personal development project — I’m continuously building new features, refining the look, and expanding functionality, so it can serve as a live showcase of my skills. To see more of my work — R, data science, data visualization, and other technical projects — visit my Personal Portfolio. The full source for this site is also open on GitHub."
-  },
-  {
-    "objectID": "posts/Christmas-Bundle/index.html",
-    "href": "posts/Christmas-Bundle/index.html",
-    "title": "Beat the Holiday rush!",
-    "section": "",
-    "text": "🎄Family Christmas Bundle🎄\nChicago, Illinois\n\n\n5 sweatshirts\nOne Sided\n3 Color Custom Design\nNo Set Up Fee\n$0.50 additional color\n\n$100\n+plus shipping (USPS Flat rate fee)"
-  },
-  {
-    "objectID": "posts/Salem's-Mission/index.html",
-    "href": "posts/Salem's-Mission/index.html",
-    "title": "Salem’s Mission",
-    "section": "",
-    "text": "Custom shirts, made with care.\nChicago, Illinois\n\nSalem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps. Every shirt we print carries more than ink- it carries a message. Whether it’s a fundraiser, a camp tee, or a gift, we’re here to help you share what matters most."
+    "text": "Rooted Event\nChicago, Illinois\n\nRoots matter. Before anything can grow tall, it has to grow deep. That’s the heart behind Rooted, our pre-youth camp event based on Colossians 2:6-7, where we focused on staying grounded in Christ and being built up˝ in our faith."
   },
   {
     "objectID": "posts/October-Sale/index.html",
@@ -28,11 +14,18 @@
     "text": "October sale · Chicago, Illinois\n\n$16.50 per shirt\n\nYour custom design. One ink color, one side.\nMinimum 6 T-shirts · No setup fee\n\nFree delivery in the Chicago area\nFree shipping on $300 orders\nFast turnaround\nGet a quote"
   },
   {
-    "objectID": "posts/Rooted/index.html",
-    "href": "posts/Rooted/index.html",
-    "title": "Rooted Event",
+    "objectID": "posts/Salem's-Mission/index.html",
+    "href": "posts/Salem's-Mission/index.html",
+    "title": "Salem’s Mission",
     "section": "",
-    "text": "Rooted Event\nChicago, Illinois\n\nRoots matter. Before anything can grow tall, it has to grow deep. That’s the heart behind Rooted, our pre-youth camp event based on Colossians 2:6-7, where we focused on staying grounded in Christ and being built up˝ in our faith."
+    "text": "Custom shirts, made with care.\nChicago, Illinois\n\nSalem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps. Every shirt we print carries more than ink- it carries a message. Whether it’s a fundraiser, a camp tee, or a gift, we’re here to help you share what matters most."
+  },
+  {
+    "objectID": "posts/Christmas-Bundle/index.html",
+    "href": "posts/Christmas-Bundle/index.html",
+    "title": "Beat the Holiday rush!",
+    "section": "",
+    "text": "🎄Family Christmas Bundle🎄\nChicago, Illinois\n\n\n5 sweatshirts\nOne Sided\n3 Color Custom Design\nNo Set Up Fee\n$0.50 additional color\n\n$100\n+plus shipping (USPS Flat rate fee)"
   },
   {
     "objectID": "subscribe.html",

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <!-- Placeholder mockup: white garment with grey shading. The page tints it with CSS,
+       so keep the background transparent and the shirt light. -->
+  <defs>
+    <linearGradient id="body" x1="0" x2="1">
+      <stop offset="0" stop-color="#d4d4d4"/><stop offset=".2" stop-color="#f6f6f6"/>
+      <stop offset=".5" stop-color="#ffffff"/><stop offset=".8" stop-color="#f6f6f6"/>
+      <stop offset="1" stop-color="#d4d4d4"/>
+    </linearGradient>
+    <linearGradient id="hem" x1="0" y1="0" x2="0" y2="1">
+      <stop offset=".8" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#c8c8c8" stop-opacity=".7"/>
+    </linearGradient>
+  </defs>
+  <path d="M255 92 C275 82 325 82 345 92 L415 108 C455 130 478 170 488 230 L528 430 L488 442 L448 262 L410 240 L412 520 C340 528 260 528 188 520 L190 240 L152 262 L112 442 L72 430 L112 230 C122 170 145 130 185 108 Z" fill="url(#body)"/>
+  <path d="M255 92 C275 82 325 82 345 92 L415 108 C455 130 478 170 488 230 L528 430 L488 442 L448 262 L410 240 L412 520 C340 528 260 528 188 520 L190 240 L152 262 L112 442 L72 430 L112 230 C122 170 145 130 185 108 Z" fill="url(#hem)"/>
+  <path d="M185 108 C200 150 196 200 190 240 M415 108 C400 150 404 200 410 240" fill="none" stroke="#d2d2d2" stroke-width="3"/>
+  <path d="M76 410 L116 422 M524 410 L484 422" fill="none" stroke="#d6d6d6" stroke-width="3"/>
+  <path d="M190 506 C260 513 340 513 410 506" fill="none" stroke="#dedede" stroke-width="2"/>
+  <path d="M255 92 C275 82 325 82 345 92" fill="none" stroke="#cfcfcf" stroke-width="8" stroke-linecap="round"/>
+</svg>
