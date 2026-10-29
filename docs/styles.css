@@ -179,8 +179,22 @@ body{
     color: var(--salem-navy);
 }
 
+#quarto-header .navbar-logo{
+    height: 52px;
+    width: auto;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+}
+
 /* "CUSTOM SCREEN / PRINTING" descriptor beside the wordmark */
-#quarto-header .navbar-brand::after{
+#quarto-header .navbar-brand-container{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#quarto-header .navbar-brand:not(.navbar-brand-logo)::after{
     content: "CUSTOM SCREEN\A PRINTING";
     white-space: pre;
     padding-left: 12px;
@@ -989,6 +1003,7 @@ body{
 
 @media (max-width: 600px){
     #quarto-header .navbar-title{ font-size: 32px; }
+    #quarto-header .navbar-logo{ height: 40px; }
     .salem-home section, .salem-circle{ padding-left: 16px; padding-right: 16px; }
     .home-intro .hero-heading{ font-size: 54px; }
     .salem-home .section-heading,

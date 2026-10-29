@@ -6,6 +6,8 @@ website:
   title: "Salem"
   favicon: "images/Salem.png"
   navbar:
+    logo: images/SalemT.png
+    logo-alt: "Salem Custom Screen Printing logo"
     pinned: true
     right:
       - text: Shop
