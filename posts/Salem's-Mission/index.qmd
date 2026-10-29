@@ -4,14 +4,65 @@ author: "Salem"
 date: "2026-5-26"
 categories: [Mission]
 description: "Custom shirts, made with care."
+body-classes: salem-post post-mission
 ---
 
-::: logo-hero
-![](/images/SalemT.png){.logo-img fig-alt="Salem Custom Screen Printing logo"}
+::: {.post-photo .is-wide .post-wide}
+![Inside the Salem studio, Chicago, Illinois.](photos/photo-1.png){fig-alt="The Salem screen printing studio"}
+:::
+
+::: mission-lead
+Salem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps.
+:::
+
+::: pull-quote
+Every shirt we print carries more than ink — it carries a message.
+:::
+
+Whether it's a fundraiser, a camp tee, or a gift, we're here to help you share what matters most.
+
+:::::: {.mission-values .post-wide}
+::: value
+[01]{.value-number}
+
+### Rooted in faith
+
+Salem is rooted in faith and a love for bringing people together.
+:::
+
+::: value
+[02]{.value-number}
+
+### Made with care
+
+Every order is printed and packed with care in our small Chicago studio.
+:::
+
+::: value
+[03]{.value-number}
+
+### Made for your message
+
+Individuals, churches, events, youth camps, fundraisers, and gifts. Whatever you have in mind, we'll help you wear it with purpose.
+:::
+::::::
+
+:::: {.photo-pair .post-wide}
+::: {.post-photo .is-tall}
+![Ink, screens, and a fresh batch of shirts.](photos/photo-2.png){fig-alt="Screen printing supplies in the studio"}
+:::
+
+::: {.post-photo .is-tall}
+![A finished order, ready for pickup.](photos/photo-3.png){fig-alt="Folded custom shirts ready for pickup"}
+:::
+::::
+
+::: post-signoff
+![](/images/SalemT.png){fig-alt="Salem Custom Screen Printing logo" width="96"}
 
 **Custom shirts, made with care.**
 
-*Chicago, Illinois*
-:::
+Chicago, Illinois
 
-Salem Custom Screen Printing is a small, faith-driven business creating custom apparel for individuals, churches, events, and youth camps. Every shirt we print carries more than ink- it carries a message. Whether it's a fundraiser, a camp tee, or a gift, we're here to help you share what matters most.
+[Design a shirt](../../shop.html){.btn-accent} [Chat with Salem](https://ig.me/m/salem.csp5){.btn-outline}
+:::

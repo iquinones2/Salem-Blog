@@ -1245,6 +1245,427 @@ body{
 }
 
 /* ==========================================================
+   Blog post layouts — each post sets its own accent via body-classes
+   ========================================================== */
+.post-mission{ --post-accent: var(--salem-blue); --post-soft: var(--salem-mist); }
+.post-rooted{ --post-accent: #2f4a3a; --post-soft: #e6ebe4; }
+.post-fall{ --post-accent: var(--salem-rust); --post-soft: #f3e8e0; }
+.post-holiday{ --post-accent: #7a2c2c; --post-evergreen: #2f4a3a; --post-soft: #f2e9e5; }
+
+.salem-post .salem-post-header .section-label{ color: var(--post-accent, var(--salem-navy)); }
+
+.salem-post-header::before{
+    content: "";
+    display: block;
+    width: 48px;
+    height: 4px;
+    margin-bottom: 20px;
+    background: var(--post-accent, var(--salem-navy));
+}
+
+/* Give every post the same page grid Quarto adds when a .column-page is present */
+.salem-post main.content{
+    display: grid;
+    grid-template-columns: inherit;
+    grid-column: screen-start / screen-end;
+}
+
+.salem-post main.content > *{ grid-column: body-content-start / body-content-end; }
+.salem-post main.content > .post-wide,
+.salem-post main.content > .column-page{ grid-column: page-start / page-end; }
+
+.salem-post main.content h3{
+    margin: 0 0 16px;
+    font-size: 30px;
+    line-height: 1.1;
+}
+
+.salem-post main.content .section-label{ color: var(--post-accent); }
+
+/* Photos: any phone photo is cropped to the slot's shape */
+.post-photo figure,
+.post-photo .quarto-figure{ margin: 0; }
+.post-photo p{ margin: 0; }
+
+.post-photo img{
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.post-photo.is-tall img{ aspect-ratio: 4 / 5; }
+.post-photo.is-square img{ aspect-ratio: 1 / 1; }
+
+.salem-post .post-photo figcaption{
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: left;
+    color: var(--salem-slate);
+}
+
+/* Closing call to action, shared by every post */
+.post-signoff{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-top: 56px;
+    padding: 40px 24px;
+    border: 1px solid var(--salem-line);
+    border-top: 3px solid var(--post-accent);
+    border-radius: 4px;
+    background: var(--salem-white);
+    text-align: center;
+}
+
+.salem-post main.content .post-signoff p{ margin: 0; }
+.post-signoff img{ margin-bottom: 12px; }
+.post-signoff strong{ font-family: var(--salem-serif); font-size: 28px; font-weight: 400; }
+.salem-post main.content .post-signoff p:not(:has(strong)):not(:has(a)){ color: var(--salem-slate); }
+
+.salem-post main.content .post-signoff p:last-child{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.salem-post #quarto-content a.btn-accent,
+.salem-post #quarto-content a.btn-outline{
+    gap: 16px;
+    padding: 0 16px;
+    text-decoration: none;
+}
+
+.salem-post #quarto-content a.btn-accent{ color: var(--salem-paper); }
+.salem-post #quarto-content a.btn-outline{ color: var(--salem-navy); }
+
+.salem-post a.btn-accent::after,
+.salem-post a.btn-outline::after{
+    content: "";
+    width: 19px;
+    height: 19px;
+    background: url("images/icons/arrow-up-right-light.svg") no-repeat center;
+}
+
+.salem-post a.btn-outline::after{ background-image: url("images/icons/arrow-up-right.svg"); }
+
+.value-number{
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--post-accent);
+}
+
+/* ---------- Salem's Mission: editorial essay ---------- */
+.post-mission .post-photo.is-wide{ margin-bottom: 48px; }
+
+.salem-post main.content .mission-lead p{
+    font-family: var(--salem-serif);
+    font-size: 30px;
+    line-height: 1.3;
+}
+
+.mission-lead p::first-letter{
+    float: left;
+    margin: 6px 12px 0 0;
+    font-size: 3.4em;
+    line-height: 0.8;
+    color: var(--post-accent);
+}
+
+.pull-quote{
+    margin: 40px 0;
+    padding: 8px 0 8px 28px;
+    border-left: 3px solid var(--post-accent);
+}
+
+.salem-post main.content .pull-quote p{
+    margin: 0;
+    font-family: var(--salem-serif);
+    font-size: 38px;
+    line-height: 1.12;
+}
+
+.mission-values{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin: 56px 0;
+}
+
+.mission-values .value{
+    padding-top: 20px;
+    border-top: 1px solid var(--salem-navy);
+}
+
+.mission-values .value-number{ margin-bottom: 12px; }
+.salem-post main.content .mission-values h3{ font-size: 26px; margin-bottom: 10px; }
+.salem-post main.content .mission-values p:not(.value-number){ font-size: 14px; line-height: 1.65; }
+
+.photo-pair{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* ---------- Rooted: event scrapbook ---------- */
+.verse-banner{
+    margin-bottom: 48px;
+    padding: 56px 64px;
+    background: var(--post-accent);
+    color: var(--salem-paper);
+    text-align: center;
+}
+
+.salem-post main.content .verse-banner .section-label{ color: #c7d3c4; }
+
+.salem-post main.content .verse-banner p:last-child{
+    max-width: 760px;
+    margin: 16px auto 0;
+    font-family: var(--salem-serif);
+    font-size: 34px;
+    line-height: 1.2;
+}
+
+.rooted-feature{
+    display: grid;
+    grid-template-columns: 5fr 6fr;
+    align-items: center;
+    gap: 48px;
+    margin: 56px 0;
+}
+
+.feature-copy ul{
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.salem-post main.content .feature-copy li{
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--salem-line);
+    font-size: 14px;
+}
+
+.feature-copy li strong{
+    flex: 0 0 80px;
+    font-weight: 600;
+    color: var(--post-accent);
+}
+
+.scrapbook{
+    padding: 48px;
+    background: var(--post-soft);
+}
+
+.scrapbook-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.scrapbook .post-photo figure{
+    padding: 12px 12px 4px;
+    background: var(--salem-white);
+    box-shadow: 0 6px 16px rgba(27, 42, 65, 0.12);
+    transform: rotate(-1.5deg);
+    transition: transform 0.2s ease;
+}
+
+.scrapbook .post-photo:nth-child(even) figure{ transform: rotate(1.2deg); }
+.scrapbook .post-photo figure:hover{ transform: rotate(0) scale(1.02); }
+
+.salem-post .scrapbook .post-photo figcaption{
+    margin: 4px 0;
+    font-family: "Caveat", cursive;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--salem-navy);
+}
+
+/* ---------- Fall is here: rust promo ---------- */
+.post-fall .offer-panel{ background: var(--post-accent); }
+.post-fall .offer-panel .section-label,
+.post-fall .offer-panel .price-unit,
+.post-fall .offer-panel .offer-minimum{ color: #f3ddd0; }
+.post-fall .offer-panel hr{ border-top-color: rgba(247, 248, 246, 0.4); }
+
+.press-strip{ margin: 0 0 56px; }
+
+.press-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.press-grid .post-photo{ overflow: hidden; border-radius: 2px; }
+.press-grid img{ transition: transform 0.4s ease; }
+.press-grid .post-photo:hover img{ transform: scale(1.04); }
+
+.order-steps{
+    padding: 40px;
+    background: var(--post-soft);
+}
+
+.steps-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.steps-grid .step{
+    padding: 24px;
+    border-top: 3px solid var(--post-accent);
+    background: var(--salem-white);
+}
+
+.steps-grid .value-number{ margin-bottom: 12px; }
+.salem-post main.content .steps-grid h3{ font-size: 24px; margin-bottom: 8px; }
+.salem-post main.content .steps-grid p:not(.value-number){ font-size: 14px; line-height: 1.65; }
+
+/* ---------- Christmas Bundle: holiday gift card ---------- */
+.holiday-hero{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 56px;
+}
+
+.holiday-flyer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: #141416;
+}
+
+.holiday-flyer p{ margin: 0; }
+
+.holiday-flyer img{
+    display: block;
+    max-width: 100%;
+    max-height: 520px;
+    object-fit: contain;
+}
+
+.holiday-panel{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 40px;
+    background: var(--post-evergreen);
+    color: var(--salem-paper);
+}
+
+.salem-post main.content .holiday-panel .section-label{ color: #c7d3c4; }
+.salem-post main.content .holiday-panel h3{ color: var(--salem-paper); font-size: 36px; margin: 0; }
+.salem-post main.content .holiday-panel p{ margin: 0; }
+
+.bundle-price p{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.bundle-price .price{
+    font-family: var(--salem-serif);
+    font-size: 64px;
+    line-height: 1;
+}
+
+.bundle-price .price-unit,
+.bundle-extra{
+    font-size: 13px;
+    color: #c7d3c4;
+}
+
+.holiday-panel ul{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.salem-post main.content .holiday-panel li{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(247, 248, 246, 0.2);
+    font-size: 15px;
+}
+
+.holiday-panel li::before{
+    content: "✓";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--post-accent);
+    font-size: 12px;
+}
+
+.salem-post .holiday-panel a.btn-light{ margin-top: 8px; text-decoration: none; }
+
+.salem-post .holiday-panel a.btn-light::after{
+    content: "";
+    width: 19px;
+    height: 19px;
+    background: url("images/icons/arrow-right-dark.svg") no-repeat center;
+}
+
+.design-choice{
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    align-items: center;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+
+.post-holiday .post-photo.is-wide img{ aspect-ratio: 16 / 9; }
+
+/* ---------- Post layouts on smaller screens ---------- */
+@media (max-width: 991px){
+    .mission-values,
+    .steps-grid{ grid-template-columns: 1fr; gap: 24px; }
+    .rooted-feature,
+    .holiday-hero,
+    .design-choice{ grid-template-columns: 1fr; gap: 32px; }
+    .holiday-hero{ gap: 0; }
+    .scrapbook-grid{ grid-template-columns: repeat(2, 1fr); }
+    .verse-banner{ padding: 40px 24px; }
+}
+
+@media (max-width: 600px){
+    .salem-post main.content .mission-lead p{ font-size: 24px; }
+    .salem-post main.content .pull-quote p{ font-size: 28px; }
+    .salem-post main.content .verse-banner p:last-child{ font-size: 26px; }
+    .photo-pair{ grid-template-columns: 1fr; }
+    .press-grid{ grid-template-columns: 1fr 1fr; }
+    .scrapbook,
+    .order-steps{ padding: 24px 16px; }
+    .scrapbook-grid{ gap: 16px; }
+    .holiday-panel{ padding: 24px; }
+    .holiday-flyer{ padding: 20px; }
+    .bundle-price .price{ font-size: 52px; }
+}
+
+/* ==========================================================
    About page (builds on the .salem-home resets)
    ========================================================== */
 .salem-about #quarto-header .nav-link.active{
@@ -1978,4 +2399,271 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     .preview-toolbar{ flex-direction: column; }
     .side-toggle button,
     .tool-button{ flex: 1; min-height: 44px; }
+}
+
+/* ==========================================================
+   Join the Salem list (reuses Shop form fields)
+   ========================================================== */
+.newsletter-page{
+    display: flex;
+    align-items: flex-start;
+    gap: 96px;
+}
+
+.newsletter-story{
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.salem-subscribe .about-heading{ font-size: 80px; }
+.salem-subscribe .about-lede{ max-width: none; }
+.newsletter-story .about-photo{ flex: none; }
+.newsletter-photograph{ height: 400px; }
+
+.salem-subscribe .story-subheading{
+    font-size: 28px;
+    line-height: 1.08;
+}
+
+.story-copy{
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.list-perks{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.list-perks li{
+    padding: 16px;
+    border-left: 2px solid var(--salem-blue);
+    background: var(--salem-mist);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.list-perks strong{ font-weight: 600; }
+
+.signup-card{
+    flex: 0 0 544px;
+    padding: 32px;
+    border: 1px solid var(--salem-line);
+    border-radius: 4px;
+    background: var(--salem-white);
+    position: sticky;
+    top: 96px;
+}
+
+.signup-form-view,
+.signup-form,
+.signup-success{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.signup-form-view[hidden],
+.signup-success[hidden],
+.signup-form [hidden]{ display: none; }
+
+.signup-success:focus{ outline: none; }
+
+/* "New to Salem" / "I've ordered before" */
+.audience-toggle{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 4px;
+    border-radius: 4px;
+    background: var(--salem-mist);
+}
+
+.audience-toggle label{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+}
+
+.audience-toggle input,
+.interest-chips input{
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.audience-toggle label:has(input:checked){
+    background: var(--salem-white);
+    box-shadow: 0 1px 3px rgba(27, 42, 65, 0.15);
+    font-weight: 600;
+}
+
+.audience-toggle label:has(input:focus-visible),
+.interest-chips label:has(input:focus-visible){
+    outline: 3px solid var(--salem-blue);
+    outline-offset: 2px;
+}
+
+.salem-subscribe .signup-heading{
+    font-size: 36px;
+    line-height: 1.08;
+}
+
+.signup-intro{
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--salem-slate);
+}
+
+.field-pair{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.signup-form fieldset{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.signup-form legend{
+    float: left;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.field-optional{
+    font-weight: 400;
+    color: var(--salem-slate);
+}
+
+.signup-form select.field-input{
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 40px;
+    background: var(--salem-white) url("images/icons/chevron-down.svg") no-repeat right 14px center;
+    cursor: pointer;
+}
+
+.signup-form.was-submitted .field-input:invalid,
+.signup-form .field-input:user-invalid{
+    border-color: var(--salem-rust);
+    box-shadow: inset 0 0 0 1px var(--salem-rust);
+}
+
+.interest-chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.interest-chips label{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid var(--salem-line);
+    border-radius: 100px;
+    background: var(--salem-white);
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.interest-chips label:hover{ border-color: var(--salem-navy); }
+
+.interest-chips label:has(input:checked){
+    border-color: var(--salem-blue);
+    background: var(--salem-blue);
+    color: var(--salem-paper);
+}
+
+.interest-chips label:has(input:checked) span::before{ content: "✓ "; }
+
+.consent-check{
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 4px;
+    background: var(--salem-mist);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--salem-slate);
+    cursor: pointer;
+}
+
+.consent-check input{
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    accent-color: var(--salem-blue);
+}
+
+.signup-form.was-submitted .consent-check:has(input:invalid){
+    box-shadow: inset 0 0 0 1px var(--salem-rust);
+}
+
+.signup-submit{
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.form-error{
+    font-size: 13px;
+    color: var(--salem-rust);
+}
+
+.form-error:empty{ display: none; }
+
+.success-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.success-actions .btn-accent{ gap: 16px; padding: 0 16px; }
+.salem-subscribe .success-actions .btn-outline{ color: var(--salem-navy); }
+
+@media (max-width: 1200px){
+    .newsletter-page{ gap: 48px; }
+    .signup-card{ flex-basis: 460px; }
+}
+
+@media (max-width: 991px){
+    /* Bring the signup card up right after the intro */
+    .newsletter-page{ flex-direction: column; align-items: stretch; gap: 24px; }
+    .newsletter-story{ display: contents; }
+    .newsletter-story > :nth-child(n+4){ order: 2; }
+    .signup-card{ order: 1; position: static; flex-basis: auto; margin: 16px 0 24px; }
+    .salem-subscribe .about-heading{ font-size: 56px; }
+    .newsletter-photograph{ height: 320px; }
+}
+
+@media (max-width: 600px){
+    .salem-subscribe .about-heading{ font-size: 44px; }
+    .signup-card{ padding: 24px 16px; }
+    .newsletter-photograph{ height: 240px; }
 }

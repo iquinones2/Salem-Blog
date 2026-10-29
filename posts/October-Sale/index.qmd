@@ -5,11 +5,12 @@ date: "2026-9-23"
 image: fall-thumb.jpg
 description: "Take advantage of our October sale!"
 categories: [Sale]
+body-classes: salem-post post-fall
 ---
 
 :::::: {.offer-split .column-page}
 ::: offer-flyer
-![](OctoberImg.jpg){fig-alt="October Sale flyer"}
+![](OctoberImg.jpg){fig-alt="October Sale flyer: custom t-shirts, one ink color, one side, $16.50 per shirt"}
 :::
 
 :::: offer-panel
@@ -32,3 +33,61 @@ Fast turnaround
 [Get a quote](https://ig.me/m/salem.csp5){.btn-light}
 ::::
 ::::::
+
+:::::: {.press-strip .post-wide}
+[Fresh from the press]{.section-label}
+
+### Fall colors, your message.
+
+::::: press-grid
+::: {.post-photo .is-square}
+![](photos/photo-1.png){fig-alt="Custom fall shirts from the October sale"}
+:::
+
+::: {.post-photo .is-square}
+![](photos/photo-2.png){fig-alt="Custom fall shirts from the October sale"}
+:::
+
+::: {.post-photo .is-square}
+![](photos/photo-3.png){fig-alt="Custom fall shirts from the October sale"}
+:::
+:::::
+::::::
+
+::::::: {.order-steps .post-wide}
+[How the sale works]{.section-label}
+
+:::::: steps-grid
+::: step
+[01]{.value-number}
+
+### Describe
+
+Tell us your design, quantity (6 or more), shirt type, and deadline.
+:::
+
+::: step
+[02]{.value-number}
+
+### Get a quote
+
+We'll confirm details, pricing, and timing before you commit.
+:::
+
+::: step
+[03]{.value-number}
+
+### Pick up
+
+Once approved, your shirts are printed, packed, and ready for pickup or delivery.
+:::
+::::::
+:::::::
+
+::: post-signoff
+**October 2026 promotion.**
+
+One ink color, one side, minimum 6 shirts.
+
+[Design your shirt](../../shop.html){.btn-accent} [Chat with Salem](https://ig.me/m/salem.csp5){.btn-outline}
+:::

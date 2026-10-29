@@ -5,25 +5,58 @@ date: "2026-9-22"
 image: holiday-thumb.jpg
 description: "Family Christmas Bundle"
 categories: [Sale]
+body-classes: salem-post post-holiday
 ---
 
-::: logo-hero
-![](ChristmasB.jpg){.logo-img fig-alt="Christmas Bundle logo" width="150"}
+:::::: {.holiday-hero .post-wide}
+::: holiday-flyer
+![](ChristmasB.jpg){fig-alt="Family Christmas Bundle flyer showing three holiday sweatshirt designs and a $100 price"}
+:::
 
-**🎄Family Christmas Bundle🎄**
+:::: holiday-panel
+[Family Christmas Bundle · Chicago, Illinois]{.section-label}
 
-*Chicago, Illinois*
+### Matching sweatshirts for the whole family.
+
+::: bundle-price
+[\$100]{.price} [plus shipping (USPS flat rate)]{.price-unit}
 :::
 
 - 5 sweatshirts
+- One-sided print
+- 3-color custom design
+- No setup fee
 
-- One Sided
+[\$0.50 per additional color]{.bundle-extra}
 
-- 3 Color Custom Design
+[Order your bundle](https://ig.me/m/salem.csp5){.btn-light}
+::::
+::::::
 
-- No Set Up Fee
+::::: {.design-choice .post-wide}
+::: design-choice-copy
+[Pick your design]{.section-label}
 
-- \$0.50 additional color
+### One of ours, or one of yours.
 
-\$100\
-+plus shipping (USPS Flat rate fee)
+Choose one of our three holiday designs from the flyer, or send us your own artwork. We'll print it on all five sweatshirts so the whole family matches.
+
+Order early to beat the holiday rush and have your bundle in time for Christmas.
+:::
+
+::: {.post-photo .is-tall}
+![Holiday sweatshirts, ready for the family photo.](photos/photo-2.png){fig-alt="Family Christmas Bundle sweatshirts"}
+:::
+:::::
+
+::: {.post-photo .is-wide .post-wide}
+![The whole family, matching.](photos/photo-1.png){fig-alt="A family wearing matching custom Christmas sweatshirts"}
+:::
+
+::: post-signoff
+**Beat the holiday rush.**
+
+Send us your design idea and we'll confirm everything before you pay.
+
+[Order your bundle](https://ig.me/m/salem.csp5){.btn-accent} [Design your own](../../shop.html){.btn-outline}
+:::
