@@ -1,6 +1,10 @@
 project:
   type: website
   output-dir: docs
+  render:
+    - "*.qmd"
+  resources:
+    - images/icons/sprout.svg
 
 website:
   title: "Salem"

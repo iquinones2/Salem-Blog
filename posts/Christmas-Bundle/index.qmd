@@ -1,7 +1,7 @@
 ---
 title: "Beat the Holiday rush!"
 author: "Salem"
-date: "2026-9-22"
+date: "2026-09-22"
 image: holiday-thumb.jpg
 description: "Family Christmas Bundle"
 categories: [Sale]
@@ -29,7 +29,7 @@ body-classes: salem-post post-holiday
 
 [\$0.50 per additional color]{.bundle-extra}
 
-[Order your bundle](https://ig.me/m/salem.csp5){.btn-light}
+[Message Salem to order](https://ig.me/m/salem.csp5){.btn-light}
 ::::
 ::::::
 
@@ -58,5 +58,5 @@ Order early to beat the holiday rush and have your bundle in time for Christmas.
 
 Send us your design idea and we'll confirm everything before you pay.
 
-[Order your bundle](https://ig.me/m/salem.csp5){.btn-accent} [Design your own](../../shop.html){.btn-outline}
+[Message Salem to order](https://ig.me/m/salem.csp5){.btn-accent} [Design your own](../../shop.html){.btn-outline}
 :::

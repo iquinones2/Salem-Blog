@@ -1,7 +1,8 @@
 ---
 title: "Salem's Mission"
 author: "Salem"
-date: "2026-5-26"
+date: "2026-05-26"
+image: ../../images/Salem.png
 categories: [Mission]
 description: "Custom shirts, made with care."
 body-classes: salem-post post-mission
