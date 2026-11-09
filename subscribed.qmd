@@ -1,0 +1,95 @@
+---
+pagetitle: "You’re on the Salem list · Salem"
+page-layout: custom
+body-classes: salem-home salem-about salem-list-page
+header-includes: |
+    <meta name="robots" content="noindex">
+---
+
+```{=html}
+<section class="list-status-page">
+  <div class="list-status">
+    <span class="list-status-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="24" height="24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <p class="section-label">Subscription confirmed</p>
+    <h1 class="list-status-heading" id="welcome-heading">You’re in the Salem circle.</h1>
+    <p class="list-status-lede" id="welcome-lede">You are subscribed to Salem Custom Screen Printing.</p>
+    <p class="list-status-copy" id="welcome-copy">Look out for a welcome note in your inbox, with seasonal offers and the stories behind what we print.</p>
+    <div class="list-status-actions">
+      <a class="btn-accent" href="index.html#journal">
+        Read the journal
+        <img src="images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
+      </a>
+      <a class="btn-outline" href="shop.html">
+        Start a shirt idea
+        <img src="images/icons/arrow-up-right.svg" width="19" height="19" alt="">
+      </a>
+    </div>
+    <p class="list-status-note">Don’t see the welcome note? Check your spam folder, or message Salem on Instagram.</p>
+  </div>
+</section>
+
+<section class="salem-circle">
+  <div class="footer-nav">
+    <div class="brand-signoff">
+      <div class="salem-brand">
+        <span class="wordmark">SALEM</span>
+        <span class="brand-descriptor">CUSTOM SCREEN<br>PRINTING</span>
+      </div>
+      <p>Chicago, Illinois<br>Custom shirts, made with care.</p>
+    </div>
+    <div class="footer-links">
+      <div>
+        <p class="section-label">Explore</p>
+        <a href="shop.html">Shop</a>
+        <a href="index.html#journal">The journal</a>
+        <a href="about.html">About Salem</a>
+        <a href="subscribe.html">Join the Salem list</a>
+      </div>
+      <div>
+        <p class="section-label">Follow along</p>
+        <a href="https://www.instagram.com/salem.csp5/" target="_blank" rel="noopener">Instagram ↗</a>
+        <a href="https://www.facebook.com/profile.php?id=61590308556408" target="_blank" rel="noopener">Facebook ↗</a>
+      </div>
+    </div>
+  </div>
+  <hr class="section-rule">
+  <div class="footer-small-print">
+    <span>© 2026 Salem Custom Screen Printing</span>
+    <span>Made with care. Worn with purpose.</span>
+  </div>
+</section>
+
+<a class="chat-button" href="https://ig.me/m/salem.csp5" target="_blank" rel="noopener">
+  <img src="images/icons/message-circle-light.svg" width="20" height="20" alt="">
+  Chat with Salem
+</a>
+
+<script src="assets/js/config.js?v=2026-11-09b"></script>
+<script src="assets/js/subscriber-store.js?v=2026-11-09b"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Details handed over by the subscribe form (sessionStorage, never the URL).
+  const welcome = SalemList.recall("welcome");
+  if (!welcome) return; // generic confirmation
+
+  const name = (welcome.firstName || "").trim();
+  const withName = function (text) { return name ? text + ", " + name + "." : text + "."; };
+  const heading = document.getElementById("welcome-heading");
+  const lede = document.getElementById("welcome-lede");
+  const copy = document.getElementById("welcome-copy");
+
+  if (welcome.status === "resubscribed") {
+    heading.textContent = withName("Welcome back");
+    lede.textContent = "You are subscribed to Salem Custom Screen Printing again.";
+    copy.textContent = "We’re glad you’re back. Look out for a welcome note in your inbox with fresh links to manage your emails.";
+  } else if (welcome.audience === "returning") {
+    heading.textContent = withName("Good to see you again");
+    copy.textContent = "We’ll let you know when custom order spots open, so your next round of shirts is easy. Look out for a welcome note in your inbox.";
+  } else {
+    heading.textContent = withName("Welcome to Salem");
+  }
+});
+</script>
+```

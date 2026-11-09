@@ -239,16 +239,16 @@ ul.task-list li input[type="checkbox"] {
       <h2 class="section-heading">Join the Salem list.</h2>
       <p>A note from our studio — new stories, seasonal offers, and a little inspiration.</p>
     </div>
-    <form class="email-form" action="../../subscribe.html" method="get">
+    <form class="email-form" action="../../subscribe.html" method="get" data-list-handoff="">
       <label for="footer-email">Email address</label>
       <div class="email-row">
-        <input type="email" id="footer-email" name="email" placeholder="you@example.com" autocomplete="email" required="">
+        <input type="email" id="footer-email" placeholder="you@example.com" autocomplete="email" required="">
         <button type="submit" class="btn-accent">
           Count me in
           <img src="../../images/icons/arrow-right-light.svg" width="19" height="19" alt="">
         </button>
       </div>
-      <p class="email-reassurance">Just Salem news. Unsubscribe anytime.</p>
+      <p class="email-reassurance">Just Salem news. <a href="../../unsubscribe.html">Unsubscribe anytime</a>.</p>
     </form>
   </div>
   <hr class="section-rule">
@@ -280,6 +280,8 @@ ul.task-list li input[type="checkbox"] {
     <span>Made with care. Worn with purpose.</span>
   </div>
 </section>
+<script src="../../assets/js/config.js?v=2026-11-09b"></script>
+<script src="../../assets/js/subscriber-store.js?v=2026-11-09b"></script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

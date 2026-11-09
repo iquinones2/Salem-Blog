@@ -32,7 +32,21 @@ body-classes: salem-home salem-about salem-subscribe
       <h2 class="signup-heading" id="signup-heading">Join the Salem list.</h2>
       <p class="signup-intro" id="signup-intro">Name and email are required. Everything else is optional.</p>
 
+      <div class="list-notice" id="list-notice" role="status" tabindex="-1" data-tone="none">
+        <p class="list-notice-title" id="list-notice-title"></p>
+        <p class="list-notice-copy" id="list-notice-copy"></p>
+        <div class="list-notice-actions" id="list-notice-actions" hidden>
+          <button type="button" class="btn-outline" id="resend-link">Email me my preferences link</button>
+          <a class="list-text-link" href="index.html#journal">Read the latest studio stories ↗</a>
+        </div>
+      </div>
+
       <form id="sub-form" class="signup-form" novalidate>
+        <!-- Spam trap: people never see or fill this; bots often do. -->
+        <div class="list-honeypot" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
         <div class="field-pair">
           <div class="form-field">
             <label for="first">First name</label>
@@ -108,26 +122,11 @@ body-classes: salem-home salem-about salem-subscribe
           <span id="signup-submit-label">Join the Salem list</span>
           <img src="images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
         </button>
-        <p class="field-hint">Just Salem news. Unsubscribe anytime. Your phone number and birthday are optional.</p>
+        <p class="field-hint">Just Salem news. <a class="list-text-link" href="unsubscribe.html">Unsubscribe anytime</a>. Your phone number and birthday are optional.</p>
         <p class="form-error" id="form-error" role="alert"></p>
       </form>
     </div>
 
-    <div class="signup-success" id="signup-success" tabindex="-1" hidden>
-      <p class="section-label">You’re in the circle</p>
-      <h2 class="signup-heading" id="success-heading">Welcome to Salem.</h2>
-      <p class="signup-intro" id="success-copy">Watch your inbox for a note from our studio.</p>
-      <div class="success-actions">
-        <a class="btn-accent" href="shop.html">
-          Design a shirt
-          <img src="images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
-        </a>
-        <a class="btn-outline" href="index.html#journal">
-          Read the journal
-          <img src="images/icons/arrow-up-right.svg" width="19" height="19" alt="">
-        </a>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -167,28 +166,37 @@ body-classes: salem-home salem-about salem-subscribe
   Chat with Salem
 </a>
 
+<script src="assets/js/config.js?v=2026-11-09b"></script>
+<script src="assets/js/subscriber-store.js?v=2026-11-09b"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("sub-form");
   const monthInput = document.getElementById("bmonth");
   const dayInput = document.getElementById("bday");
+  const phoneInput = document.getElementById("phone");
+  const emailInput = document.getElementById("email");
   const errorBox = document.getElementById("form-error");
+  const submitButton = form.querySelector(".signup-submit");
+  const submitLabel = document.getElementById("signup-submit-label");
+  const notice = document.getElementById("list-notice");
+  const noticeActions = document.getElementById("list-notice-actions");
+  const resendButton = document.getElementById("resend-link");
+  const audienceRadios = document.querySelectorAll('input[name="audience"]');
+
+  // Server field names → input ids
+  const FIELD_IDS = { firstName: "first", lastName: "last", email: "email", phone: "phone", consent: "consent" };
 
   // Copy that changes with "New to Salem" / "I've ordered before"
   const audienceCopy = {
     new: {
       heading: "Join the Salem list.",
       intro: "Name and email are required. Everything else is optional.",
-      submit: "Join the Salem list",
-      successHeading: "Welcome to Salem.",
-      successCopy: "Watch your inbox for a note from our studio, with seasonal offers and the stories behind what we print."
+      submit: "Join the Salem list"
     },
     returning: {
       heading: "Welcome back.",
       intro: "Thanks for printing with us. Stay close for reorder openings, seasonal offers, and new designs.",
-      submit: "Keep me in the loop",
-      successHeading: "Good to see you again.",
-      successCopy: "We’ll let you know when custom order spots open, so your next round of shirts is easy."
+      submit: "Keep me in the loop"
     }
   };
 
@@ -201,20 +209,65 @@ document.addEventListener("DOMContentLoaded", function () {
     const copy = audienceCopy[audience];
     document.getElementById("signup-heading").textContent = copy.heading;
     document.getElementById("signup-intro").textContent = copy.intro;
-    document.getElementById("signup-submit-label").textContent = copy.submit;
+    submitLabel.textContent = copy.submit;
     form.querySelectorAll("[data-audience]").forEach(function (field) {
       field.hidden = field.dataset.audience !== audience;
     });
   }
 
-  document.querySelectorAll('input[name="audience"]').forEach(function (radio) {
+  audienceRadios.forEach(function (radio) {
     radio.addEventListener("change", applyAudience);
   });
 
-  // Prefill email when arriving from the homepage signup
-  const emailParam = new URLSearchParams(window.location.search).get("email");
-  if (emailParam) document.getElementById("email").value = emailParam;
+  // Email typed on the homepage or a post (handed over without using the URL)
+  const prefill = SalemList.takePrefill();
+  if (prefill) emailInput.value = prefill;
 
+  /* ---------- Notice: loading / error / already subscribed ---------- */
+  function showNotice(tone, title, copy, options) {
+    options = options || {};
+    notice.dataset.tone = tone;
+    notice.setAttribute("role", tone === "error" ? "alert" : "status");
+    document.getElementById("list-notice-title").textContent = title;
+    document.getElementById("list-notice-copy").textContent = copy;
+    noticeActions.hidden = !options.actions;
+    if (options.focus) notice.focus();
+  }
+
+  function clearNotice() {
+    notice.dataset.tone = "none";
+    noticeActions.hidden = true;
+  }
+
+  /* ---------- Per-field messages (aria-describedby) ---------- */
+  function setFieldError(input, message) {
+    const id = input.id + "-error";
+    let msg = document.getElementById(id);
+    const describedBy = (input.getAttribute("aria-describedby") || "").split(" ").filter(function (x) { return x && x !== id; });
+    if (message) {
+      if (!msg) {
+        msg = document.createElement("p");
+        msg.id = id;
+        msg.className = "field-error";
+        const anchor = input.closest(".consent-check") || input.closest(".form-field") || input;
+        anchor.insertAdjacentElement("afterend", msg);
+      }
+      msg.textContent = message;
+      describedBy.push(id);
+      input.setAttribute("aria-invalid", "true");
+    } else {
+      if (msg) msg.remove();
+      input.removeAttribute("aria-invalid");
+    }
+    if (describedBy.length) input.setAttribute("aria-describedby", describedBy.join(" "));
+    else input.removeAttribute("aria-describedby");
+  }
+
+  function clearFieldErrors() {
+    form.querySelectorAll("[aria-invalid]").forEach(function (input) { setFieldError(input, ""); });
+  }
+
+  /* ---------- Client validation ---------- */
   function validateBirthday() {
     const month = monthInput.value;
     const day = dayInput.value;
@@ -244,36 +297,140 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
+  // Same rule as the server: 10–15 digits once a leading US "1" is dropped.
+  function validatePhone() {
+    let digits = phoneInput.value.replace(/\D/g, "");
+    if (digits.length === 11 && digits.charAt(0) === "1") digits = digits.slice(1);
+    phoneInput.setCustomValidity(
+      phoneInput.value.trim() && (digits.length < 10 || digits.length > 15)
+        ? "Enter a full phone number, or leave it blank."
+        : ""
+    );
+  }
+
   monthInput.addEventListener("change", validateBirthday);
   dayInput.addEventListener("input", validateBirthday);
+  phoneInput.addEventListener("input", validatePhone);
+
+  // Drop a field's message as soon as it's fixed.
+  ["input", "change"].forEach(function (type) {
+    form.addEventListener(type, function (event) {
+      const input = event.target;
+      if (input.getAttribute && input.getAttribute("aria-invalid") && input.checkValidity()) {
+        setFieldError(input, "");
+      }
+    });
+  });
+
+  /* ---------- Loading state ---------- */
+  function setBusy(busy) {
+    form.setAttribute("aria-busy", busy ? "true" : "false");
+    form.querySelectorAll("input, select, textarea, button").forEach(function (control) {
+      if (control.id !== "website") control.disabled = busy;
+    });
+    audienceRadios.forEach(function (radio) { radio.disabled = busy; });
+    form.classList.toggle("is-sending", busy);
+    submitLabel.textContent = busy ? "Sending…" : audienceCopy[currentAudience()].submit;
+  }
+
+  function collect() {
+    const audience = currentAudience();
+    return {
+      firstName: document.getElementById("first").value.trim(),
+      lastName: document.getElementById("last").value.trim(),
+      email: emailInput.value.trim(),
+      phone: phoneInput.value.trim(),
+      birthdayMonth: monthInput.value,
+      birthdayDay: dayInput.value ? String(Number(dayInput.value)) : "",
+      interests: Array.from(form.querySelectorAll('input[name="interest"]:checked')).map(function (box) { return box.value; }),
+      heardAbout: audience === "new" ? document.getElementById("source").value : "",
+      consent: document.getElementById("consent").checked,
+      website: document.getElementById("website").value
+    };
+  }
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (form.getAttribute("aria-busy") === "true") return;
+
+    clearFieldErrors();
+    clearNotice();
     validateBirthday();
+    validatePhone();
     if (!form.checkValidity()) {
       const firstInvalid = form.querySelector("input:invalid, select:invalid");
       const label = firstInvalid.labels && firstInvalid.labels.length
         ? firstInvalid.labels[0].textContent.replace("(optional)", "").trim()
         : firstInvalid.getAttribute("aria-label");
-      errorBox.textContent = firstInvalid.id === "consent"
+      const message = firstInvalid.id === "consent"
         ? "Please agree to receive emails so we can add you to the list."
-        : label + ": " + firstInvalid.validationMessage;
+        : firstInvalid.validationMessage;
+      errorBox.textContent = firstInvalid.id === "consent" ? message : label + ": " + message;
+      setFieldError(firstInvalid, message);
       form.classList.add("was-submitted");
       firstInvalid.focus();
       return;
     }
     errorBox.textContent = "";
 
-    // TODO: send `new FormData(form)` plus `audience` to the newsletter service (webhook) here.
+    const data = collect();
+    setBusy(true);
+    showNotice("info", "Sending your request…", "Please wait. The form is temporarily disabled.");
 
-    const copy = audienceCopy[currentAudience()];
-    const firstName = document.getElementById("first").value.trim();
-    document.getElementById("success-heading").textContent = copy.successHeading.replace(".", firstName ? ", " + firstName + "." : ".");
-    document.getElementById("success-copy").textContent = copy.successCopy;
-    document.getElementById("signup-form-view").hidden = true;
-    const success = document.getElementById("signup-success");
-    success.hidden = false;
-    success.focus();
+    SalemList.subscribe(data).then(function (res) {
+      setBusy(false);
+
+      if (res.ok && (res.status === "created" || res.status === "resubscribed")) {
+        // Hand the welcome details to the next page without using the URL.
+        SalemList.remember("welcome", {
+          firstName: data.firstName,
+          status: res.status,
+          audience: currentAudience()
+        });
+        window.location.href = "subscribed.html";
+        return;
+      }
+
+      if (res.ok && res.status === "exists") {
+        showNotice("info", "You’re already on the list.",
+          "No need to sign up twice. We can email you a link to update your interests.",
+          { actions: true, focus: true });
+        return;
+      }
+
+      if (res.error === "validation" && res.fields) {
+        let firstInput = null;
+        Object.keys(res.fields).forEach(function (name) {
+          const input = document.getElementById(FIELD_IDS[name] || name);
+          if (!input) return;
+          setFieldError(input, res.fields[name]);
+          if (!firstInput) firstInput = input;
+        });
+        showNotice("error", "Please check the highlighted fields.", "Fix the fields marked below, then send again.");
+        form.classList.add("was-submitted");
+        if (firstInput) firstInput.focus();
+        return;
+      }
+
+      showNotice("error", "We couldn’t add you just yet.", SalemList.errorMessage(res), { focus: true });
+    });
+  });
+
+  /* ---------- "Email me my preferences link" ---------- */
+  resendButton.addEventListener("click", function () {
+    resendButton.disabled = true;
+    resendButton.textContent = "Sending…";
+    SalemList.resendLink(emailInput.value.trim()).then(function (res) {
+      resendButton.disabled = false;
+      resendButton.textContent = "Email me my preferences link";
+      if (res.ok) {
+        showNotice("info", "Check your inbox.",
+          "If that address is on the Salem list, a link to update your interests is on its way.",
+          { focus: true });
+      } else {
+        showNotice("error", "We couldn’t send the link.", SalemList.errorMessage(res), { actions: true, focus: true });
+      }
+    });
   });
 
   applyAudience();

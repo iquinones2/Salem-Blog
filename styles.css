@@ -2682,3 +2682,203 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     .signup-card{ padding: 24px 16px; }
     .newsletter-photograph{ height: 240px; }
 }
+
+/* ==========================================================
+   Salem list: form states, confirmation, unsubscribe, preferences
+   (Figma "Salem — Subscribe form states" 27:28499, "You're off the list" 27:27246)
+   ========================================================== */
+
+/* Notice above the signup form: loading / error / already subscribed */
+.list-notice{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid var(--salem-blue);
+    border-radius: 4px;
+    background: var(--salem-mist);
+}
+.list-notice[data-tone="none"]{ display: none; }
+.list-notice[data-tone="error"]{ border-color: var(--salem-rust); }
+.list-notice:focus{ outline: 3px solid var(--salem-blue); outline-offset: 2px; }
+.list-notice[data-tone="error"]:focus{ outline-color: var(--salem-rust); }
+
+.salem-home #quarto-content .list-notice-title{
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+.salem-home #quarto-content .list-notice[data-tone="error"] .list-notice-title{ color: var(--salem-rust); }
+.list-notice-copy{ font-size: 13px; line-height: 1.6; }
+
+.list-notice-actions{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+.list-notice-actions[hidden]{ display: none; }
+.list-notice-actions .btn-outline{ background: var(--salem-white); color: var(--salem-navy); cursor: pointer; }
+
+.salem-home #quarto-content .list-text-link{
+    font-size: 13px;
+    color: var(--salem-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Spam trap, kept off-screen (not display:none, which some bots skip) */
+.list-honeypot{
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Per-field messages linked with aria-describedby */
+.field-error{
+    margin-top: -16px !important;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--salem-rust);
+}
+.field-input[aria-invalid="true"]{
+    border-color: var(--salem-rust);
+    box-shadow: inset 0 0 0 1px var(--salem-rust);
+}
+.consent-check:has(input[aria-invalid="true"]){ box-shadow: inset 0 0 0 1px var(--salem-rust); }
+
+/* Loading: inputs and action are disabled */
+.signup-form.is-sending .field-input,
+.signup-form.is-sending .interest-chips label,
+.signup-form.is-sending .consent-check{ background-color: var(--salem-mist); color: var(--salem-slate); cursor: wait; }
+.signup-form.is-sending .interest-chips label:has(input:checked){ background: var(--salem-mist); border-color: var(--salem-line); color: var(--salem-slate); }
+.signup-submit:disabled,
+.list-status-page .btn-accent:disabled{
+    background: var(--salem-mist);
+    color: var(--salem-slate);
+    cursor: wait;
+    transform: none;
+    box-shadow: none;
+}
+.signup-form.is-sending .signup-submit img{ display: none; }
+.signup-form.is-sending .signup-submit::after{
+    content: "";
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: list-spin 0.8s linear infinite;
+}
+@keyframes list-spin{ to{ transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce){
+    .signup-form.is-sending .signup-submit::after{ animation: none; border-right-color: currentColor; }
+}
+
+/* Confirmation, unsubscribe, and preferences pages */
+.list-status-page{
+    display: flex;
+    justify-content: center;
+    padding-top: 80px;
+    padding-bottom: 96px;
+}
+
+.list-status{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    max-width: 778px;
+}
+.list-status[hidden]{ display: none; }
+
+.list-status-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: var(--salem-mist);
+    color: var(--salem-blue);
+}
+
+.salem-home #quarto-content .list-status-heading{
+    font-size: 64px;
+    line-height: 1.08;
+}
+.list-status-heading:focus{ outline: none; }
+
+.list-status-lede{ font-size: 16px; line-height: 1.6; }
+.list-status-copy{ font-size: 14px; line-height: 1.6; }
+.list-status-note{ font-size: 12px; line-height: 1.6; color: var(--salem-slate); }
+
+.list-status-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.list-status-actions--stacked{ flex-direction: column; }
+.list-status-actions--stacked > *{ justify-content: center; width: 100%; }
+.list-status-actions .btn-accent{ gap: 16px; padding: 0 16px; }
+.list-status-page .btn-outline{ color: var(--salem-navy); background: transparent; cursor: pointer; }
+
+.list-resend,
+.list-prefs-form{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.list-resend .btn-accent,
+.list-prefs-form .btn-accent{ justify-content: center; gap: 16px; }
+
+.list-prefs-form fieldset{ margin: 0; padding: 0; border: 0; min-width: 0; }
+.list-prefs-form legend{
+    float: left;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.list-form-status{ font-size: 13px; line-height: 1.6; }
+.list-form-status:empty{ display: none; }
+.list-form-status[data-tone="error"]{ color: var(--salem-rust); }
+
+@media (max-width: 991px){
+    .list-status-page{ padding-top: 56px; padding-bottom: 72px; }
+    .salem-home #quarto-content .list-status-heading{ font-size: 48px; }
+}
+
+@media (max-width: 600px){
+    .list-status-page{ padding-top: 40px; padding-bottom: 56px; }
+    .salem-home #quarto-content .list-status-heading{ font-size: 40px; }
+    .list-notice-actions .btn-outline{ width: 100%; justify-content: center; white-space: normal; }
+    .list-status-actions > *{ width: 100%; justify-content: center; white-space: normal; }
+}
+
+/* "Unsubscribe anytime" links under the signup boxes */
+.email-reassurance a,
+.salem-home #quarto-content .email-reassurance a{
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Link-styled buttons (e.g. "Unsubscribe with your name and email instead") */
+button.list-text-link{
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 12px;
+    color: var(--salem-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}

@@ -5,6 +5,8 @@ project:
     - "*.qmd"
   resources:
     - images/icons/sprout.svg
+    - assets/js/config.js
+    - assets/js/subscriber-store.js
 
 website:
   title: "Salem"
