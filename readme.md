@@ -5,11 +5,15 @@ The website and journal for **Salem Custom Screen Printing**, a small, faith-dri
 ### Live site: https://iquinones2.github.io/Salem-Blog/
 
 <p align="center">
-    <img src="images/mainBlogPage_v1.png" alt="Salem homepage and journal" width="45%">
-    <img src="images/missionPage.png" alt="Salem's Mission journal post" width="45%">
+    <img src="images/readme/home.jpg" alt="Salem homepage with the featured October sale" width="49%">
+    <img src="images/readme/shop.jpg" alt="Shop page with shirt styles to customize" width="49%">
+</p>
+<p align="center">
+    <img src="images/readme/about.jpg" alt="About page: More than ink" width="49%">
+    <img src="images/readme/subscribe.jpg" alt="Join the Salem list signup form" width="49%">
 </p>
 
-The site is informational: it shares Salem's story, showcases past work, and lets visitors design a shirt and request a quote. There is no checkout — orders, quotes, and payment are handled directly with Salem.
+The site is informational: it shares Salem's story, showcases past work, lets visitors design a shirt and request a quote, and runs the Salem list (newsletter). There is no checkout. To order, visitors message Salem on Instagram ("Chat with Salem" on every page), and quotes and payment are handled directly with Salem.
 
 This is also an ongoing personal development project, refined over time. For more projects, see my [personal portfolio](https://iquinones2.github.io/R-Data-Science-Portfolio/).
 
@@ -20,14 +24,16 @@ This is also an ongoing personal development project, refined over time. For mor
 | **Home / Journal** (`index.qmd`) | Editorial homepage with the post listing, category filter, and a custom sort dropdown (newest, oldest, A–Z, Z–A) |
 | **Shop** (`shop.qmd`) | Shirt customizer — pick a style (crew tee, V-neck, long sleeve), ink color, and font, add text or an uploaded image on the front or back, download a preview, and send a quote request. Nothing is charged. |
 | **About** (`about.qmd`) | Salem's story and mission |
-| **Join the Salem list** (`subscribe.qmd`) | Newsletter signup with separate paths for new and returning customers, plus client-side validation |
+| **Join the Salem list** (`subscribe.qmd`) | Newsletter signup with client-side validation; saves to a Google Sheet and sends a welcome email |
+| **Subscribed / Preferences / Unsubscribe** (`subscribed.qmd`, `preferences.qmd`, `unsubscribe.qmd`) | Confirmation page, interest editing via a private email link, and leaving the list (by email link or by name + email). Unsubscribing deletes the subscriber's row. |
 | **Journal posts** (`posts/`) | Event write-ups and seasonal offers: Salem's Mission, Rooted, October Sale, Christmas Bundle |
 
 ## Built with
 
 - **[Quarto](https://quarto.org)** — static site generator for the pages and journal
 - **CSS** — custom editorial design in `styles.css`, layered on the `lux` theme; fonts are DM Serif Display, Inter, Bebas Neue, and Caveat
-- **Vanilla JavaScript** — the shirt customizer (`shop/`), journal sorting and filtering, and form validation; no frameworks or build step
+- **Vanilla JavaScript** — the shirt customizer (`shop/`), journal sorting and filtering, form validation, and the Salem list client (`assets/js/`); no frameworks or build step
+- **Google Apps Script + Google Sheets** — the Salem list backend (`apps-script/Code.gs`): stores subscribers and sends welcome/link emails
 - **GitHub Pages** — hosting, served from the `docs/` folder on `master`
 
 ## Project structure
@@ -38,11 +44,14 @@ styles.css             All custom styles
 index.qmd              Homepage + journal listing (uses journal.ejs)
 journal.ejs            Custom template for journal cards
 about.qmd, shop.qmd, subscribe.qmd
+subscribed.qmd, preferences.qmd, unsubscribe.qmd   Salem list pages
 shop/                  customizer.js, shirt-styles.js
+assets/js/             config.js (API URL), subscriber-store.js (Salem list client)
+apps-script/           Code.gs: Salem list backend (pasted into Apps Script; not published)
 posts/                 One folder per post (index.qmd, thumbnail, photos/)
 posts/_metadata.yml    Shared post layout (partials, date format, freeze)
-_partials/             Shared post title block and footer
-images/                Logo, page photos, shirt mockups, icons
+_partials/             Shared post title block and footer (with newsletter signup)
+images/                Logo, page photos, shirt mockups, icons, README screenshots
 docs/                  Rendered site (generated — do not edit by hand)
 ```
 
@@ -65,7 +74,9 @@ Edit the `.qmd`, `styles.css`, `_partials/`, or `shop/` source files — never `
 
 ## Roadmap
 
-- Connect the newsletter signup and quote request forms to a delivery service (they currently validate and confirm on the page only)
+- Connect the shop quote request form to a delivery service (it currently validates and confirms on the page only)
+- Email new journal posts to the Salem list
+- An order page with payment, once Salem is ready for it
 
 ## Attribution
 

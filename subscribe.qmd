@@ -1,5 +1,4 @@
 ---
-https://script.google.com/macros/s/AKfycbwT91rWkwjpvEkV5Im05wtxmMS5y9DsCmI-OwP34iszzCaRUZwpS-pl2cOtIGsr3XRX/exec---
 pagetitle: "Join the Salem list · Salem"
 page-layout: custom
 body-classes: salem-home salem-about salem-subscribe

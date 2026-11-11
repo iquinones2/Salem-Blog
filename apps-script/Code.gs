@@ -13,7 +13,11 @@
  * Email is the only unique identifier. Phone is optional and may repeat.
  * Unsubscribing deletes the row. Email failures are logged, never returned as errors.
  *
- * Script Properties used: SITE_URL, OWNER_EMAIL
+ * Newsletters: written in the "Newsletter" tab and sent from the sheet's
+ * "Salem list" menu (see the Newsletter section below).
+ *
+ * Script Properties used: SITE_URL, OWNER_EMAIL, MAILING_ADDRESS (optional)
+ * (NEWSLETTER_CAMPAIGN is set and cleared by the script while a newsletter sends.)
  */
 
 const SHEET_NAME = "Subscribers";
@@ -289,6 +293,13 @@ function json_(obj) {
 /* Email                                                               */
 /* ------------------------------------------------------------------ */
 
+// Optional postal address for the email footer (Salem chose to leave it out,
+// Nov 2026). When empty, footers show "Chicago, Illinois". Note: CAN-SPAM
+// expects a postal address in promotional emails; a PO box or virtual mailbox counts.
+function mailingAddress_() {
+  return String(PropertiesService.getScriptProperties().getProperty("MAILING_ADDRESS") || "").trim();
+}
+
 function siteUrl_() {
   const v = PropertiesService.getScriptProperties().getProperty("SITE_URL") || "https://iquinones2.github.io/Salem-Blog";
   return v.replace(/\/+$/, "");
@@ -345,7 +356,7 @@ function emailShell_(inner, l) {
     '<tr><td style="padding:16px 28px 28px;">' + inner + '</td></tr>' +
     '<tr><td style="background:#1c2a42;color:#d6dbe4;padding:24px 28px;font-size:12px;line-height:1.6;">' +
     '<strong style="color:#ffffff;font-size:14px;">' + BRAND + '</strong><br>' +
-    'Chicago, Illinois &middot; Custom shirts, made with care.<br><br>' +
+    esc_(mailingAddress_() || "Chicago, Illinois") + ' &middot; Custom shirts, made with care.<br><br>' +
     "You're receiving this because you joined the Salem list.<br>" +
     '<a href="' + esc_(l.unsubscribe) + '" style="color:#ffffff;">Unsubscribe</a> &nbsp;&nbsp; ' +
     '<a href="' + esc_(l.preferences) + '" style="color:#ffffff;">Update interests</a>' +
@@ -430,6 +441,339 @@ function sendOwnerAlert_(rec) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Newsletter                                                          */
+/* ------------------------------------------------------------------ */
+//
+// Salem writes the email in the "Newsletter" tab (labels in column A, values
+// in column B), then uses the sheet's "Salem list" menu:
+//   1. Send me a preview   → one copy to OWNER_EMAIL
+//   2. Send newsletter...  → asks to confirm, then emails everyone who matches
+//
+// Gmail allows ~100 recipients a day on a consumer account. When the quota
+// runs low, sendNewsletter saves its place (Status = "Sending") and a daily
+// trigger continues at 9am until everyone has it. Progress is tracked by
+// subscriber id only (no names or emails) and is cleared when the send ends.
+
+const NEWSLETTER_SHEET = "Newsletter";
+const NEWSLETTER_LOG_SHEET = "Newsletter log";
+const NEWSLETTER_FIELDS = [
+  ["Subject", "", "Subject line in the inbox. {firstName} works here too."],
+  ["Heading", "", "Big title at the top of the email (optional)."],
+  ["Message", "", "Blank line = new paragraph. {firstName} becomes the reader's first name."],
+  ["Button label", "", "Optional, e.g. Read the full story"],
+  ["Button link", "", "Optional, a full https:// link"],
+  ["Send to", "Everyone", "Everyone, or only people who picked one interest."],
+  ["Status", "Draft", "Set by the script: Draft → Sending → Sent."],
+  ["Progress", "", "Filled in by the script."]
+];
+const NEWSLETTER_AUDIENCES = [
+  "Everyone", "Individual shirts", "Team and group orders", "Church and youth events",
+  "Fundraisers", "Personal gifts", "Other events"
+];
+const NEWSLETTER_QUOTA_RESERVE = 10;        // keep room for welcome emails from the website
+const NEWSLETTER_RUN_LIMIT_MS = 4.5 * 60 * 1000; // Apps Script stops a run at 6 minutes
+
+/** Adds the "Salem list" menu to the sheet. Runs automatically when the sheet opens. */
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu("Salem list")
+    .addItem("Set up Newsletter tab", "setupNewsletterTab")
+    .addItem("Send me a preview", "previewNewsletter")
+    .addSeparator()
+    .addItem("Send newsletter to the list…", "confirmSendNewsletter")
+    .addToUi();
+}
+
+/** Creates the "Newsletter" tab with its labels. Safe to run again: it won't overwrite a draft. */
+function setupNewsletterTab() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (ss.getSheetByName(NEWSLETTER_SHEET)) {
+    notify_('The "' + NEWSLETTER_SHEET + '" tab already exists. Nothing was changed.');
+    return;
+  }
+  const sh = ss.insertSheet(NEWSLETTER_SHEET);
+  sh.getRange(1, 1, NEWSLETTER_FIELDS.length, 3).setValues(NEWSLETTER_FIELDS);
+  sh.getRange(1, 1, NEWSLETTER_FIELDS.length, 1).setFontWeight("bold");
+  sh.getRange(1, 2, NEWSLETTER_FIELDS.length, 1).setWrap(true).setNumberFormat("@");
+  sh.getRange(1, 3, NEWSLETTER_FIELDS.length, 1).setFontColor("#5b6577").setWrap(true);
+  sh.getRange(1, 1, NEWSLETTER_FIELDS.length, 3).setVerticalAlignment("top");
+  sh.setColumnWidth(1, 130);
+  sh.setColumnWidth(2, 520);
+  sh.setColumnWidth(3, 300);
+  sh.setRowHeight(fieldRow_("Message"), 240);
+  sh.getRange(fieldRow_("Send to"), 2).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(NEWSLETTER_AUDIENCES, true).build());
+  sh.getRange(fieldRow_("Status"), 2).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(["Draft", "Sending", "Sent"], true).build());
+  notify_('Created the "' + NEWSLETTER_SHEET + '" tab. Write the email in column B, then use Salem list → Send me a preview.');
+}
+
+/** Sends one copy of the current newsletter to OWNER_EMAIL, so Salem can check it first. */
+function previewNewsletter() {
+  const owner = PropertiesService.getScriptProperties().getProperty("OWNER_EMAIL");
+  if (!owner) return notify_("Set the OWNER_EMAIL Script Property first, so the preview has somewhere to go.");
+  const n = readNewsletter_();
+  if (!n.subject && !n.message) return notify_("Write a Subject and Message in the Newsletter tab first.");
+  if (!canSend_()) return notify_("Gmail's daily email limit is used up. Try again tomorrow.");
+
+  // Preview links use a fake token: they open the right pages but won't change anything.
+  const m = renderNewsletter_(n, { firstName: "Friend", token: "preview" });
+  MailApp.sendEmail({ to: owner, subject: "[Preview] " + m.subject, name: BRAND, body: m.text, htmlBody: m.html });
+
+  const problems = newsletterProblems_(n);
+  notify_("Preview sent to OWNER_EMAIL." +
+    (problems.length ? "\n\nFix these before sending to the list:\n- " + problems.join("\n- ") : ""));
+}
+
+/** Menu entry: shows who will get the newsletter and asks before sending. */
+function confirmSendNewsletter() {
+  const ui = SpreadsheetApp.getUi();
+  const n = readNewsletter_();
+  const problems = newsletterProblems_(n);
+  if (problems.length) return notify_("Not sent yet. Please fix:\n- " + problems.join("\n- "));
+  if (n.status === "sending") {
+    return notify_('This newsletter is already sending (see Progress). It continues each morning at 9am.');
+  }
+
+  const count = newsletterRecipients_(n, table_()).length;
+  if (!count) return notify_('Nobody on the list matches "Send to: ' + n.sendTo + '". Nothing was sent.');
+
+  const again = n.status === "sent" ? "\n\nThis newsletter was already sent once. Sending again emails everyone a second time." : "";
+  const days = Math.ceil(count / 90);
+  const timing = days > 1 ? "\n\nGmail's daily limit means this takes about " + days + " days. It continues each morning at 9am." : "";
+  let answer;
+  try {
+    answer = ui.alert("Send the Salem newsletter?",
+      'Send "' + n.subject + '" to ' + count + (count === 1 ? " person" : " people") +
+      (n.sendTo === "Everyone" ? "" : " interested in " + n.sendTo) + "?" + again + timing,
+      ui.ButtonSet.YES_NO);
+  } catch (err) {
+    // The editor's Run button has no sheet window to ask in, so nothing is sent.
+    console.log("Nothing sent. Open the Google Sheet and use Salem list → Send newsletter to the list… " +
+      "(the confirmation box only appears there). It would go to " + count + " people.");
+    return;
+  }
+  if (answer !== ui.Button.YES) return;
+
+  startNewsletter_(n);
+  sendNewsletter();
+}
+
+/**
+ * Sends the newsletter to everyone who hasn't received it yet, until the run
+ * time or the daily quota runs out. Called by the menu and by the daily trigger.
+ */
+function sendNewsletter() {
+  // A separate lock from doPost's script lock, so signups keep working while this runs.
+  const lock = LockService.getDocumentLock();
+  if (!lock.tryLock(0)) return notify_("A newsletter send is already running.");
+  try {
+    const startedAt = Date.now();
+    const n = readNewsletter_();
+    const props = PropertiesService.getScriptProperties();
+    const campaign = props.getProperty("NEWSLETTER_CAMPAIGN");
+    if (n.status !== "sending" || !campaign) {
+      stopNewsletterTrigger_();
+      return notify_('Nothing to send. Use Salem list → "Send newsletter to the list…" to start.');
+    }
+    const problems = newsletterProblems_(n);
+    if (problems.length) {
+      return notify_("Sending is paused. Please fix:\n- " + problems.join("\n- ") +
+        '\n\nIt will continue at the next 9am run, or run sendNewsletter from the editor.');
+    }
+
+    const log = newsletterLog_();
+    const done = sentIds_(log, campaign);
+    const recipients = newsletterRecipients_(n, table_());
+    let sentNow = 0, failed = 0, stoppedEarly = false;
+
+    for (const r of recipients) {
+      const id = r.data.id || r.data.token;
+      if (done.has(id)) continue;
+      if (Date.now() - startedAt > NEWSLETTER_RUN_LIMIT_MS ||
+          MailApp.getRemainingDailyQuota() <= NEWSLETTER_QUOTA_RESERVE) {
+        stoppedEarly = true;
+        break;
+      }
+      const m = renderNewsletter_(n, r.data);
+      try {
+        MailApp.sendEmail({ to: r.data.email, subject: m.subject, name: BRAND, body: m.text, htmlBody: m.html });
+        sentNow++;
+      } catch (err) {
+        failed++; // logged without the address; marked done so one bad address can't block the rest
+        console.error("Newsletter email failed: " + (err && err.message));
+      }
+      log.appendRow([campaign, id, new Date().toISOString()]);
+      done.add(id);
+    }
+
+    const total = recipients.length;
+    const reached = recipients.filter(r => done.has(r.data.id || r.data.token)).length;
+    const failNote = failed ? " (" + failed + " could not be delivered; see Executions)" : "";
+
+    if (!stoppedEarly) {
+      setNewsletterField_(n, "Status", "Sent");
+      setNewsletterField_(n, "Progress", "Sent to " + reached + " of " + total + failNote + " · finished " + stamp_());
+      finishNewsletter_(log, campaign);
+      notify_("Newsletter sent to " + reached + (reached === 1 ? " person" : " people") + failNote + ".");
+    } else {
+      setNewsletterField_(n, "Progress", reached + " of " + total + " sent so far" + failNote +
+        " · continues tomorrow at 9am · updated " + stamp_());
+      ensureNewsletterTrigger_();
+      notify_("Sent " + sentNow + " today (" + reached + " of " + total + " so far). " +
+        "Gmail's daily limit was reached, so the rest go out tomorrow at 9am.");
+    }
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/* Newsletter helpers ------------------------------------------------- */
+
+function readNewsletter_() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(NEWSLETTER_SHEET);
+  if (!sh) throw new Error('Missing "' + NEWSLETTER_SHEET + '" tab. Use Salem list → Set up Newsletter tab.');
+  const values = sh.getRange(1, 1, Math.max(sh.getLastRow(), 1), 2).getDisplayValues();
+  const f = {}, rows = {};
+  values.forEach((r, i) => {
+    const key = String(r[0]).trim();
+    if (key) { f[key] = String(r[1]); rows[key] = i + 1; }
+  });
+  NEWSLETTER_FIELDS.forEach(x => {
+    if (!(x[0] in f)) throw new Error('Missing row "' + x[0] + '" in the ' + NEWSLETTER_SHEET + " tab.");
+  });
+  return {
+    sh: sh,
+    rows: rows,
+    subject: f["Subject"].trim(),
+    heading: f["Heading"].trim(),
+    message: f["Message"].replace(/\r\n?/g, "\n").trim(),
+    buttonLabel: f["Button label"].trim(),
+    buttonLink: f["Button link"].trim(),
+    sendTo: f["Send to"].trim() || "Everyone",
+    status: f["Status"].trim().toLowerCase()
+  };
+}
+
+function fieldRow_(key) {
+  return NEWSLETTER_FIELDS.findIndex(x => x[0] === key) + 1;
+}
+
+function setNewsletterField_(n, key, value) {
+  n.sh.getRange(n.rows[key], 2).setValue(value);
+}
+
+function newsletterProblems_(n) {
+  const p = [];
+  if (!n.subject) p.push("Add a Subject.");
+  if (!n.message) p.push("Add a Message.");
+  if (n.buttonLabel && !n.buttonLink) p.push("Add a Button link, or clear the Button label.");
+  if (n.buttonLink && !n.buttonLabel) p.push("Add a Button label, or clear the Button link.");
+  if (n.buttonLink && !/^https:\/\/\S+$/i.test(n.buttonLink)) p.push("The Button link must be a full https:// link.");
+  if (NEWSLETTER_AUDIENCES.indexOf(n.sendTo) === -1) p.push('"Send to" must be Everyone or one of the interests.');
+  return p;
+}
+
+function newsletterRecipients_(n, t) {
+  const want = n.sendTo.toLowerCase();
+  return t.rows.filter(r =>
+    isActive_(r.data.status) && r.data.token && EMAIL_RE.test(r.data.email) &&
+    (want === "everyone" || toList_(r.data.interests).some(i => i.toLowerCase() === want)));
+}
+
+function renderNewsletter_(n, rec) {
+  const name = rec.firstName || "friend";
+  const fill = s => s.replace(/\{firstName\}/g, name);
+  const l = links_(rec);
+  const paras = fill(n.message).split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  const heading = fill(n.heading);
+
+  const inner =
+    (heading ? '<h1 style="font-family:Georgia,serif;font-size:32px;line-height:1.15;margin:10px 0 16px;">' + esc_(heading) + "</h1>" : "") +
+    paras.map(p => '<p style="font-size:16px;line-height:1.6;">' + esc_(p).replace(/\n/g, "<br>") + "</p>").join("") +
+    (n.buttonLink
+      ? '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">' +
+        button_(n.buttonLink, n.buttonLabel, true) + "</table>"
+      : "") +
+    '<p style="font-size:14px;line-height:1.6;margin-top:20px;">Made with care. Worn with purpose.<br>&mdash; Salem</p>';
+
+  const text =
+    (heading ? heading + "\n\n" : "") + paras.join("\n\n") +
+    (n.buttonLink ? "\n\n" + n.buttonLabel + ": " + n.buttonLink : "") +
+    "\n\nMade with care. Worn with purpose. — Salem\n\n" +
+    BRAND + "\n" + (mailingAddress_() || "Chicago, Illinois") + "\n" +
+    "You're receiving this because you joined the Salem list.\n" +
+    "Update interests: " + l.preferences + "\nUnsubscribe: " + l.unsubscribe;
+
+  return { subject: fill(n.subject), html: emailShell_(inner, l), text: text };
+}
+
+// Starts a fresh send: new campaign id, empty progress log.
+function startNewsletter_(n) {
+  const props = PropertiesService.getScriptProperties();
+  const old = props.getProperty("NEWSLETTER_CAMPAIGN");
+  if (old) finishNewsletter_(newsletterLog_(), old);
+  props.setProperty("NEWSLETTER_CAMPAIGN", Utilities.getUuid());
+  setNewsletterField_(n, "Status", "Sending");
+  setNewsletterField_(n, "Progress", "Starting · " + stamp_());
+}
+
+// Removes the progress rows and the trigger once a send is finished.
+function finishNewsletter_(log, campaign) {
+  const last = log.getLastRow();
+  if (last >= 1) {
+    const ids = log.getRange(1, 1, last, 1).getValues();
+    for (let i = ids.length - 1; i >= 0; i--) {
+      if (String(ids[i][0]) === campaign) log.deleteRow(i + 1);
+    }
+  }
+  PropertiesService.getScriptProperties().deleteProperty("NEWSLETTER_CAMPAIGN");
+  stopNewsletterTrigger_();
+}
+
+// Hidden tab: campaign id | subscriber id | sent at. Ids only, never names or emails.
+function newsletterLog_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(NEWSLETTER_LOG_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(NEWSLETTER_LOG_SHEET);
+    sh.hideSheet();
+  }
+  return sh;
+}
+
+function sentIds_(log, campaign) {
+  const last = log.getLastRow();
+  const set = new Set();
+  if (last < 1) return set;
+  log.getRange(1, 1, last, 2).getDisplayValues().forEach(r => {
+    if (r[0] === campaign) set.add(r[1]);
+  });
+  return set;
+}
+
+function ensureNewsletterTrigger_() {
+  const exists = ScriptApp.getProjectTriggers().some(t => t.getHandlerFunction() === "sendNewsletter");
+  if (!exists) ScriptApp.newTrigger("sendNewsletter").timeBased().everyDays(1).atHour(9).create();
+}
+
+function stopNewsletterTrigger_() {
+  ScriptApp.getProjectTriggers()
+    .filter(t => t.getHandlerFunction() === "sendNewsletter")
+    .forEach(t => ScriptApp.deleteTrigger(t));
+}
+
+function stamp_() {
+  return Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMM d, h:mm a");
+}
+
+// Shows a message in the sheet when run from the menu; logs it when run from
+// the editor or a trigger (where there is no sheet window to show it in).
+function notify_(msg) {
+  console.log(msg);
+  try { SpreadsheetApp.getUi().alert(msg); } catch (err) { /* no UI in this context */ }
+}
+
+/* ------------------------------------------------------------------ */
 /* Run these from the editor                                           */
 /* ------------------------------------------------------------------ */
 
@@ -439,6 +783,8 @@ function authorizeOnce() {
   console.log("Emails left today: " + MailApp.getRemainingDailyQuota());
   console.log("SITE_URL: " + siteUrl_());
   console.log("OWNER_EMAIL set: " + Boolean(PropertiesService.getScriptProperties().getProperty("OWNER_EMAIL")));
+  console.log("MAILING_ADDRESS set (optional): " + Boolean(mailingAddress_()));
+  console.log("Newsletter triggers: " + ScriptApp.getProjectTriggers().length); // asks for trigger permission
   CacheService.getScriptCache().put("auth_check", "1", 10);
   console.log("All set.");
 }
