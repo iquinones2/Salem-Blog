@@ -16,8 +16,13 @@
  * Newsletters: written in the "Newsletter" tab and sent from the sheet's
  * "Salem list" menu (see the Newsletter section below).
  *
- * Script Properties used: SITE_URL, OWNER_EMAIL, MAILING_ADDRESS (optional)
- * (NEWSLETTER_CAMPAIGN is set and cleared by the script while a newsletter sends.)
+ * Automations (see the Automation section): Settings tab, Agent Log tab,
+ * askClaude_ (optional AI help), installTriggers.
+ *
+ * Script Properties used: SITE_URL, OWNER_EMAIL, MAILING_ADDRESS (optional),
+ * ANTHROPIC_API_KEY (optional; only ever stored here, never in the website code)
+ * (NEWSLETTER_CAMPAIGN is set and cleared by the script while a newsletter sends.
+ *  LAST_POST_LINK, LAST_POST_DATE and AI_OFF_NOTED are kept by the automations.)
  */
 
 const SHEET_NAME = "Subscribers";
@@ -418,7 +423,7 @@ function sendLinks_(rec) {
 }
 
 function sendOwnerAlert_(rec) {
-  const owner = PropertiesService.getScriptProperties().getProperty("OWNER_EMAIL");
+  const owner = ownerEmail_();
   if (!owner || !canSend_()) return;
   const sheetUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
   const lines = [
@@ -480,6 +485,12 @@ function onOpen() {
     .addItem("Send me a preview", "previewNewsletter")
     .addSeparator()
     .addItem("Send newsletter to the list…", "confirmSendNewsletter")
+    .addSeparator()
+    .addItem("Set up Settings tab", "setupSettingsTab")
+    .addItem("Install automatic jobs", "installTriggers")
+    .addSeparator()
+    .addItem("Draft newsletter from latest post", "draftNewsletterFromLatestPost")
+    .addItem("Check for bounced emails now", "checkBounces")
     .addToUi();
 }
 
@@ -509,8 +520,8 @@ function setupNewsletterTab() {
 
 /** Sends one copy of the current newsletter to OWNER_EMAIL, so Salem can check it first. */
 function previewNewsletter() {
-  const owner = PropertiesService.getScriptProperties().getProperty("OWNER_EMAIL");
-  if (!owner) return notify_("Set the OWNER_EMAIL Script Property first, so the preview has somewhere to go.");
+  const owner = ownerEmail_();
+  if (!owner) return notify_('Add the "Owner email" in the Settings tab (or the OWNER_EMAIL Script Property) first, so the preview has somewhere to go.');
   const n = readNewsletter_();
   if (!n.subject && !n.message) return notify_("Write a Subject and Message in the Newsletter tab first.");
   if (!canSend_()) return notify_("Gmail's daily email limit is used up. Try again tomorrow.");
@@ -650,7 +661,8 @@ function readNewsletter_() {
     buttonLabel: f["Button label"].trim(),
     buttonLink: f["Button link"].trim(),
     sendTo: f["Send to"].trim() || "Everyone",
-    status: f["Status"].trim().toLowerCase()
+    status: f["Status"].trim().toLowerCase(),
+    progress: f["Progress"].trim()
   };
 }
 
@@ -774,6 +786,530 @@ function notify_(msg) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Automation: Settings, Agent Log, AI helper, triggers                */
+/* ------------------------------------------------------------------ */
+//
+// Ground rules for every automated job:
+//   - It drafts or reports. Anything sent to customers waits for Salem's OK.
+//   - It never deletes subscriber rows and never emails the whole list.
+//   - Only counts, totals and post titles go to the AI. Never names or emails.
+//   - It writes one line to the "Agent Log" tab per run.
+
+const SETTINGS_SHEET = "Settings";
+const AGENT_LOG_SHEET = "Agent Log";
+const AGENT_LOG_HEADERS = ["Time", "Job", "What it did", "Error"];
+const AGENT_LOG_MAX_ROWS = 2000; // oldest lines are trimmed past this
+
+// Key | starting value | note shown in column C. Salem edits column B.
+const SETTINGS_FIELDS = [
+  ["Owner email", "", "Where reports, alerts and previews go. Blank = the OWNER_EMAIL Script Property."],
+  ["Report day", "1", "Day of the month the monthly report arrives (1–28). After changing it, run Salem list → Install automatic jobs."],
+  ["Business voice", "Warm, humble and faith-driven. Plain, friendly words and short sentences. " +
+    "A small Chicago studio that cares about the people and messages behind each shirt. " +
+    "No hype or pressure. To order, people message Salem on Instagram.",
+    "How AI-written drafts should sound. Edit freely."],
+  ["FAQ: Minimum order", "", "Used for draft replies to customers. Leave blank until Salem decides."],
+  ["FAQ: Pricing", "", "Price ranges, e.g. per-shirt price by quantity."],
+  ["FAQ: Turnaround", "", "Usual time from approved design to pickup."],
+  ["FAQ: Delivery area", "", "Pickup / delivery details."],
+  // Seasonal tips: the monthly report shows the tip for the coming month (no AI needed).
+  ["Tip: January", "New year, new plans. Check in with churches and youth groups planning spring retreats and ask what shirts they'll need.", "Shown in the report that arrives at the start of January. Edit freely."],
+  ["Tip: February", "Easter is coming. Remind churches that Holy Week and Easter shirts should be ordered early.", ""],
+  ["Tip: March", "Share an Easter order reminder post. Start conversations about VBS (Vacation Bible School) shirts for summer.", ""],
+  ["Tip: April", "VBS and summer camp season is close. Invite churches to order VBS and youth camp shirts before the summer rush.", ""],
+  ["Tip: May", "Graduations, end of the school year and family reunions. Last call for VBS and camp orders.", ""],
+  ["Tip: June", "VBS and camps are running. Share photos of shirts in action (with permission) and thank the churches you served.", ""],
+  ["Tip: July", "Back to school and fall church kickoffs are coming. Reach out to schools, teams and ministries now.", ""],
+  ["Tip: August", "Back to school: teams, clubs and fall fundraisers. Ask about harvest festivals and fall church events.", ""],
+  ["Tip: September", "Fall fundraisers, walks and runs. Start talking with churches about Christmas programs and year-end gifts.", ""],
+  ["Tip: October", "Post a Christmas order reminder with the last day to order for Christmas pickup. Ask about staff and volunteer gifts.", ""],
+  ["Tip: November", "Last call for Christmas orders. Year-end and Giving Tuesday fundraiser shirts.", ""],
+  ["Tip: December", "Thank your customers and share a year-in-review post. Plan January outreach.", ""]
+];
+
+/** Creates the Settings tab, or adds any missing rows to it. Never overwrites Salem's values. */
+function setupSettingsTab() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(SETTINGS_SHEET);
+  const created = !sh;
+  if (!sh) {
+    sh = ss.insertSheet(SETTINGS_SHEET);
+    sh.setColumnWidth(1, 160);
+    sh.setColumnWidth(2, 460);
+    sh.setColumnWidth(3, 340);
+  }
+  const have = new Set(Object.keys(readSettings_()));
+  const missing = SETTINGS_FIELDS.filter(f => !have.has(f[0]));
+  if (missing.length) {
+    const start = sh.getLastRow() + 1;
+    sh.getRange(start, 1, missing.length, 3).setValues(missing);
+    sh.getRange(start, 1, missing.length, 1).setFontWeight("bold");
+    sh.getRange(start, 2, missing.length, 1).setWrap(true).setNumberFormat("@");
+    sh.getRange(start, 3, missing.length, 1).setFontColor("#5b6577").setWrap(true);
+    sh.getRange(start, 1, missing.length, 3).setVerticalAlignment("top");
+  }
+  logAgent_("setup settings", created ? "Created the Settings tab." : "Added " + missing.length + " missing setting(s).");
+  notify_(created
+    ? 'Created the "' + SETTINGS_SHEET + '" tab. Fill in column B; leave FAQ answers blank until Salem decides them.'
+    : missing.length ? "Added " + missing.length + " new setting(s) to the Settings tab." : "The Settings tab is already up to date.");
+}
+
+/** All settings as { key: value }. Returns {} if the tab doesn't exist yet. */
+function readSettings_() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SETTINGS_SHEET);
+  const out = {};
+  if (!sh || sh.getLastRow() < 1) return out;
+  sh.getRange(1, 1, sh.getLastRow(), 2).getDisplayValues().forEach(r => {
+    const k = String(r[0]).trim();
+    if (k) out[k] = String(r[1]).trim();
+  });
+  return out;
+}
+
+/** One setting, or the fallback when it's missing or blank. */
+function setting_(key, fallback) {
+  const v = readSettings_()[key];
+  return v ? v : (fallback == null ? "" : fallback);
+}
+
+/** Owner email: the Settings tab first, then the OWNER_EMAIL Script Property. */
+function ownerEmail_() {
+  const fromSheet = normEmail_(setting_("Owner email"));
+  if (EMAIL_RE.test(fromSheet)) return fromSheet;
+  return String(PropertiesService.getScriptProperties().getProperty("OWNER_EMAIL") || "").trim();
+}
+
+/**
+ * Writes one line to the Agent Log tab (creates it if needed).
+ * Keep messages free of names, emails and phone numbers.
+ */
+function logAgent_(job, message, error) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sh = ss.getSheetByName(AGENT_LOG_SHEET);
+    if (!sh) {
+      sh = ss.insertSheet(AGENT_LOG_SHEET);
+      sh.getRange(1, 1, 1, AGENT_LOG_HEADERS.length).setValues([AGENT_LOG_HEADERS]).setFontWeight("bold");
+      sh.setFrozenRows(1);
+      sh.setColumnWidth(1, 150);
+      sh.setColumnWidth(2, 160);
+      sh.setColumnWidth(3, 460);
+      sh.setColumnWidth(4, 320);
+    }
+    sh.appendRow([
+      Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm"),
+      safeCell_(String(job || "")),
+      safeCell_(String(message || "").slice(0, 1000)),
+      safeCell_(String(error || "").slice(0, 500))
+    ]);
+    const extra = sh.getLastRow() - 1 - AGENT_LOG_MAX_ROWS;
+    if (extra > 0) sh.deleteRows(2, extra);
+  } catch (err) {
+    // Logging must never break the job that called it.
+    console.error("Agent Log write failed: " + (err && err.message));
+  }
+}
+
+/**
+ * Asks Claude for a short piece of writing. Returns the text, or null if the
+ * API key is missing or anything goes wrong (the error goes to the Agent Log),
+ * so the calling job can carry on without AI text.
+ * Only send aggregates and public post text here, never subscriber details.
+ */
+function askClaude_(prompt, maxTokens, job) {
+  const label = job || "ask claude";
+  const key = String(PropertiesService.getScriptProperties().getProperty("ANTHROPIC_API_KEY") || "").trim();
+  if (!key) {
+    // Running without AI is the normal, free setup. Note it once a month, not on every run.
+    const props = PropertiesService.getScriptProperties();
+    const month = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM");
+    if (props.getProperty("AI_OFF_NOTED") !== month) {
+      logAgent_(label, "AI is off (no ANTHROPIC_API_KEY), so jobs use their plain fallbacks. Noted once a month.");
+      props.setProperty("AI_OFF_NOTED", month);
+    }
+    return null;
+  }
+  try {
+    const res = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
+      method: "post",
+      contentType: "application/json",
+      headers: { "x-api-key": key, "anthropic-version": "2023-06-01" },
+      payload: JSON.stringify({
+        model: "claude-haiku-5-5",
+        max_tokens: maxTokens || 1500,
+        output_config: { effort: "low" }, // short, simple writing; keeps cost and time down
+        messages: [{ role: "user", content: String(prompt) }]
+      }),
+      muteHttpExceptions: true
+    });
+    const code = res.getResponseCode();
+    let body = {};
+    try { body = JSON.parse(res.getContentText() || "{}"); } catch (e) { /* non-JSON error page */ }
+
+    if (code !== 200) {
+      const e = body.error || {};
+      logAgent_(label, "AI call failed.", "HTTP " + code + (e.type ? " " + e.type : "") + (e.message ? ": " + e.message : ""));
+      return null;
+    }
+    if (body.stop_reason === "refusal") {
+      logAgent_(label, "AI declined this request.", "stop_reason: refusal");
+      return null;
+    }
+    if (body.stop_reason === "max_tokens") {
+      // A cut-off draft is worse than the plain fallback, so don't use it.
+      logAgent_(label, "AI answer was cut off; using the fallback instead.", "stop_reason: max_tokens (raise maxTokens)");
+      return null;
+    }
+    // Only text blocks; the model can also return (empty) thinking blocks.
+    const text = (body.content || []).filter(b => b.type === "text").map(b => b.text).join("").trim();
+    if (!text) {
+      logAgent_(label, "AI returned no text.", "stop_reason: " + body.stop_reason);
+      return null;
+    }
+    return text;
+  } catch (err) {
+    logAgent_(label, "AI call failed.", (err && err.message) || String(err));
+    return null;
+  }
+}
+
+// Every scheduled job in one place. Each later phase adds its line here.
+//   fn:   the function the trigger runs (must exist in this file)
+//   when: builds the schedule on a ScriptApp trigger builder
+// The newsletter's 9am "sendNewsletter" trigger is not listed: sendNewsletter
+// adds and removes it by itself while a multi-day send is in progress.
+function scheduledJobs_() {
+  return [
+    { fn: "checkBounces", label: "Bounced email check (Mondays, about 6am)",
+      when: b => b.timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(6) },
+    { fn: "checkNewPost", label: "New journal post check (daily, about 8am)",
+      when: b => b.timeBased().everyDays(1).atHour(8) }
+  ];
+}
+
+/* ------------------------------------------------------------------ */
+/* New journal post → newsletter draft                                 */
+/* ------------------------------------------------------------------ */
+//
+// Once a day, read the journal's RSS feed (SITE_URL/index.xml, made by Quarto).
+// When a newer post appears, write a newsletter about it into the Newsletter
+// tab (Status "Draft") and send Salem one short email. Nothing goes to the
+// list: Salem previews and sends it from the menu as usual.
+//
+// It never replaces a newsletter Salem is writing by hand, or one that is
+// sending. The draft is written by AI only when an API key is set; otherwise
+// it is built from the post's title and description.
+//
+// Script Properties set by the script: LAST_POST_LINK, LAST_POST_DATE.
+
+const POST_DRAFT_MARK = "DRAFT - not sent";
+
+function feedUrl_() {
+  return siteUrl_() + "/index.xml";
+}
+
+/** Posts in the feed, newest first: { title, link, description, date }. */
+function readFeed_() {
+  const res = UrlFetchApp.fetch(feedUrl_(), { muteHttpExceptions: true, followRedirects: true });
+  if (res.getResponseCode() !== 200) {
+    throw new Error("The journal feed returned HTTP " + res.getResponseCode() + " (" + feedUrl_() + ")");
+  }
+  const channel = XmlService.parse(res.getContentText()).getRootElement().getChild("channel");
+  if (!channel) throw new Error("The journal feed has no <channel>.");
+  return channel.getChildren("item").map(it => ({
+    title: plainText_(it.getChildText("title")),
+    link: String(it.getChildText("link") || "").trim(),
+    description: plainText_(it.getChildText("description")),
+    date: new Date(it.getChildText("pubDate") || 0)
+  })).filter(p => p.link).sort((a, b) => b.date - a.date);
+}
+
+// Feed text can carry HTML; keep just the words.
+function plainText_(s) {
+  return String(s || "").replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"').replace(/&#39;|&#x27;|&rsquo;|&lsquo;/g, "'").replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ").trim();
+}
+
+/** Daily trigger: drafts a newsletter when a new journal post appears. */
+function checkNewPost() {
+  const job = "new post check";
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const posts = readFeed_();
+    if (!posts.length) return logAgent_(job, "The journal feed has no posts yet.");
+    const latest = posts[0];
+    const lastLink = props.getProperty("LAST_POST_LINK");
+    const lastDate = Number(props.getProperty("LAST_POST_DATE") || 0);
+
+    if (!lastLink) {
+      rememberPost_(latest);
+      return logAgent_(job, 'First run: now watching the journal. Latest post is "' + latest.title + '" (no draft made for it).');
+    }
+    if (latest.link === lastLink) return logAgent_(job, "No new post.");
+    if (lastDate && latest.date.getTime() <= lastDate) {
+      // e.g. a post was renamed or removed: not actually new.
+      rememberPost_(latest);
+      return logAgent_(job, 'The newest post changed to "' + latest.title + '" but it is not newer than the last one, so no draft was made.');
+    }
+
+    const result = draftFromPost_(latest, false);
+    if (!result.waiting) rememberPost_(latest); // waiting = try again tomorrow
+    if (result.drafted) {
+      const emailed = sendDraftReadyEmail_(latest);
+      result.message += emailed ? " Emailed Salem." : " (Salem was not emailed: no owner email or no quota left.)";
+    } else if (result.kept) {
+      sendDraftKeptEmail_(latest);
+    }
+    logAgent_(job, result.message);
+  } catch (err) {
+    logAgent_(job, "Could not check the journal feed.", (err && err.message) || String(err));
+  }
+}
+
+/** Menu: "Draft newsletter from latest post". Asks before replacing an unsent hand-written draft. */
+function draftNewsletterFromLatestPost() {
+  const job = "draft from latest post";
+  try {
+    const posts = readFeed_();
+    if (!posts.length) return notify_("The journal feed has no posts yet.");
+    const latest = posts[0];
+    const result = draftFromPost_(latest, true);
+    if (result.drafted) rememberPost_(latest);
+    logAgent_(job, result.message);
+    notify_(result.message + (result.drafted ? "\n\nCheck the Newsletter tab, then use Salem list → Send me a preview." : ""));
+  } catch (err) {
+    logAgent_(job, "Could not make the draft.", (err && err.message) || String(err));
+    notify_("Could not make the draft: " + ((err && err.message) || err));
+  }
+}
+
+function rememberPost_(post) {
+  PropertiesService.getScriptProperties().setProperties({
+    LAST_POST_LINK: post.link,
+    LAST_POST_DATE: String(post.date.getTime() || 0)
+  });
+}
+
+// Writes the draft into the Newsletter tab when it's safe to.
+// Returns { drafted | kept | waiting | cancelled: true, message }.
+function draftFromPost_(post, fromMenu) {
+  const lock = LockService.getDocumentLock(); // the same lock sendNewsletter holds
+  if (!lock.tryLock(10000)) {
+    return { waiting: true, message: 'A newsletter send is running, so the draft for "' + post.title + '" will wait.' };
+  }
+  try {
+    if (!SpreadsheetApp.getActiveSpreadsheet().getSheetByName(NEWSLETTER_SHEET)) setupNewsletterTab();
+    const n = readNewsletter_();
+    if (n.status === "sending") {
+      return { waiting: true, message: 'A newsletter is still sending, so the draft for "' + post.title + '" will wait until it finishes.' };
+    }
+    const replaceable = n.status === "sent" || (!n.subject && !n.message) || n.progress.indexOf(POST_DRAFT_MARK) === 0;
+    if (!replaceable) {
+      if (!fromMenu || !confirmReplaceDraft_(n, post)) {
+        return fromMenu
+          ? { cancelled: true, message: "Kept your current newsletter draft. Nothing was changed." }
+          : { kept: true, message: 'New post "' + post.title + '", but Salem has an unsent newsletter draft, so it was kept and no draft was made.' };
+      }
+    }
+
+    const d = composePostDraft_(post);
+    setNewsletterField_(n, "Subject", d.subject);
+    setNewsletterField_(n, "Heading", post.title);
+    setNewsletterField_(n, "Message", d.message);
+    setNewsletterField_(n, "Button label", "Read the full story");
+    setNewsletterField_(n, "Button link", post.link);
+    setNewsletterField_(n, "Send to", "Everyone");
+    setNewsletterField_(n, "Status", "Draft");
+    setNewsletterField_(n, "Progress", POST_DRAFT_MARK + " · " + (d.ai ? "written by AI" : "made from the post") +
+      ' for "' + post.title + '" · ' + stamp_());
+    return { drafted: true, message: 'Made a newsletter draft for "' + post.title + '" (' + (d.ai ? "AI-written" : "from the post's title and description") + ")." };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function confirmReplaceDraft_(n, post) {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    return ui.alert("Replace your newsletter draft?",
+      'The Newsletter tab has an unsent draft ("' + (n.subject || "no subject") + '"). Replace it with a draft about "' +
+      post.title + '"?', ui.ButtonSet.YES_NO) === ui.Button.YES;
+  } catch (err) {
+    return false; // run from the editor: no window to ask in, so keep the draft
+  }
+}
+
+// Subject + message for a post. Uses AI if a key is set, else a plain template.
+function composePostDraft_(post) {
+  const fallback = {
+    ai: false,
+    subject: "New on the Salem journal: " + post.title,
+    message: "Hi {firstName},\n\nWe just shared something new on the Salem journal: \"" + post.title + "\"." +
+      (post.description ? "\n\n" + post.description : "") +
+      "\n\nWe'd love for you to take a look. If it sparks an idea for your church, team or event, " +
+      "send us a message on Instagram and we'll help bring it to life.\n\nThank you for being part of the Salem circle."
+  };
+
+  const prompt =
+    "Write a short newsletter email (80 to 140 words) for the Salem list, announcing a new post on the journal of " +
+    BRAND + ", a small, faith-driven custom apparel shop in Chicago.\n\n" +
+    "Voice: " + setting_("Business voice", "Warm, humble and plain.") + "\n\n" +
+    "Post title: " + post.title + "\nPost summary: " + (post.description || "(none)") + "\n\n" +
+    "Rules: start the message with exactly \"Hi {firstName},\" (the placeholder is filled in later). " +
+    "Plain text only, no markdown, paragraphs separated by one blank line. Do not include a link, a sign-off " +
+    "or a signature: a \"Read the full story\" button and Salem's sign-off are added automatically. " +
+    "Never mention prices, discounts or dates unless they are in the summary. Ordering happens by messaging Salem on Instagram.\n\n" +
+    'Reply with only JSON: {"subject": "...", "message": "..."}';
+  const reply = askClaude_(prompt, 1500, "new post draft");
+  if (!reply) return fallback;
+  try {
+    const j = JSON.parse((reply.match(/\{[\s\S]*\}/) || [""])[0]);
+    const subject = String(j.subject || "").trim().slice(0, 120);
+    const message = String(j.message || "").trim();
+    if (!subject || !message) throw new Error("missing subject or message");
+    return { ai: true, subject: subject, message: message };
+  } catch (err) {
+    logAgent_("new post draft", "AI reply was not usable; used the plain draft instead.", (err && err.message) || String(err));
+    return fallback;
+  }
+}
+
+function sendDraftReadyEmail_(post) {
+  const owner = ownerEmail_();
+  if (!owner || !canSend_()) return false;
+  const sheetUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+  MailApp.sendEmail({
+    to: owner, name: "Salem website",
+    subject: 'Newsletter draft ready: "' + post.title + '"',
+    body: 'A newsletter draft for "' + post.title + '" is ready. Preview it from the Salem list menu ' +
+      "(Salem list → Send me a preview). Nothing has been sent to the list.\n\nOpen the sheet: " + sheetUrl
+  });
+  return true;
+}
+
+function sendDraftKeptEmail_(post) {
+  const owner = ownerEmail_();
+  if (!owner || !canSend_()) return;
+  MailApp.sendEmail({
+    to: owner, name: "Salem website",
+    subject: 'New journal post: "' + post.title + '"',
+    body: 'Your new post "' + post.title + '" is live. Your unsent newsletter draft was kept as it is. ' +
+      "To replace it with a draft about the post, use Salem list → Draft newsletter from latest post.\n\n" +
+      "Open the sheet: " + SpreadsheetApp.getActiveSpreadsheet().getUrl()
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* List quality: bounced addresses (no AI)                             */
+/* ------------------------------------------------------------------ */
+//
+// Once a week, look in this Gmail account for "message not delivered" replies
+// from the last 8 days, and set matching subscribers to status "bounced".
+// Newsletters only go to "active" rows, so bounced people are skipped.
+// Rows are never deleted. To undo, change the status back to "active";
+// signing up again on the website also makes the row active again.
+
+const BOUNCE_QUERY = "(from:mailer-daemon OR from:postmaster) " +
+  '(subject:"Delivery Status Notification" OR subject:"Address not found" OR subject:"Undeliverable" OR ' +
+  'subject:"Mail delivery failed" OR subject:"Returned mail" OR subject:"Delivery failure") newer_than:8d';
+
+function checkBounces() {
+  const job = "bounce check";
+  try {
+    const threads = GmailApp.search(BOUNCE_QUERY, 0, 100);
+    const failed = new Set();
+    let messages = 0;
+    threads.forEach(th => th.getMessages().forEach(m => {
+      messages++;
+      bouncedAddresses_(m).forEach(a => failed.add(a));
+    }));
+
+    let marked = 0, already = 0;
+    if (failed.size) {
+      // Same lock as the website: an unsubscribe deletes a row and shifts row numbers.
+      const lock = LockService.getScriptLock();
+      lock.waitLock(30000);
+      try {
+        const t = table_();
+        const now = new Date().toISOString();
+        t.rows.forEach(r => {
+          if (!failed.has(normEmail_(r.data.email))) return;
+          if (r.data.status === "bounced") { already++; return; }
+          if (!isActive_(r.data.status)) return;
+          writeRow_(t, r.rowNumber, Object.assign({}, r.data, { status: "bounced", updatedAt: now }));
+          marked++;
+        });
+      } finally {
+        lock.releaseLock();
+      }
+    }
+
+    const msg = "Read " + messages + " bounce message(s) from the last 8 days. Marked " + marked +
+      " subscriber(s) as bounced" + (already ? " (" + already + " already marked)" : "") + ".";
+    logAgent_(job, msg);
+    notify_(msg + (marked ? '\n\nThey are now skipped by newsletters. Filter the Subscribers tab by status "bounced" to see them.' : ""));
+  } catch (err) {
+    logAgent_(job, "Bounce check did not finish.", (err && err.message) || String(err));
+    notify_("The bounce check did not finish: " + ((err && err.message) || err));
+  }
+}
+
+// The addresses a bounce message says failed. Prefers the X-Failed-Recipients
+// header (Gmail adds it); otherwise reads only the explanation at the top of
+// the message, never the quoted original email below it (an owner alert
+// quotes a subscriber's address, which must not count as a bounce).
+function bouncedAddresses_(m) {
+  const out = new Set();
+  const header = m.getHeader("X-Failed-Recipients");
+  if (header) header.split(/[,\s]+/).forEach(a => { a = normEmail_(a); if (EMAIL_RE.test(a)) out.add(a); });
+  if (!out.size) {
+    const top = String(m.getPlainBody() || "")
+      .split(/^.*(original message|forwarded message|message headers|reporting-mta:|^received:).*$/im)[0]
+      .slice(0, 3000);
+    (top.match(/[^\s<>"'(),;:\[\]]+@[^\s<>"'(),;:\[\]]+\.[a-z]{2,}/gi) || [])
+      .forEach(a => out.add(normEmail_(a)));
+  }
+  // Never treat the shop's own addresses as bounced subscribers.
+  [ownerEmail_(), Session.getEffectiveUser().getEmail()].forEach(a => out.delete(normEmail_(a)));
+  Array.from(out).forEach(a => { if (/^(mailer-daemon|postmaster)@/i.test(a)) out.delete(a); });
+  return out;
+}
+
+/**
+ * Sets up every scheduled job. Safe to run again: it removes each job's old
+ * trigger before adding it back, so there are never duplicates, and it picks
+ * up changes such as a new "Report day" in Settings.
+ */
+function installTriggers() {
+  const jobs = scheduledJobs_();
+  const names = new Set(jobs.map(j => j.fn));
+  let removed = 0;
+  ScriptApp.getProjectTriggers()
+    .filter(t => names.has(t.getHandlerFunction()))
+    .forEach(t => { ScriptApp.deleteTrigger(t); removed++; });
+
+  const done = [], failed = [];
+  jobs.forEach(j => {
+    try {
+      if (typeof globalThis[j.fn] !== "function") throw new Error("function " + j.fn + " not found");
+      j.when(ScriptApp.newTrigger(j.fn)).create();
+      done.push(j.label || j.fn);
+    } catch (err) {
+      failed.push(j.fn + " (" + ((err && err.message) || err) + ")");
+    }
+  });
+
+  const msg = jobs.length
+    ? "Installed " + done.length + " automatic job(s)" + (done.length ? ":\n- " + done.join("\n- ") : ".") +
+      (removed ? "\n\n(Replaced " + removed + " old trigger(s).)" : "")
+    : "There are no automatic jobs to install yet.";
+  logAgent_("install triggers", msg.replace(/\n+/g, " "), failed.join("; "));
+  notify_(msg + (failed.length ? "\n\nCould not install:\n- " + failed.join("\n- ") : ""));
+}
+
+/* ------------------------------------------------------------------ */
 /* Run these from the editor                                           */
 /* ------------------------------------------------------------------ */
 
@@ -782,16 +1318,27 @@ function authorizeOnce() {
   table_();
   console.log("Emails left today: " + MailApp.getRemainingDailyQuota());
   console.log("SITE_URL: " + siteUrl_());
-  console.log("OWNER_EMAIL set: " + Boolean(PropertiesService.getScriptProperties().getProperty("OWNER_EMAIL")));
+  console.log("Owner email set (Settings or OWNER_EMAIL): " + Boolean(ownerEmail_()));
+  console.log("ANTHROPIC_API_KEY set (optional): " +
+    Boolean(PropertiesService.getScriptProperties().getProperty("ANTHROPIC_API_KEY")));
   console.log("MAILING_ADDRESS set (optional): " + Boolean(mailingAddress_()));
+  console.log("Gmail read access (bounce check): " + (GmailApp.getInboxUnreadCount() >= 0));
   console.log("Newsletter triggers: " + ScriptApp.getProjectTriggers().length); // asks for trigger permission
   CacheService.getScriptCache().put("auth_check", "1", 10);
   console.log("All set.");
 }
 
-/** Optional: adds a test subscriber using OWNER_EMAIL, without the website. Delete the row afterwards. */
+/** Checks the AI connection with a tiny request. Sends no subscriber data. */
+function testClaude() {
+  const reply = askClaude_("Reply with one short, warm sentence greeting a small Chicago screen printing shop.", 300, "test claude");
+  const msg = reply ? "AI is working. It said: " + reply : "AI did not answer. See the Agent Log tab for the reason.";
+  logAgent_("test claude", reply ? "AI connection works." : "AI connection test failed (see the line above).");
+  console.log(msg);
+}
+
+/** Optional: adds a test subscriber using the owner email, without the website. Delete the row afterwards. */
 function testSubscribe() {
-  const owner = PropertiesService.getScriptProperties().getProperty("OWNER_EMAIL");
+  const owner = ownerEmail_();
   const res = doPost({
     postData: {
       type: "text/plain",

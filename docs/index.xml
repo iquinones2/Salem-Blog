@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Salem</title>
+<link>https://iquinones2.github.io/Salem-Blog/</link>
+<atom:link href="https://iquinones2.github.io/Salem-Blog/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.10.18</generator>
+<lastBuildDate>Wed, 23 Sep 2026 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Fall is here!</title>
+  <dc:creator>Salem </dc:creator>
+  <link>https://iquinones2.github.io/Salem-Blog/posts/October-Sale/</link>
+  <description><![CDATA[ Take advantage of our October sale! ]]></description>
+  <category>Sale</category>
+  <guid>https://iquinones2.github.io/Salem-Blog/posts/October-Sale/</guid>
+  <pubDate>Wed, 23 Sep 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://iquinones2.github.io/Salem-Blog/posts/October-Sale/fall-thumb.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Beat the Holiday rush!</title>
+  <dc:creator>Salem </dc:creator>
+  <link>https://iquinones2.github.io/Salem-Blog/posts/Christmas-Bundle/</link>
+  <description><![CDATA[ Family Christmas Bundle ]]></description>
+  <category>Sale</category>
+  <guid>https://iquinones2.github.io/Salem-Blog/posts/Christmas-Bundle/</guid>
+  <pubDate>Tue, 22 Sep 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://iquinones2.github.io/Salem-Blog/posts/Christmas-Bundle/holiday-thumb.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Rooted Event</title>
+  <dc:creator>Salem </dc:creator>
+  <link>https://iquinones2.github.io/Salem-Blog/posts/Rooted/</link>
+  <description><![CDATA[ Apparel with a shared purpose. ]]></description>
+  <category>Rooted</category>
+  <guid>https://iquinones2.github.io/Salem-Blog/posts/Rooted/</guid>
+  <pubDate>Wed, 27 May 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://iquinones2.github.io/Salem-Blog/posts/Rooted/rooted-thumb.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Salem’s Mission</title>
+  <dc:creator>Salem </dc:creator>
+  <link>https://iquinones2.github.io/Salem-Blog/posts/Salems-Mission/</link>
+  <description><![CDATA[ Custom shirts, made with care. ]]></description>
+  <category>Mission</category>
+  <guid>https://iquinones2.github.io/Salem-Blog/posts/Salems-Mission/</guid>
+  <pubDate>Tue, 26 May 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://iquinones2.github.io/Salem-Blog/images/Salem.jpg" medium="image" type="image/jpeg"/>
+</item>
+</channel>
+</rss>

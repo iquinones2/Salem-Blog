@@ -35,7 +35,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./images/Salem.png" rel="icon" type="image/png">
+<link href="./images/Salem.jpg" rel="icon" type="image/jpeg">
 <script src="site_libs/quarto-listing/list.min.js"></script>
 <script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
@@ -85,9 +85,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-project','listing-website','listing-format','listing-editor','listing-engines','listing-language','listing-freeze','listing-body-classes','listing-title-block-banner','listing-date-format','listing-template-partials','listing-include-after-body','listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories','listing-path','listing-outputHref','listing-date-modified','listing-filename','listing-file-modified','listing-reading-time','listing-word-count',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
+      valueNames: ['listing-project','listing-website','listing-format','listing-editor','listing-engines','listing-language','listing-freeze','listing-body-classes','listing-title-block-banner','listing-date-format','listing-template-partials','listing-include-after-body','listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories','listing-path','listing-outputHref','listing-date-modified','listing-filename','listing-file-modified','listing-reading-time','listing-word-count','listing-aliases',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
       
-      searchColumns: ["listing-project","listing-website","listing-format","listing-editor","listing-engines","listing-language","listing-freeze","listing-body-classes","listing-title-block-banner","listing-date-format","listing-template-partials","listing-include-after-body","listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories","listing-path","listing-outputHref","listing-date-modified","listing-filename","listing-file-modified","listing-reading-time","listing-word-count"],
+      searchColumns: ["listing-project","listing-website","listing-format","listing-editor","listing-engines","listing-language","listing-freeze","listing-body-classes","listing-title-block-banner","listing-date-format","listing-template-partials","listing-include-after-body","listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories","listing-path","listing-outputHref","listing-date-modified","listing-filename","listing-file-modified","listing-reading-time","listing-word-count","listing-aliases"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -139,7 +139,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="alternate" type="application/rss+xml" title="Salem" href="index.xml" data-external="1"></head>
 
 <body class="nav-fixed salem-home fullcontent quarto-light">
 
@@ -347,9 +347,9 @@ window.Quarto = {
     </div>
   </a>
 
-  <a class="journal-story" href="./posts/Salem's-Mission/index.html" data-index="3" data-categories="TWlzc2lvbg==" data-listing-date-sort="1779771600000" data-listing-file-modified-sort="1793652487164" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="161" data-cats="Mission" data-title="Salem's Mission">
+  <a class="journal-story" href="./posts/Salems-Mission/index.html" data-index="3" data-categories="TWlzc2lvbg==" data-listing-date-sort="1779771600000" data-listing-file-modified-sort="1794862696970" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="161" data-cats="Mission" data-title="Salem's Mission">
     
-    <div class="story-image"><img src="./images/Salem.png" alt="" loading="lazy"></div>
+    <div class="story-image"><img src="./images/Salem.jpg" alt="" loading="lazy"></div>
     
     <div class="story-details">
       <div class="story-meta">
@@ -379,7 +379,7 @@ window.Quarto = {
     <p class="section-label">Our mission / The heart of Salem</p>
     <h2 class="mission-statement">Every shirt we print carries more than ink — it carries a message.</h2>
     <p>Rooted in faith and a love for bringing people together, we make custom apparel for individuals, churches, events, youth camps, fundraisers, and gifts. Whatever your message, we’re here to help you wear it with purpose.</p>
-    <a class="text-link" href="posts/Salem's-Mission/index.html">
+    <a class="text-link" href="posts/Salems-Mission/index.html">
       Get to know Salem
       <img src="images/icons/arrow-up-right.svg" width="19" height="19" alt="">
     </a>
@@ -583,7 +583,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/iquinones2\.github\.io\/Salem-Blog");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

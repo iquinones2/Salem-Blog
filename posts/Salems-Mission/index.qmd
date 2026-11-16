@@ -2,10 +2,12 @@
 title: "Salem's Mission"
 author: "Salem"
 date: "2026-05-26"
-image: ../../images/Salem.png
+image: ../../images/Salem.jpg
 categories: [Mission]
 description: "Custom shirts, made with care."
 body-classes: salem-post post-mission
+aliases:
+  - "/posts/Salem's-Mission/index.html"
 ---
 
 ::: {.post-photo .is-wide .post-wide}

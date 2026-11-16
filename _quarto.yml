@@ -10,7 +10,8 @@ project:
 
 website:
   title: "Salem"
-  favicon: "images/Salem.png"
+  site-url: "https://iquinones2.github.io/Salem-Blog"
+  favicon: "images/Salem.jpg"
   navbar:
     logo: images/SalemT.png
     logo-alt: "Salem Custom Screen Printing logo"
