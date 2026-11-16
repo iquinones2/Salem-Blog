@@ -3125,11 +3125,6 @@ html[lang="es"]:not(.salem-nav-ready) #quarto-header .navbar-nav{
 }
 @keyframes salem-reveal{ to{ visibility: visible; } }
 
-@media (max-width: 991px){
-    #quarto-header .quarto-navbar-tools{ margin-left: 8px; order: 2; }
-    #quarto-header .navbar-toggler{ order: 3; }
-    #quarto-header .navbar-collapse{ order: 4; }
-}
 @media (max-width: 600px){
     .salem-lang-link{ padding: 0 4px; font-size: calc(12px * var(--salem-text-scale, 1)); }
     .salem-tools{ gap: 4px; }
@@ -3138,10 +3133,13 @@ html[lang="es"]:not(.salem-nav-ready) #quarto-header .navbar-nav{
     html[lang="es"]:not(.salem-nav-ready) #quarto-header .navbar-nav{ animation-duration: 0s; }
 }
 
-/* Long Spanish words ("personalizadas,") must never push the page wider than a phone. */
-h1, h2, h3, .hero-heading, .offer-title, .section-heading{ overflow-wrap: break-word; hyphens: auto; }
-@media (max-width: 600px){
-    html[lang="es"] .home-intro .hero-heading{ font-size: calc(44px * var(--salem-text-scale, 1)); }
+/* Long Spanish words ("personalizadas,") must never push the page wider than the
+   screen. No hyphenation: the Spanish hero shrinks with the screen instead, and
+   break-word is only a last resort for a word that can't fit at all. */
+h1, h2, h3, .hero-heading, .offer-title, .section-heading{ overflow-wrap: break-word; hyphens: manual; }
+html[lang="es"] .home-intro .hero-heading{ font-size: min(calc(100px * var(--salem-text-scale, 1)), 6.2vw); }
+@media (max-width: 991px){
+    html[lang="es"] .home-intro .hero-heading{ font-size: min(calc(80px * var(--salem-text-scale, 1)), calc(11vw - 6px)); }
 }
 
 /* A "light" button stays light on navy cards in dark mode. */
@@ -3165,15 +3163,6 @@ body.quarto-dark .btn-light img[src*="arrow-up-right.svg"]{ filter: none; }
     }
 }
 
-/* Phones: the brand row keeps logo + wordmark; the descriptor gives way to the
-   language link and gear, which sit on the right beside the menu button. */
-@media (max-width: 600px){
-    #quarto-header .navbar-brand:not(.navbar-brand-logo)::after{ display: none; }
-    #quarto-header .navbar-brand-container{ margin-right: auto !important; margin-left: 0 !important; min-width: 0; }
-    #quarto-header .quarto-navbar-tools{ margin-left: auto; }
-    #quarto-header #quarto-search{ display: none; }
-}
-
 /* Filled buttons keep their own text color inside page content
    (".salem-home #quarto-content a { color: inherit }" made the list pages'
    buttons navy on blue: 2.1:1). */
@@ -3182,3 +3171,89 @@ body.quarto-dark .btn-light img[src*="arrow-up-right.svg"]{ filter: none; }
 /* Labels on the promo panels stay light on the dark/rust panel in both themes. */
 .salem-post main.content .offer-panel .section-label{ color: var(--salem-on-band-muted); }
 .salem-post.post-fall main.content .offer-panel .section-label{ color: #fbefe8; }
+
+/* ==========================================================
+   Header layout
+   ≥1200px: logo, menu, language link, gear and search on one row.
+   <1200px: a compact bar (logo + name on the left; language, gear,
+   search and menu button on the right). The menu opens below it.
+   The menu collapses below 1200px via `collapse-below: xl` in _quarto.yml.
+   ========================================================== */
+#quarto-header .navbar-brand-container{
+    flex-shrink: 0;                 /* the logo and name never get squeezed */
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+#quarto-header .navbar-brand{ flex-shrink: 0; }
+#quarto-header .nav-link[href$="subscribe.html"]{ white-space: nowrap; }
+
+@media (min-width: 1200px){
+    #quarto-header .navbar{ padding: 12px 40px; }
+    #quarto-header .navbar-nav{ gap: 20px; }
+    #quarto-header .navbar-logo{ height: 44px; }
+    #quarto-header .navbar-title{ font-size: calc(36px * var(--salem-text-scale, 1)); }
+    #quarto-header .nav-link[href$="subscribe.html"]{ padding: 10px 14px !important; gap: 10px; }
+    #quarto-header .quarto-navbar-tools{ margin-left: 20px; }
+}
+/* "CUSTOM SCREEN PRINTING" shows only where it fits in full. */
+@media (min-width: 1200px) and (max-width: 1439.98px){
+    #quarto-header .navbar-brand:not(.navbar-brand-logo)::after{ display: none; }
+}
+
+@media (max-width: 1199.98px){
+    #quarto-header .navbar{ padding: 8px 24px; }
+    #quarto-header .navbar-container{ flex-wrap: wrap; align-items: center; }
+    #quarto-header .navbar-brand-container{ order: 0; }
+    #quarto-header .quarto-navbar-tools{ order: 1; margin-left: 8px; }
+    #quarto-header #quarto-search{ order: 2; }
+    #quarto-header .navbar-toggler{ order: 3; margin-left: 4px; }
+    #quarto-header .navbar-collapse{ order: 4; flex-basis: 100%; }
+    #quarto-header .navbar-logo{ height: 40px; }
+    #quarto-header .navbar-title{ font-size: calc(32px * var(--salem-text-scale, 1)); }
+    #quarto-header .navbar-nav{ align-items: flex-start; gap: 4px; padding: 8px 0 16px; }
+    #quarto-header .nav-link{ padding: 10px 0 !important; }
+    #quarto-header .nav-link[href$="subscribe.html"]{ margin-top: 8px; padding: 12px 16px !important; }
+    .salem-settings-button{ width: 40px; height: 40px; }
+}
+
+@media (max-width: 600px){
+    #quarto-header .navbar{ padding: 6px 16px; }
+    #quarto-header .navbar-logo{ height: 34px; }
+    #quarto-header .navbar-title{ font-size: calc(26px * var(--salem-text-scale, 1)); }
+    #quarto-header .navbar-brand-container{ gap: 8px; }
+    #quarto-header .navbar-brand:not(.navbar-brand-logo)::after{ display: none; }
+    #quarto-header #quarto-search{ display: none; } /* no room; the menu has every page */
+    .salem-tools{ gap: 2px; }
+}
+
+@media (min-width: 1200px){
+    #quarto-header .navbar-collapse{ margin-left: 32px; }   /* space between SALEM and the menu */
+}
+@media (max-width: 1199.98px){
+    /* Keep English/gear, search and the menu button together on the right. */
+    #quarto-header #quarto-search{ margin-left: 4px !important; margin-right: 0 !important; flex-grow: 0 !important; }
+    #quarto-header .quarto-navbar-tools{ margin-left: auto; }
+    #quarto-header .navbar-brand-container{ margin-right: 0 !important; }
+    /* Home intro: stack the heading and the welcome note instead of squeezing the note. */
+    .home-intro{ flex-direction: column; align-items: stretch; gap: 24px; }
+    .home-intro .promise, .home-intro .welcome-note{ flex-basis: auto; }
+    html[lang="es"] .home-intro .hero-heading{ font-size: min(calc(80px * var(--salem-text-scale, 1)), calc(11vw - 6px)); }
+}
+@media (min-width: 1200px) and (max-width: 1339.98px){
+    #quarto-header .navbar{ padding: 12px 28px; }
+    #quarto-header .navbar-collapse{ margin-left: 24px; }
+    #quarto-header .navbar-nav{ gap: 14px; }
+    #quarto-header .quarto-navbar-tools{ margin-left: 12px; }
+    .salem-tools{ gap: 4px; }
+}
+/* "Larger" text on desktop: the descriptor waits for very wide screens, and the
+   1200–1339px range gets a slightly smaller wordmark and tighter menu spacing. */
+@media (min-width: 1200px) and (max-width: 1599.98px){
+    html[data-text-size="large"] #quarto-header .navbar-brand:not(.navbar-brand-logo)::after{ display: none; }
+}
+@media (min-width: 1200px) and (max-width: 1339.98px){
+    html[data-text-size="large"] #quarto-header .navbar-logo{ height: 36px; }
+    html[data-text-size="large"] #quarto-header .navbar-title{ font-size: 30px; }
+    html[data-text-size="large"] #quarto-header .navbar-nav{ gap: 8px; }
+    html[data-text-size="large"] #quarto-header .navbar-collapse{ margin-left: 16px; }
+}

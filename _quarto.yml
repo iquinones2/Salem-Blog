@@ -17,6 +17,7 @@ website:
     logo: images/SalemT.png
     logo-alt: "Salem Custom Screen Printing logo"
     pinned: true
+    collapse-below: xl   # full menu only from 1200px; see "Header layout" in styles.css
     right:
       - text: Shop
         href: shop.qmd
