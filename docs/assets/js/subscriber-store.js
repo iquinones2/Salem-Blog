@@ -7,6 +7,9 @@
  *   subscribe(data), unsubscribe(token), getPreferences(token),
  *   updateInterests(token, interests, lang?), resendLink(email)
  *   lang()           – "es" or "en", from the page's <html lang> (sent with every signup)
+ *   pick({en, es})   – the entry for the page's language (page scripts keep their
+ *                      user-facing text in such en/es dictionaries)
+ *   text(key)        – a shared message from MESSAGES below
  *   takeToken()      – reads ?token=, keeps it for this tab, removes it from the address bar
  *   takePrefill()    – email handed over from a homepage / post signup box
  *   remember(k, v) / recall(k) – small sessionStorage helpers (never the URL)
@@ -27,6 +30,32 @@
   function pageLang() {
     return /^es\b/i.test(document.documentElement.getAttribute("lang") || "") ? "es" : "en";
   }
+
+  // Pick the page's language from an { en: ..., es: ... } dictionary (falls back to English).
+  function pick(dict) { return (dict && dict[pageLang()]) || dict.en; }
+
+  // Shared user-facing messages. Spanish: neutral Latin American, usted.
+  var MESSAGES = {
+    en: {
+      emailInvalid: "Enter a complete email address, such as you@example.com.",
+      sending: "Sending…",
+      resendDone: "If that address is on the Salem list, a fresh link is on its way. It can take a few minutes.",
+      timeout: "Salem didn’t answer in time. Please check your connection and try again.",
+      network: "We couldn’t reach Salem. Please check your connection and try again.",
+      busy: "Salem is busy right now. Please try again in a moment.",
+      generic: "Something went wrong on our side. Please try again, or message Salem on Instagram."
+    },
+    es: {
+      emailInvalid: "Escriba un correo electrónico completo, por ejemplo usted@ejemplo.com.",
+      sending: "Enviando…",
+      resendDone: "Si ese correo está en la lista de Salem, le enviamos un enlace nuevo. Puede tardar unos minutos.",
+      timeout: "Salem no respondió a tiempo. Revise su conexión e inténtelo de nuevo.",
+      network: "No pudimos comunicarnos con Salem. Revise su conexión e inténtelo de nuevo.",
+      busy: "Salem está ocupado en este momento. Inténtelo de nuevo en un momento.",
+      generic: "Algo salió mal de nuestro lado. Inténtelo de nuevo o escríbale a Salem por Instagram."
+    }
+  };
+  function text(key) { return pick(MESSAGES)[key] || MESSAGES.en[key] || ""; }
 
   /* ---------- session helpers (tab-scoped, never in the URL) ---------- */
   function remember(key, value) {
@@ -177,7 +206,7 @@
       event.preventDefault();
       if (!input.checkValidity()) {
         input.setAttribute("aria-invalid", "true");
-        status.textContent = "Enter a complete email address, such as you@example.com.";
+        status.textContent = text("emailInvalid");
         status.dataset.tone = "error";
         input.focus();
         return;
@@ -185,12 +214,12 @@
       input.removeAttribute("aria-invalid");
       button.disabled = true;
       status.dataset.tone = "info";
-      status.textContent = "Sending…";
+      status.textContent = text("sending");
       resendLink(input.value.trim()).then(function (res) {
         button.disabled = false;
         status.dataset.tone = res.ok ? "info" : "error";
         status.textContent = res.ok
-          ? "If that address is on the Salem list, a fresh link is on its way. It can take a few minutes."
+          ? text("resendDone")
           : errorMessage(res);
       });
     });
@@ -201,10 +230,11 @@
   // Friendly copy for a failed call.
   function errorMessage(res) {
     switch (res && res.error) {
-      case "timeout": return "Salem didn’t answer in time. Please check your connection and try again.";
-      case "network": return "We couldn’t reach Salem. Please check your connection and try again.";
-      case "busy": return "Salem is busy right now. Please try again in a moment.";
-      default: return (res && res.message) || "Something went wrong on our side. Please try again, or message Salem on Instagram.";
+      case "timeout": return text("timeout");
+      case "network": return text("network");
+      case "busy": return text("busy");
+      // The server's own message is English, so Spanish pages use the Spanish fallback.
+      default: return (pageLang() === "en" && res && res.message) || text("generic");
     }
   }
 
@@ -229,6 +259,8 @@
     remember: remember,
     recall: recall,
     lang: pageLang,
+    pick: pick,
+    text: text,
     isLocal: function () { return !apiUrl(); }
   };
 })();

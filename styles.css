@@ -47,7 +47,7 @@
     margin: 1rem 0 1.25rem;
     padding: 0.5rem 1rem;
     border-radius:12px;
-    background-color: #f9f9f9;
+    background-color: var(--salem-surface-alt);
 }
 
 .custom-banner label{
@@ -60,9 +60,9 @@
     -webkit-appearance:none;
     padding: 0.5rem 2rem 0.5rem 0.75rem;
     font-size: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--salem-field-line);
     border-radius: 8px;
-    background-color: #fff;
+    background-color: var(--salem-surface);
     color: inherit;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -76,14 +76,14 @@
 }
 
 #sort-post:hover{
-    border-color: #888;
+    border-color: var(--salem-ink-line);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 #sort-post:focus{
     outline: none;
-    border-color: #2c7be5;
-    box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.25);
+    border-color: var(--salem-accent);
+    box-shadow: 0 0 0 3px var(--salem-accent);
 }
 
 /* Custom styling for post images */
@@ -92,7 +92,7 @@
     padding: 2.5rem 1.5rem;
     margin: 2rem 0;
     border-radius: 15px;
-    background: linear-gradient(135deg, #fafafa 0%, #eef2f7 100%);
+    background: var(--salem-surface-alt);
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
 }
@@ -122,7 +122,7 @@
 }
 
 .logo-hero em{
-    color: #666;
+    color: var(--salem-muted);
     font-size: 0.95rem;
 }
 
@@ -142,22 +142,77 @@
     --salem-navy: #1b2a41;
     --salem-blue: #2f5d8c;
     --salem-line: #c0c5cc;
-    --salem-muted: #657066;
+    --salem-muted: #5e695f;   /* was #657066: 4.40:1 on mist; now passes 4.5:1 */
     --salem-rust: #a44e30;
     --salem-white: #ffffff;
     --salem-mist: #eaedef;
     --salem-slate: #52616a;
     --salem-serif: "DM Serif Display", Georgia, serif;
     --salem-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+    /* Role tokens: use these in new CSS. Light values = the palette above;
+       dark values are under body.quarto-dark below. */
+    --salem-page: var(--salem-paper);          /* page background */
+    --salem-ink: var(--salem-navy);            /* main text */
+    --salem-ink-line: var(--salem-navy);       /* strong borders (outline buttons) */
+    --salem-surface: var(--salem-white);       /* cards, inputs */
+    --salem-surface-alt: var(--salem-mist);    /* tinted panels, chips */
+    --salem-accent: var(--salem-blue);         /* links, accents, focus */
+    --salem-focus: var(--salem-blue);
+    --salem-button: var(--salem-blue);         /* filled button background */
+    --salem-on-button: var(--salem-paper);     /* text on filled buttons */
+    --salem-selected: var(--salem-navy);       /* pressed/selected toggles */
+    --salem-on-selected: var(--salem-paper);
+    --salem-band: var(--salem-navy);           /* dark sections (footer, offers) */
+    --salem-on-band: var(--salem-paper);       /* text on dark sections and photos */
+    --salem-on-band-muted: var(--salem-line);  /* secondary text on dark sections */
+    --salem-field-line: #7d868f;               /* form field borders (3:1 for inputs) */
+    --salem-text-scale: 1;                     /* "Larger" text sets 1.15 */
+    color-scheme: light;
 }
 
+/* Dark theme: navy and silver (every text pair passes WCAG AA).
+   Quarto adds .quarto-dark to <body> before the page draws, so no flash. */
+body.quarto-dark{
+    --salem-paper: #041E42;
+    --salem-navy: #FFFFFF;
+    --salem-blue: #8DB4F0;
+    --salem-line: #3A5888;          /* decorative rules */
+    --salem-muted: #B0B7BC;
+    --salem-slate: #B0B7BC;
+    --salem-rust: #F0A27F;
+    --salem-white: #0B2A55;
+    --salem-mist: #0B2A55;
+
+    --salem-page: #041E42;
+    --salem-ink: #FFFFFF;
+    --salem-ink-line: #B0B7BC;
+    --salem-surface: #0B2A55;
+    --salem-surface-alt: #0B2A55;
+    --salem-accent: #8DB4F0;
+    --salem-focus: #8DB4F0;
+    --salem-button: #B0B7BC;
+    --salem-on-button: #041E42;
+    --salem-selected: #B0B7BC;
+    --salem-on-selected: #041E42;
+    --salem-band: #0B2A55;
+    --salem-on-band: #FFFFFF;
+    --salem-on-band-muted: #B0B7BC;
+    --salem-field-line: #7C93B5;
+    color-scheme: dark;
+}
+
+/* Text size: "Larger" in the settings panel (saved per visitor). */
+html[data-text-size="large"]{ --salem-text-scale: 1.15; }
+html[data-text-size="large"] body{ --salem-text-scale: 1.15; }
+
 body{
-    background-color: var(--salem-paper);
+    background-color: var(--salem-page);
 }
 
 /* ---------- Sticky header (site-wide navbar) ---------- */
 #quarto-header .navbar{
-    background-color: var(--salem-paper);
+    background-color: var(--salem-page);
     border-bottom: 1px solid var(--salem-line);
     padding: 16px 64px;
     box-shadow: none;
@@ -172,11 +227,11 @@ body{
 
 #quarto-header .navbar-title{
     font-family: var(--salem-serif);
-    font-size: 43px;
+    font-size: calc(43px * var(--salem-text-scale, 1));
     line-height: 1;
     text-transform: uppercase;
     letter-spacing: 0;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
 }
 
 #quarto-header .navbar-logo{
@@ -200,10 +255,10 @@ body{
     padding-left: 12px;
     border-left: 1px solid var(--salem-line);
     font-family: var(--salem-sans);
-    font-size: 10px;
+    font-size: calc(10px * var(--salem-text-scale, 1));
     font-weight: 600;
     line-height: 1.5;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
 }
 
 #quarto-header .navbar-nav{
@@ -214,16 +269,16 @@ body{
 #quarto-header .nav-link{
     padding: 0 !important;
     font-family: var(--salem-sans);
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     font-weight: 400;
     text-transform: none;
     letter-spacing: 0;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
 }
 
 #quarto-header .nav-link:hover,
 #quarto-header .nav-link.active{
-    color: var(--salem-blue);
+    color: var(--salem-accent);
 }
 
 /* "Join the Salem list" outlined button */
@@ -232,7 +287,7 @@ body{
     align-items: center;
     gap: 16px;
     padding: 12px 16px !important;
-    border: 1px solid var(--salem-navy);
+    border: 1px solid var(--salem-ink-line);
     border-radius: 4px;
     font-weight: 500;
 }
@@ -256,7 +311,7 @@ body{
     padding: 0;
     font-family: var(--salem-sans);
     letter-spacing: 0;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
 }
 
 .salem-home #quarto-content p{
@@ -288,7 +343,7 @@ body{
 }
 
 .section-label{
-    font-size: 11px;
+    font-size: calc(11px * var(--salem-text-scale, 1));
     font-weight: 600;
     line-height: 1.4;
     text-transform: uppercase;
@@ -296,7 +351,7 @@ body{
 
 .section-heading{
     font-family: var(--salem-serif);
-    font-size: 56px;
+    font-size: calc(56px * var(--salem-text-scale, 1));
     line-height: 1.1;
 }
 
@@ -317,7 +372,7 @@ body{
 }
 
 .home-intro .hero-heading{
-    font-size: 100px;
+    font-size: calc(100px * var(--salem-text-scale, 1));
     line-height: 0.99;
 }
 
@@ -330,7 +385,7 @@ body{
 }
 
 .home-intro .welcome-note p{
-    font-size: 16px;
+    font-size: calc(16px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
@@ -338,7 +393,7 @@ body{
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     color: var(--salem-muted) !important;
 }
 
@@ -376,8 +431,8 @@ body{
     position: relative;
     padding: 9px 14px;
     border-radius: 4px;
-    background: var(--salem-paper);
-    font-size: 10px;
+    background: var(--salem-page);
+    font-size: calc(10px * var(--salem-text-scale, 1));
     font-weight: 600;
 }
 
@@ -388,18 +443,18 @@ body{
     align-items: flex-start;
     gap: 20px;
     padding: 36px;
-    background: var(--salem-navy);
-    color: var(--salem-paper);
+    background: var(--salem-band);
+    color: var(--salem-on-band);
 }
 
 .october-offer .section-label,
 .october-offer .price-unit,
 .october-offer .offer-minimum{
-    color: var(--salem-line);
+    color: var(--salem-on-band-muted);
 }
 
 .salem-home .offer-title{
-    font-size: 56px;
+    font-size: calc(56px * var(--salem-text-scale, 1));
     line-height: 1;
 }
 
@@ -411,12 +466,12 @@ body{
 
 .shirt-price .price{
     font-family: var(--salem-serif);
-    font-size: 64px;
+    font-size: calc(64px * var(--salem-text-scale, 1));
     line-height: 1;
 }
 
 .shirt-price .price-unit{
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
 }
 
 .offer-details{
@@ -427,24 +482,24 @@ body{
 }
 
 .offer-details .offer-spec{
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.5;
 }
 
 .offer-details .offer-minimum{
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     line-height: 1.5;
 }
 
 .offer-details hr{
     margin: 0;
     border: 0;
-    border-top: 1px solid var(--salem-blue);
+    border-top: 1px solid var(--salem-accent);
     opacity: 1;
 }
 
 .offer-details .offer-delivery{
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     line-height: 1.8;
 }
 
@@ -458,7 +513,7 @@ body{
     border: 0;
     border-radius: 4px;
     font-family: var(--salem-sans);
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     font-weight: 500;
     white-space: nowrap;
     cursor: pointer;
@@ -466,13 +521,13 @@ body{
 }
 
 .btn-light{
-    background: var(--salem-paper);
-    color: var(--salem-navy) !important;
+    background: var(--salem-page);
+    color: var(--salem-ink) !important;
 }
 
 .btn-accent{
-    background: var(--salem-blue);
-    color: var(--salem-paper);
+    background: var(--salem-button);
+    color: var(--salem-on-button);
 }
 
 .btn-light:hover,
@@ -485,7 +540,7 @@ body{
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    font-size: 11px;
+    font-size: calc(11px * var(--salem-text-scale, 1));
     color: var(--salem-muted);
 }
 
@@ -515,7 +570,7 @@ body{
     flex-direction: column;
     align-items: flex-start;
     padding: 24px;
-    background: var(--salem-white);
+    background: var(--salem-surface);
     border: 1px solid var(--salem-line);
     border-radius: 4px;
 }
@@ -527,20 +582,20 @@ body{
 .step-badge{
     padding: 6px 10px;
     border-radius: 100px;
-    background: var(--salem-blue);
-    color: var(--salem-paper);
-    font-size: 11px;
+    background: var(--salem-button);
+    color: var(--salem-on-button);
+    font-size: calc(11px * var(--salem-text-scale, 1));
     font-weight: 600;
 }
 
 .salem-home .step-card h3{
-    font-size: 29px;
+    font-size: calc(29px * var(--salem-text-scale, 1));
     line-height: 1.15;
 }
 
 .step-card p,
 .zelle-note p:not(.section-label){
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
@@ -563,7 +618,7 @@ body{
 
 .journal-intro{
     max-width: 315px;
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     line-height: 1.65;
     color: var(--salem-muted);
 }
@@ -589,23 +644,23 @@ body{
     padding: 9px 16px;
     border: 1px solid var(--salem-line);
     border-radius: 100px;
-    background: var(--salem-paper);
-    color: var(--salem-navy);
+    background: var(--salem-page);
+    color: var(--salem-ink);
     font-family: var(--salem-sans);
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     line-height: normal;
     cursor: pointer;
     transition: border-color 0.2s ease;
 }
 
 .category-filter:hover{
-    border-color: var(--salem-navy);
+    border-color: var(--salem-ink-line);
 }
 
 .category-filter[aria-pressed="true"]{
-    background: var(--salem-blue);
-    border-color: var(--salem-blue);
-    color: var(--salem-paper);
+    background: var(--salem-button);
+    border-color: var(--salem-button);
+    color: var(--salem-on-button);
     font-weight: 600;
 }
 
@@ -616,12 +671,12 @@ body{
     box-shadow: none;
     background: url("images/icons/chevron-down.svg") no-repeat right center;
     font-family: var(--salem-sans);
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     color: var(--salem-muted);
 }
 
 .salem-home #sort-post:focus-visible{
-    outline: 2px solid var(--salem-blue);
+    outline: 2px solid var(--salem-accent);
     outline-offset: 4px;
 }
 
@@ -666,7 +721,7 @@ body{
     justify-content: center;
     gap: 24px;
     padding: 28px;
-    background: var(--salem-navy);
+    background: var(--salem-band);
     text-align: center;
 }
 
@@ -678,14 +733,14 @@ body{
 
 .salem-home .mission-motto{
     font-family: var(--salem-serif);
-    font-size: 45px;
+    font-size: calc(45px * var(--salem-text-scale, 1));
     line-height: 1.04;
-    color: var(--salem-paper);
+    color: var(--salem-on-band);
 }
 
 .studio-signature{
-    font-size: 9px;
-    color: var(--salem-line);
+    font-size: calc(9px * var(--salem-text-scale, 1));
+    color: var(--salem-on-band-muted);
 }
 
 .story-details{
@@ -702,7 +757,7 @@ body{
 }
 
 .story-category{
-    font-size: 10px;
+    font-size: calc(10px * var(--salem-text-scale, 1));
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -713,21 +768,21 @@ body{
 
 .story-date,
 .story-link span{
-    font-size: 11px;
+    font-size: calc(11px * var(--salem-text-scale, 1));
     color: var(--salem-muted);
 }
 
 .salem-home .story-title{
-    font-size: 29px;
+    font-size: calc(29px * var(--salem-text-scale, 1));
     line-height: 1.15;
 }
 
 .journal-story:hover .story-title{
-    color: var(--salem-blue);
+    color: var(--salem-accent);
 }
 
 .story-description{
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     line-height: 1.55;
     color: var(--salem-muted);
 }
@@ -760,7 +815,7 @@ body{
 }
 
 .studio-portrait figcaption{
-    font-size: 11px;
+    font-size: calc(11px * var(--salem-text-scale, 1));
     color: var(--salem-muted);
 }
 
@@ -773,12 +828,12 @@ body{
 }
 
 .salem-home .mission-statement{
-    font-size: 49px;
+    font-size: calc(49px * var(--salem-text-scale, 1));
     line-height: 1.08;
 }
 
 .our-purpose p:not(.section-label){
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.75;
 }
 
@@ -787,8 +842,8 @@ body{
     align-items: center;
     gap: 18px;
     padding-bottom: 6px;
-    border-bottom: 1px solid var(--salem-navy);
-    font-size: 13px;
+    border-bottom: 1px solid var(--salem-ink-line);
+    font-size: calc(13px * var(--salem-text-scale, 1));
     font-weight: 600;
 }
 
@@ -799,8 +854,8 @@ body{
     gap: 48px;
     padding-top: 62px;
     padding-bottom: 28px;
-    background: var(--salem-navy);
-    color: var(--salem-paper);
+    background: var(--salem-band);
+    color: var(--salem-on-band);
 }
 
 .salem-circle .section-label,
@@ -808,7 +863,7 @@ body{
 .email-reassurance,
 .brand-signoff > p,
 .footer-small-print{
-    color: var(--salem-line);
+    color: var(--salem-on-band-muted);
 }
 
 .newsletter-signup{
@@ -825,11 +880,11 @@ body{
 }
 
 .salem-circle .section-heading{
-    font-size: 55px;
+    font-size: calc(55px * var(--salem-text-scale, 1));
 }
 
 .newsletter-invitation p:last-child{
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
@@ -841,7 +896,7 @@ body{
 }
 
 .email-form label{
-    font-size: 11px;
+    font-size: calc(11px * var(--salem-text-scale, 1));
     font-weight: 500;
 }
 
@@ -855,12 +910,12 @@ body{
     min-width: 0;
     height: 48px;
     padding: 0 15px;
-    border: 1px solid var(--salem-blue);
+    border: 1px solid var(--salem-accent);
     border-radius: 4px;
-    background: var(--salem-paper);
-    color: var(--salem-navy);
+    background: var(--salem-page);
+    color: var(--salem-ink);
     font-family: var(--salem-sans);
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
 }
 
 .email-row input::placeholder{
@@ -868,18 +923,18 @@ body{
 }
 
 .email-row input:focus{
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(47, 93, 140, 0.5);
+    outline: 2px solid var(--salem-focus);
+    outline-offset: 2px;
 }
 
 .email-reassurance{
-    font-size: 10px;
+    font-size: calc(10px * var(--salem-text-scale, 1));
 }
 
 .section-rule{
     margin: 0;
     border: 0;
-    border-top: 1px solid var(--salem-blue);
+    border-top: 1px solid var(--salem-accent);
     opacity: 1;
 }
 
@@ -897,7 +952,7 @@ body{
 }
 
 .brand-signoff > p{
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     line-height: 1.7;
 }
 
@@ -909,14 +964,14 @@ body{
 
 .salem-brand .wordmark{
     font-family: var(--salem-serif);
-    font-size: 43px;
+    font-size: calc(43px * var(--salem-text-scale, 1));
     line-height: 1;
 }
 
 .salem-brand .brand-descriptor{
     padding-left: 12px;
-    border-left: 1px solid var(--salem-blue);
-    font-size: 10px;
+    border-left: 1px solid var(--salem-accent);
+    font-size: calc(10px * var(--salem-text-scale, 1));
     font-weight: 600;
     line-height: 1.5;
 }
@@ -933,7 +988,7 @@ body{
 }
 
 .footer-links a{
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     white-space: nowrap;
 }
 
@@ -945,7 +1000,7 @@ body{
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    font-size: 10px;
+    font-size: calc(10px * var(--salem-text-scale, 1));
 }
 
 /* ---------- Floating chat button ---------- */
@@ -959,9 +1014,9 @@ body{
     gap: 12px;
     padding: 14px 18px;
     border-radius: 100px;
-    background: var(--salem-blue);
-    color: var(--salem-paper) !important;
-    font-size: 13px;
+    background: var(--salem-button);
+    color: var(--salem-on-button) !important;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     font-weight: 600;
     box-shadow: 0 8px 20px rgba(27, 42, 65, 0.15);
 }
@@ -973,12 +1028,12 @@ body{
     width: 20px;
     height: 20px;
     border-radius: 10px;
-    background: var(--salem-paper);
+    background: var(--salem-page);
 }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1200px){
-    .home-intro .hero-heading{ font-size: 80px; }
+    .home-intro .hero-heading{ font-size: calc(80px * var(--salem-text-scale, 1)); }
     .story-grid{ grid-template-columns: repeat(2, 1fr); }
     .newsletter-signup{ gap: 48px; }
 }
@@ -1002,14 +1057,14 @@ body{
 }
 
 @media (max-width: 600px){
-    #quarto-header .navbar-title{ font-size: 32px; }
+    #quarto-header .navbar-title{ font-size: calc(32px * var(--salem-text-scale, 1)); }
     #quarto-header .navbar-logo{ height: 40px; }
     .salem-home section, .salem-circle{ padding-left: 16px; padding-right: 16px; }
-    .home-intro .hero-heading{ font-size: 54px; }
+    .home-intro .hero-heading{ font-size: calc(54px * var(--salem-text-scale, 1)); }
     .salem-home .section-heading,
     .salem-home .offer-title,
-    .salem-circle .section-heading{ font-size: 40px; }
-    .salem-home .mission-statement{ font-size: 34px; }
+    .salem-circle .section-heading{ font-size: calc(40px * var(--salem-text-scale, 1)); }
+    .salem-home .mission-statement{ font-size: calc(34px * var(--salem-text-scale, 1)); }
     .october-offer{ padding: 24px; }
     .story-grid{ grid-template-columns: 1fr; }
     .journal-controls{ flex-direction: column; align-items: flex-start; }
@@ -1054,7 +1109,7 @@ body{
 .salem-post #quarto-content{
     font-family: var(--salem-sans);
     letter-spacing: 0;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
 }
 
 .salem-post #quarto-content main.content{
@@ -1077,7 +1132,7 @@ body{
 
 .salem-post-header .section-label{
     margin: 0;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
 }
 
 .salem-post #quarto-content .salem-post-header .title{
@@ -1085,17 +1140,17 @@ body{
     padding: 0;
     border: 0;
     font-family: var(--salem-serif);
-    font-size: 72px;
+    font-size: calc(72px * var(--salem-text-scale, 1));
     font-weight: 400;
     line-height: 1.02;
     text-transform: none;
     letter-spacing: 0;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
 }
 
 .post-description{
     margin: 16px 0 0;
-    font-size: 18px;
+    font-size: calc(18px * var(--salem-text-scale, 1));
     line-height: 1.6;
     color: var(--salem-muted);
 }
@@ -1108,24 +1163,24 @@ body{
     margin-top: 28px;
     padding-top: 14px;
     border-top: 1px solid var(--salem-line);
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     color: var(--salem-muted);
 }
 
 .salem-post #quarto-content .post-byline a{
-    color: var(--salem-navy);
+    color: var(--salem-ink);
     font-weight: 600;
     text-decoration: none;
 }
 
 .salem-post #quarto-content .post-byline a:hover{
-    color: var(--salem-blue);
+    color: var(--salem-accent);
 }
 
 /* ---------- Post prose ---------- */
 .salem-post main.content p:not([class]),
 .salem-post main.content li{
-    font-size: 16px;
+    font-size: calc(16px * var(--salem-text-scale, 1));
     line-height: 1.75;
 }
 
@@ -1135,7 +1190,7 @@ body{
     font-weight: 400;
     text-transform: none;
     letter-spacing: 0;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
     border: 0;
 }
 
@@ -1145,20 +1200,20 @@ body{
     padding: 40px 24px;
     border: 1px solid var(--salem-line);
     border-radius: 4px;
-    background: var(--salem-white);
+    background: var(--salem-surface);
     box-shadow: none;
 }
 
 .salem-post .logo-hero strong{
     font-family: var(--salem-serif);
-    font-size: 29px;
+    font-size: calc(29px * var(--salem-text-scale, 1));
     font-weight: 400;
     line-height: 1.15;
 }
 
 .salem-post .logo-hero em{
     font-style: normal;
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     color: var(--salem-muted);
 }
 
@@ -1175,7 +1230,7 @@ body{
     align-items: center;
     justify-content: center;
     padding: 40px;
-    background: var(--salem-white);
+    background: var(--salem-surface);
     border: 1px solid var(--salem-line);
     border-right: 0;
 }
@@ -1198,20 +1253,20 @@ body{
     align-items: flex-start;
     gap: 20px;
     padding: 36px;
-    background: var(--salem-navy);
-    color: var(--salem-paper);
+    background: var(--salem-band);
+    color: var(--salem-on-band);
 }
 
 .salem-post .offer-panel p{
     margin: 0;
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.8;
 }
 
 .offer-panel .section-label,
 .offer-panel .price-unit,
 .offer-panel .offer-minimum{
-    color: var(--salem-line);
+    color: var(--salem-on-band-muted);
 }
 
 .offer-panel .shirt-price p{
@@ -1222,14 +1277,14 @@ body{
 }
 
 .salem-post .offer-panel .offer-minimum{
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
 }
 
 .offer-panel hr{
     width: 100%;
     margin: 0;
     border: 0;
-    border-top: 1px solid var(--salem-blue);
+    border-top: 1px solid var(--salem-accent);
     opacity: 1;
 }
 
@@ -1246,14 +1301,14 @@ body{
 }
 
 @media (max-width: 991px){
-    .salem-post #quarto-content .salem-post-header .title{ font-size: 52px; }
+    .salem-post #quarto-content .salem-post-header .title{ font-size: calc(52px * var(--salem-text-scale, 1)); }
     .offer-split{ flex-direction: column; }
     .offer-flyer{ border-right: 1px solid var(--salem-line); border-bottom: 0; }
 }
 
 @media (max-width: 600px){
     .salem-post #title-block-header.salem-post-header{ padding-top: 32px; }
-    .salem-post #quarto-content .salem-post-header .title{ font-size: 40px; }
+    .salem-post #quarto-content .salem-post-header .title{ font-size: calc(40px * var(--salem-text-scale, 1)); }
     .post-byline{ flex-direction: column; align-items: flex-start; }
     .offer-flyer{ padding: 24px; }
     .offer-panel{ padding: 24px; }
@@ -1262,12 +1317,18 @@ body{
 /* ==========================================================
    Blog post layouts — each post sets its own accent via body-classes
    ========================================================== */
-.post-mission{ --post-accent: var(--salem-blue); --post-soft: var(--salem-mist); }
-.post-rooted{ --post-accent: #2f4a3a; --post-soft: #e6ebe4; }
-.post-fall{ --post-accent: var(--salem-rust); --post-soft: #f3e8e0; }
-.post-holiday{ --post-accent: #7a2c2c; --post-evergreen: #2f4a3a; --post-soft: #f2e9e5; }
+/* --post-accent: panel backgrounds (stays dark in both themes, under light text).
+   --post-accent-text: the accent used as text/borders (lighter in dark mode). */
+.post-mission{ --post-accent: #2f5d8c; --post-accent-text: #2f5d8c; --post-soft: #eaedef; }
+.post-rooted{ --post-accent: #2f4a3a; --post-accent-text: #2f4a3a; --post-soft: #e6ebe4; }
+.post-fall{ --post-accent: #a44e30; --post-accent-text: #a44e30; --post-soft: #f3e8e0; }
+.post-holiday{ --post-accent: #7a2c2c; --post-accent-text: #7a2c2c; --post-evergreen: #2f4a3a; --post-soft: #f2e9e5; }
+body.quarto-dark.post-mission{ --post-accent-text: #8DB4F0; --post-soft: #0B2A55; }
+body.quarto-dark.post-rooted{ --post-accent-text: #A9C9A4; --post-soft: #14342E; }
+body.quarto-dark.post-fall{ --post-accent-text: #F0A27F; --post-soft: #3A2420; }
+body.quarto-dark.post-holiday{ --post-accent-text: #F2A0A0; --post-soft: #3B1F24; }
 
-.salem-post .salem-post-header .section-label{ color: var(--post-accent, var(--salem-navy)); }
+.salem-post .salem-post-header .section-label{ color: var(--post-accent-text, var(--salem-ink)); }
 
 .salem-post-header::before{
     content: "";
@@ -1275,7 +1336,7 @@ body{
     width: 48px;
     height: 4px;
     margin-bottom: 20px;
-    background: var(--post-accent, var(--salem-navy));
+    background: var(--post-accent, var(--salem-band));
 }
 
 /* Give every post the same page grid Quarto adds when a .column-page is present */
@@ -1291,11 +1352,11 @@ body{
 
 .salem-post main.content h3{
     margin: 0 0 16px;
-    font-size: 30px;
+    font-size: calc(30px * var(--salem-text-scale, 1));
     line-height: 1.1;
 }
 
-.salem-post main.content .section-label{ color: var(--post-accent); }
+.salem-post main.content .section-label{ color: var(--post-accent-text); }
 
 /* Photos: any phone photo is cropped to the slot's shape */
 .post-photo figure,
@@ -1316,7 +1377,7 @@ body{
 
 .salem-post .post-photo figcaption{
     margin-top: 10px;
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     line-height: 1.6;
     text-align: left;
     color: var(--salem-slate);
@@ -1331,15 +1392,15 @@ body{
     margin-top: 56px;
     padding: 40px 24px;
     border: 1px solid var(--salem-line);
-    border-top: 3px solid var(--post-accent);
+    border-top: 3px solid var(--post-accent-text);
     border-radius: 4px;
-    background: var(--salem-white);
+    background: var(--salem-surface);
     text-align: center;
 }
 
 .salem-post main.content .post-signoff p{ margin: 0; }
 .post-signoff img{ margin-bottom: 12px; }
-.post-signoff strong{ font-family: var(--salem-serif); font-size: 28px; font-weight: 400; }
+.post-signoff strong{ font-family: var(--salem-serif); font-size: calc(28px * var(--salem-text-scale, 1)); font-weight: 400; }
 .salem-post main.content .post-signoff p:not(:has(strong)):not(:has(a)){ color: var(--salem-slate); }
 
 .salem-post main.content .post-signoff p:last-child{
@@ -1357,8 +1418,8 @@ body{
     text-decoration: none;
 }
 
-.salem-post #quarto-content a.btn-accent{ color: var(--salem-paper); }
-.salem-post #quarto-content a.btn-outline{ color: var(--salem-navy); }
+.salem-post #quarto-content a.btn-accent{ color: var(--salem-on-button); }
+.salem-post #quarto-content a.btn-outline{ color: var(--salem-ink); }
 
 .salem-post a.btn-accent::after,
 .salem-post a.btn-outline::after{
@@ -1372,9 +1433,9 @@ body{
 
 .value-number{
     display: block;
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     font-weight: 600;
-    color: var(--post-accent);
+    color: var(--post-accent-text);
 }
 
 /* ---------- Salem's Mission: editorial essay ---------- */
@@ -1382,7 +1443,7 @@ body{
 
 .salem-post main.content .mission-lead p{
     font-family: var(--salem-serif);
-    font-size: 30px;
+    font-size: calc(30px * var(--salem-text-scale, 1));
     line-height: 1.3;
 }
 
@@ -1391,19 +1452,19 @@ body{
     margin: 6px 12px 0 0;
     font-size: 3.4em;
     line-height: 0.8;
-    color: var(--post-accent);
+    color: var(--post-accent-text);
 }
 
 .pull-quote{
     margin: 40px 0;
     padding: 8px 0 8px 28px;
-    border-left: 3px solid var(--post-accent);
+    border-left: 3px solid var(--post-accent-text);
 }
 
 .salem-post main.content .pull-quote p{
     margin: 0;
     font-family: var(--salem-serif);
-    font-size: 38px;
+    font-size: calc(38px * var(--salem-text-scale, 1));
     line-height: 1.12;
 }
 
@@ -1416,12 +1477,12 @@ body{
 
 .mission-values .value{
     padding-top: 20px;
-    border-top: 1px solid var(--salem-navy);
+    border-top: 1px solid var(--salem-ink-line);
 }
 
 .mission-values .value-number{ margin-bottom: 12px; }
-.salem-post main.content .mission-values h3{ font-size: 26px; margin-bottom: 10px; }
-.salem-post main.content .mission-values p:not(.value-number){ font-size: 14px; line-height: 1.65; }
+.salem-post main.content .mission-values h3{ font-size: calc(26px * var(--salem-text-scale, 1)); margin-bottom: 10px; }
+.salem-post main.content .mission-values p:not(.value-number){ font-size: calc(14px * var(--salem-text-scale, 1)); line-height: 1.65; }
 
 .photo-pair{
     display: grid;
@@ -1434,7 +1495,7 @@ body{
     margin-bottom: 48px;
     padding: 56px 64px;
     background: var(--post-accent);
-    color: var(--salem-paper);
+    color: var(--salem-on-band);
     text-align: center;
 }
 
@@ -1444,7 +1505,7 @@ body{
     max-width: 760px;
     margin: 16px auto 0;
     font-family: var(--salem-serif);
-    font-size: 34px;
+    font-size: calc(34px * var(--salem-text-scale, 1));
     line-height: 1.2;
 }
 
@@ -1467,13 +1528,13 @@ body{
     gap: 16px;
     padding: 12px 0;
     border-top: 1px solid var(--salem-line);
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
 }
 
 .feature-copy li strong{
     flex: 0 0 80px;
     font-weight: 600;
-    color: var(--post-accent);
+    color: var(--post-accent-text);
 }
 
 .scrapbook{
@@ -1490,7 +1551,7 @@ body{
 
 .scrapbook .post-photo figure{
     padding: 12px 12px 4px;
-    background: var(--salem-white);
+    background: var(--salem-surface);
     box-shadow: 0 6px 16px rgba(27, 42, 65, 0.12);
     transform: rotate(-1.5deg);
     transition: transform 0.2s ease;
@@ -1502,17 +1563,17 @@ body{
 .salem-post .scrapbook .post-photo figcaption{
     margin: 4px 0;
     font-family: "Caveat", cursive;
-    font-size: 20px;
+    font-size: calc(20px * var(--salem-text-scale, 1));
     font-weight: 600;
     text-align: center;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
 }
 
 /* ---------- Fall is here: rust promo ---------- */
 .post-fall .offer-panel{ background: var(--post-accent); }
 .post-fall .offer-panel .section-label,
 .post-fall .offer-panel .price-unit,
-.post-fall .offer-panel .offer-minimum{ color: #f3ddd0; }
+.post-fall .offer-panel .offer-minimum{ color: #fbefe8; } /* was #f3ddd0 (4.33:1 on rust) */
 .post-fall .offer-panel hr{ border-top-color: rgba(247, 248, 246, 0.4); }
 
 .press-strip{ margin: 0 0 56px; }
@@ -1542,13 +1603,13 @@ body{
 
 .steps-grid .step{
     padding: 24px;
-    border-top: 3px solid var(--post-accent);
-    background: var(--salem-white);
+    border-top: 3px solid var(--post-accent-text);
+    background: var(--salem-surface);
 }
 
 .steps-grid .value-number{ margin-bottom: 12px; }
-.salem-post main.content .steps-grid h3{ font-size: 24px; margin-bottom: 8px; }
-.salem-post main.content .steps-grid p:not(.value-number){ font-size: 14px; line-height: 1.65; }
+.salem-post main.content .steps-grid h3{ font-size: calc(24px * var(--salem-text-scale, 1)); margin-bottom: 8px; }
+.salem-post main.content .steps-grid p:not(.value-number){ font-size: calc(14px * var(--salem-text-scale, 1)); line-height: 1.65; }
 
 /* ---------- Christmas Bundle: holiday gift card ---------- */
 .holiday-hero{
@@ -1581,11 +1642,11 @@ body{
     gap: 16px;
     padding: 40px;
     background: var(--post-evergreen);
-    color: var(--salem-paper);
+    color: var(--salem-on-band);
 }
 
 .salem-post main.content .holiday-panel .section-label{ color: #c7d3c4; }
-.salem-post main.content .holiday-panel h3{ color: var(--salem-paper); font-size: 36px; margin: 0; }
+.salem-post main.content .holiday-panel h3{ color: var(--salem-on-band); font-size: calc(36px * var(--salem-text-scale, 1)); margin: 0; }
 .salem-post main.content .holiday-panel p{ margin: 0; }
 
 .bundle-price p{
@@ -1597,13 +1658,13 @@ body{
 
 .bundle-price .price{
     font-family: var(--salem-serif);
-    font-size: 64px;
+    font-size: calc(64px * var(--salem-text-scale, 1));
     line-height: 1;
 }
 
 .bundle-price .price-unit,
 .bundle-extra{
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     color: #c7d3c4;
 }
 
@@ -1620,7 +1681,7 @@ body{
     gap: 12px;
     padding: 10px 0;
     border-top: 1px solid rgba(247, 248, 246, 0.2);
-    font-size: 15px;
+    font-size: calc(15px * var(--salem-text-scale, 1));
 }
 
 .holiday-panel li::before{
@@ -1632,7 +1693,7 @@ body{
     height: 24px;
     border-radius: 50%;
     background: var(--post-accent);
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
 }
 
 .salem-post .holiday-panel a.btn-light{ margin-top: 8px; text-decoration: none; }
@@ -1667,9 +1728,9 @@ body{
 }
 
 @media (max-width: 600px){
-    .salem-post main.content .mission-lead p{ font-size: 24px; }
-    .salem-post main.content .pull-quote p{ font-size: 28px; }
-    .salem-post main.content .verse-banner p:last-child{ font-size: 26px; }
+    .salem-post main.content .mission-lead p{ font-size: calc(24px * var(--salem-text-scale, 1)); }
+    .salem-post main.content .pull-quote p{ font-size: calc(28px * var(--salem-text-scale, 1)); }
+    .salem-post main.content .verse-banner p:last-child{ font-size: calc(26px * var(--salem-text-scale, 1)); }
     .photo-pair{ grid-template-columns: 1fr; }
     .press-grid{ grid-template-columns: 1fr 1fr; }
     .scrapbook,
@@ -1677,7 +1738,7 @@ body{
     .scrapbook-grid{ gap: 16px; }
     .holiday-panel{ padding: 24px; }
     .holiday-flyer{ padding: 20px; }
-    .bundle-price .price{ font-size: 52px; }
+    .bundle-price .price{ font-size: calc(52px * var(--salem-text-scale, 1)); }
 }
 
 /* ==========================================================
@@ -1694,16 +1755,16 @@ body{
     gap: 16px;
     min-height: 48px;
     padding: 12px 16px;
-    border: 1px solid var(--salem-navy);
+    border: 1px solid var(--salem-ink-line);
     border-radius: 4px;
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     font-weight: 500;
     white-space: nowrap;
     transition: background-color 0.15s ease;
 }
 
 .btn-outline:hover{
-    background: rgba(27, 42, 65, 0.06);
+    background: color-mix(in srgb, var(--salem-ink) 8%, transparent);
 }
 
 .about-intro,
@@ -1717,13 +1778,13 @@ body{
 }
 
 .salem-about .about-heading{
-    font-size: 88px;
+    font-size: calc(88px * var(--salem-text-scale, 1));
     line-height: 1.08;
 }
 
 .about-lede{
     max-width: 640px;
-    font-size: 16px;
+    font-size: calc(16px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
@@ -1756,9 +1817,9 @@ body{
 .print-table-photograph{ height: 400px; }
 
 .about-photo figcaption{
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     line-height: 1.65;
-    color: #52616a;
+    color: var(--salem-slate);
 }
 
 .about-copy{
@@ -1767,31 +1828,31 @@ body{
 }
 
 .studio-story .about-copy p:not(.section-label){
-    font-size: 16px;
+    font-size: calc(16px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
 .care-in-the-making{
-    background: var(--salem-navy);
-    color: var(--salem-paper);
+    background: var(--salem-band);
+    color: var(--salem-on-band);
 }
 
 .care-in-the-making .section-label,
 .care-in-the-making p,
 .care-in-the-making .about-photo figcaption{
-    color: var(--salem-line);
+    color: var(--salem-on-band-muted);
 }
 
 .care-in-the-making .about-copy p:not(.section-label),
 .community-invitation p:not(.section-label),
 .newsletter-invitation-band p:not(.section-label){
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
 .salem-about #quarto-content .community-invitation p a,
 .salem-about #quarto-content .social-channels a{
-    color: var(--salem-blue);
+    color: var(--salem-accent);
     text-decoration: underline;
 }
 
@@ -1799,11 +1860,11 @@ body{
     display: flex;
     flex-wrap: wrap;
     gap: 32px;
-    font-size: 15px;
+    font-size: calc(15px * var(--salem-text-scale, 1));
 }
 
 .newsletter-invitation-band{
-    background: #eaedef;
+    background: var(--salem-surface-alt);
 }
 
 /* Scoped under #quarto-content to beat Bootstrap's `#quarto-content>*` padding */
@@ -1841,14 +1902,14 @@ body{
     .about-photo{ flex-basis: auto; }
     .studio-photograph{ height: 420px; }
     .print-table-photograph{ height: 320px; }
-    .salem-about .about-heading{ font-size: 64px; }
+    .salem-about .about-heading{ font-size: calc(64px * var(--salem-text-scale, 1)); }
 }
 
 @media (max-width: 600px){
     .salem-about #quarto-content > section{ padding-top: 40px; padding-bottom: 40px; }
     .salem-about #quarto-content > .studio-story{ padding-top: 0; }
-    .salem-about .about-heading{ font-size: 48px; }
-    .salem-about .section-heading{ font-size: 36px; }
+    .salem-about .about-heading{ font-size: calc(48px * var(--salem-text-scale, 1)); }
+    .salem-about .section-heading{ font-size: calc(36px * var(--salem-text-scale, 1)); }
     .studio-photograph{ height: 320px; }
     .print-table-photograph{ height: 240px; }
     .salem-about #quarto-content > .salem-circle{ padding-bottom: 96px; }
@@ -1874,8 +1935,8 @@ body{
     padding: 0 0 16px;
     border: 1px solid var(--salem-line);
     border-radius: 4px;
-    background: var(--salem-white);
-    color: var(--salem-navy);
+    background: var(--salem-surface);
+    color: var(--salem-ink);
     font-family: var(--salem-sans);
     text-align: left;
     cursor: pointer;
@@ -1886,8 +1947,8 @@ body{
 .style-card:hover{ box-shadow: 0 6px 14px rgba(27, 42, 65, 0.12); }
 
 .style-card[aria-pressed="true"]{
-    border-color: var(--salem-blue);
-    box-shadow: inset 0 0 0 2px var(--salem-blue);
+    border-color: var(--salem-accent);
+    box-shadow: inset 0 0 0 2px var(--salem-accent);
 }
 
 .style-card-image{
@@ -1896,7 +1957,7 @@ body{
     width: 100%;
     aspect-ratio: 4 / 3;
     margin-bottom: 8px;
-    background: var(--salem-mist);
+    background: var(--salem-surface-alt);
 }
 
 .style-card-image .shirt-render{ inset: 0 12%; }
@@ -1905,19 +1966,19 @@ body{
 .style-card-name{
     padding: 0 16px;
     font-family: var(--salem-serif);
-    font-size: 24px;
+    font-size: calc(24px * var(--salem-text-scale, 1));
     line-height: 1.1;
 }
 
 .style-card-description,
 .style-card-action{
     padding: 0 16px;
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     line-height: 1.6;
 }
 
 .style-card-description{ color: var(--salem-slate); }
-.style-card-action{ margin-top: auto; font-weight: 600; color: var(--salem-blue); }
+.style-card-action{ margin-top: auto; font-weight: 600; color: var(--salem-accent); }
 
 /* ---------- Shirt render: tinted mockup or photo ---------- */
 .shirt-render{
@@ -1966,7 +2027,7 @@ body{
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: var(--salem-mist);
+    background: var(--salem-surface-alt);
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
@@ -1978,8 +2039,8 @@ body{
     left: 24px;
     padding: 8px;
     border-radius: 4px;
-    background: var(--salem-paper);
-    font-size: 12px;
+    background: var(--salem-page);
+    font-size: calc(12px * var(--salem-text-scale, 1));
     pointer-events: none;
 }
 
@@ -2015,7 +2076,7 @@ body{
 
 .design-layer.is-selected,
 .design-layer:focus-visible{
-    outline: 2px solid var(--salem-blue);
+    outline: 2px solid var(--salem-accent);
     outline-offset: 2px;
 }
 
@@ -2026,7 +2087,7 @@ body{
     height: 24px;
     border: 2px solid var(--salem-white);
     border-radius: 50%;
-    background: var(--salem-blue);
+    background: var(--salem-button);
     box-shadow: 0 2px 6px rgba(27, 42, 65, 0.3);
     touch-action: none;
 }
@@ -2044,7 +2105,7 @@ body{
     left: 9px;
     width: 2px;
     height: 16px;
-    background: var(--salem-blue);
+    background: var(--salem-button);
 }
 
 @media (pointer: coarse){
@@ -2073,33 +2134,33 @@ body{
     padding: 8px 14px;
     border: 1px solid var(--salem-line);
     border-radius: 4px;
-    background: var(--salem-white);
-    color: var(--salem-navy);
+    background: var(--salem-surface);
+    color: var(--salem-ink);
     font-family: var(--salem-sans);
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     font-weight: 500;
     cursor: pointer;
 }
 
 .side-toggle button[aria-pressed="true"]{
-    border-color: var(--salem-navy);
-    background: var(--salem-navy);
-    color: var(--salem-paper);
+    border-color: var(--salem-selected);
+    background: var(--salem-selected);
+    color: var(--salem-on-selected);
 }
 
-.tool-button:hover:not(:disabled){ border-color: var(--salem-navy); }
+.tool-button:hover:not(:disabled){ border-color: var(--salem-ink-line); }
 .tool-button:disabled{ opacity: 0.45; cursor: not-allowed; }
 
 .selected-colors{
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
 }
 
 .mockup-note,
 .field-hint,
 .quote-fine-print{
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     line-height: 1.65;
     color: var(--salem-slate);
 }
@@ -2111,16 +2172,16 @@ body{
     align-items: flex-start;
     gap: 16px;
     padding: 24px;
-    background: var(--salem-navy);
-    color: var(--salem-paper);
+    background: var(--salem-band);
+    color: var(--salem-on-band);
 }
 
 .summary-card .section-label,
-.summary-note{ color: var(--salem-line); }
+.summary-note{ color: var(--salem-on-band-muted); }
 
 .summary-title{
     font-family: var(--salem-serif);
-    font-size: 40px;
+    font-size: calc(40px * var(--salem-text-scale, 1));
     line-height: 1.08;
 }
 
@@ -2135,14 +2196,14 @@ body{
     column-gap: 16px;
     padding: 8px 0;
     border-top: 1px solid rgba(192, 197, 204, 0.25);
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.5;
 }
 
-.summary-list dt{ font-weight: 600; color: var(--salem-line); }
+.summary-list dt{ font-weight: 600; color: var(--salem-on-band-muted); }
 .summary-list dd{ grid-column: 2; margin: 0; overflow-wrap: anywhere; }
 
-.summary-note{ font-size: 12px; line-height: 1.65; }
+.summary-note{ font-size: calc(12px * var(--salem-text-scale, 1)); line-height: 1.65; }
 
 .summary-card .btn-light:disabled{ opacity: 0.6; cursor: wait; }
 
@@ -2156,7 +2217,7 @@ body{
 }
 
 .salem-shop .options-heading{
-    font-size: 36px;
+    font-size: calc(36px * var(--salem-text-scale, 1));
     line-height: 1.08;
 }
 
@@ -2171,22 +2232,22 @@ body{
 .form-field label,
 .field-label{
     margin: 0;
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     font-weight: 600;
 }
 
-.field-label{ font-size: 14px; }
+.field-label{ font-size: calc(14px * var(--salem-text-scale, 1)); }
 
 .field-input{
     width: 100%;
     min-height: 48px;
     padding: 12px 16px;
-    border: 1px solid var(--salem-line);
+    border: 1px solid var(--salem-field-line); /* was --salem-line (1.6:1); inputs need 3:1 */
     border-radius: 4px;
-    background: var(--salem-white);
-    color: var(--salem-navy);
+    background: var(--salem-surface);
+    color: var(--salem-ink);
     font-family: var(--salem-sans);
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.5;
 }
 
@@ -2194,8 +2255,8 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 
 .field-input:focus{
     outline: none;
-    border-color: var(--salem-blue);
-    box-shadow: inset 0 0 0 2px var(--salem-blue);
+    border-color: var(--salem-accent);
+    box-shadow: inset 0 0 0 2px var(--salem-accent);
 }
 
 .field-input::placeholder{ color: var(--salem-slate); }
@@ -2229,24 +2290,24 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     border: 1px solid var(--salem-line);
     border-radius: 50%;
     background: var(--swatch);
-    box-shadow: inset 0 0 0 4px var(--salem-paper);
+    box-shadow: inset 0 0 0 4px var(--salem-page);
     cursor: pointer;
 }
 
 .swatch-button[aria-checked="true"]{
-    border: 2px solid var(--salem-navy);
+    border: 2px solid var(--salem-ink-line);
 }
 
 .swatch-button:focus-visible,
 .size-button:focus-visible,
 .style-card:focus-visible,
 .art-drop:focus-visible{
-    outline: 3px solid var(--salem-blue);
+    outline: 3px solid var(--salem-accent);
     outline-offset: 3px;
 }
 
 .swatch-label{
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     white-space: nowrap;
 }
 
@@ -2268,18 +2329,18 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     padding: 0 16px;
     border: 1px solid var(--salem-line);
     border-radius: 4px;
-    background: var(--salem-white);
-    color: var(--salem-navy);
+    background: var(--salem-surface);
+    color: var(--salem-ink);
     font-family: var(--salem-sans);
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     font-weight: 500;
     cursor: pointer;
 }
 
 .size-button[aria-checked="true"]{
-    border-color: var(--salem-navy);
-    background: var(--salem-navy);
-    color: var(--salem-paper);
+    border-color: var(--salem-selected);
+    background: var(--salem-selected);
+    color: var(--salem-on-selected);
 }
 
 .artwork-mode{
@@ -2292,7 +2353,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 
 .salem-shop .btn-outline{
     background: transparent;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
     font-family: var(--salem-sans);
     cursor: pointer;
 }
@@ -2320,7 +2381,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     border: 1px dashed var(--salem-line);
     border-radius: 4px;
     background: transparent;
-    color: var(--salem-navy);
+    color: var(--salem-ink);
     font-family: var(--salem-sans);
     text-align: left;
     cursor: pointer;
@@ -2328,19 +2389,19 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 
 .art-drop:hover,
 .art-drop.is-dragging{
-    border-color: var(--salem-blue);
+    border-color: var(--salem-accent);
     background: rgba(47, 93, 140, 0.05);
 }
 
-.art-drop-title{ font-size: 14px; font-weight: 600; color: var(--salem-blue); }
-.art-drop-hint{ font-size: 12px; line-height: 1.65; color: var(--salem-slate); }
+.art-drop-title{ font-size: calc(14px * var(--salem-text-scale, 1)); font-weight: 600; color: var(--salem-accent); }
+.art-drop-hint{ font-size: calc(12px * var(--salem-text-scale, 1)); line-height: 1.65; color: var(--salem-slate); }
 
 /* ---------- 03 / Send to Salem ---------- */
 .quote-request{
     display: flex;
     align-items: flex-start;
     gap: 48px;
-    background: var(--salem-white);
+    background: var(--salem-surface);
 }
 
 .quote-explanation{
@@ -2352,7 +2413,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 }
 
 .quote-explanation > p:not(.section-label):not(.quote-fine-print){
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
@@ -2363,11 +2424,11 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     padding: 24px;
     border: 1px solid var(--salem-line);
     border-radius: 4px;
-    background: var(--salem-mist);
+    background: var(--salem-surface-alt);
 }
 
 .zelle-instructions p:not(.section-label):not(.quote-fine-print){
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
@@ -2407,10 +2468,10 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 }
 
 @media (max-width: 600px){
-    .preview-badge{ top: 12px; left: 12px; font-size: 11px; }
+    .preview-badge{ top: 12px; left: 12px; font-size: calc(11px * var(--salem-text-scale, 1)); }
     .text-controls{ grid-template-columns: 1fr; }
-    .summary-title{ font-size: 32px; }
-    .salem-shop .options-heading{ font-size: 30px; }
+    .summary-title{ font-size: calc(32px * var(--salem-text-scale, 1)); }
+    .salem-shop .options-heading{ font-size: calc(30px * var(--salem-text-scale, 1)); }
     .preview-toolbar{ flex-direction: column; }
     .side-toggle button,
     .tool-button{ flex: 1; min-height: 44px; }
@@ -2433,18 +2494,18 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     gap: 24px;
 }
 
-.salem-subscribe .about-heading{ font-size: 80px; }
+.salem-subscribe .about-heading{ font-size: calc(80px * var(--salem-text-scale, 1)); }
 .salem-subscribe .about-lede{ max-width: none; }
 .newsletter-story .about-photo{ flex: none; }
 .newsletter-photograph{ height: 400px; }
 
 .salem-subscribe .story-subheading{
-    font-size: 28px;
+    font-size: calc(28px * var(--salem-text-scale, 1));
     line-height: 1.08;
 }
 
 .story-copy{
-    font-size: 14px;
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.65;
 }
 
@@ -2459,9 +2520,9 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 
 .list-perks li{
     padding: 16px;
-    border-left: 2px solid var(--salem-blue);
-    background: var(--salem-mist);
-    font-size: 14px;
+    border-left: 2px solid var(--salem-accent);
+    background: var(--salem-surface-alt);
+    font-size: calc(14px * var(--salem-text-scale, 1));
     line-height: 1.6;
 }
 
@@ -2472,7 +2533,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     padding: 32px;
     border: 1px solid var(--salem-line);
     border-radius: 4px;
-    background: var(--salem-white);
+    background: var(--salem-surface);
     position: sticky;
     top: 96px;
 }
@@ -2497,7 +2558,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     grid-template-columns: 1fr 1fr;
     padding: 4px;
     border-radius: 4px;
-    background: var(--salem-mist);
+    background: var(--salem-surface-alt);
 }
 
 .audience-toggle label{
@@ -2508,7 +2569,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     min-height: 40px;
     padding: 8px 12px;
     border-radius: 3px;
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     font-weight: 500;
     text-align: center;
     cursor: pointer;
@@ -2522,24 +2583,24 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 }
 
 .audience-toggle label:has(input:checked){
-    background: var(--salem-white);
+    background: var(--salem-surface);
     box-shadow: 0 1px 3px rgba(27, 42, 65, 0.15);
     font-weight: 600;
 }
 
 .audience-toggle label:has(input:focus-visible),
 .interest-chips label:has(input:focus-visible){
-    outline: 3px solid var(--salem-blue);
+    outline: 3px solid var(--salem-accent);
     outline-offset: 2px;
 }
 
 .salem-subscribe .signup-heading{
-    font-size: 36px;
+    font-size: calc(36px * var(--salem-text-scale, 1));
     line-height: 1.08;
 }
 
 .signup-intro{
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     line-height: 1.65;
     color: var(--salem-slate);
 }
@@ -2562,7 +2623,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     width: 100%;
     margin: 0 0 8px;
     padding: 0;
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     font-weight: 600;
 }
 
@@ -2575,7 +2636,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     appearance: none;
     -webkit-appearance: none;
     padding-right: 40px;
-    background: var(--salem-white) url("images/icons/chevron-down.svg") no-repeat right 14px center;
+    background: var(--salem-surface) url("images/icons/chevron-down.svg") no-repeat right 14px center;
     cursor: pointer;
 }
 
@@ -2599,18 +2660,18 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     padding: 8px 12px;
     border: 1px solid var(--salem-line);
     border-radius: 100px;
-    background: var(--salem-white);
-    font-size: 12px;
+    background: var(--salem-surface);
+    font-size: calc(12px * var(--salem-text-scale, 1));
     cursor: pointer;
     transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.interest-chips label:hover{ border-color: var(--salem-navy); }
+.interest-chips label:hover{ border-color: var(--salem-ink-line); }
 
 .interest-chips label:has(input:checked){
-    border-color: var(--salem-blue);
-    background: var(--salem-blue);
-    color: var(--salem-paper);
+    border-color: var(--salem-button);
+    background: var(--salem-button);
+    color: var(--salem-on-button);
 }
 
 .interest-chips label:has(input:checked) span::before{ content: "✓ "; }
@@ -2621,8 +2682,8 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     gap: 12px;
     padding: 16px;
     border-radius: 4px;
-    background: var(--salem-mist);
-    font-size: 12px;
+    background: var(--salem-surface-alt);
+    font-size: calc(12px * var(--salem-text-scale, 1));
     line-height: 1.6;
     color: var(--salem-slate);
     cursor: pointer;
@@ -2647,7 +2708,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 }
 
 .form-error{
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     color: var(--salem-rust);
 }
 
@@ -2660,7 +2721,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 }
 
 .success-actions .btn-accent{ gap: 16px; padding: 0 16px; }
-.salem-subscribe .success-actions .btn-outline{ color: var(--salem-navy); }
+.salem-subscribe .success-actions .btn-outline{ color: var(--salem-ink); }
 
 @media (max-width: 1200px){
     .newsletter-page{ gap: 48px; }
@@ -2673,12 +2734,12 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     .newsletter-story{ display: contents; }
     .newsletter-story > :nth-child(n+4){ order: 2; }
     .signup-card{ order: 1; position: static; flex-basis: auto; margin: 16px 0 24px; }
-    .salem-subscribe .about-heading{ font-size: 56px; }
+    .salem-subscribe .about-heading{ font-size: calc(56px * var(--salem-text-scale, 1)); }
     .newsletter-photograph{ height: 320px; }
 }
 
 @media (max-width: 600px){
-    .salem-subscribe .about-heading{ font-size: 44px; }
+    .salem-subscribe .about-heading{ font-size: calc(44px * var(--salem-text-scale, 1)); }
     .signup-card{ padding: 24px 16px; }
     .newsletter-photograph{ height: 240px; }
 }
@@ -2694,22 +2755,22 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     flex-direction: column;
     gap: 8px;
     padding: 16px;
-    border: 1px solid var(--salem-blue);
+    border: 1px solid var(--salem-accent);
     border-radius: 4px;
-    background: var(--salem-mist);
+    background: var(--salem-surface-alt);
 }
 .list-notice[data-tone="none"]{ display: none; }
 .list-notice[data-tone="error"]{ border-color: var(--salem-rust); }
-.list-notice:focus{ outline: 3px solid var(--salem-blue); outline-offset: 2px; }
+.list-notice:focus{ outline: 3px solid var(--salem-accent); outline-offset: 2px; }
 .list-notice[data-tone="error"]:focus{ outline-color: var(--salem-rust); }
 
 .salem-home #quarto-content .list-notice-title{
-    font-size: 16px;
+    font-size: calc(16px * var(--salem-text-scale, 1));
     font-weight: 600;
     line-height: 1.4;
 }
 .salem-home #quarto-content .list-notice[data-tone="error"] .list-notice-title{ color: var(--salem-rust); }
-.list-notice-copy{ font-size: 13px; line-height: 1.6; }
+.list-notice-copy{ font-size: calc(13px * var(--salem-text-scale, 1)); line-height: 1.6; }
 
 .list-notice-actions{
     display: flex;
@@ -2719,11 +2780,11 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     margin-top: 8px;
 }
 .list-notice-actions[hidden]{ display: none; }
-.list-notice-actions .btn-outline{ background: var(--salem-white); color: var(--salem-navy); cursor: pointer; }
+.list-notice-actions .btn-outline{ background: var(--salem-surface); color: var(--salem-ink); cursor: pointer; }
 
 .salem-home #quarto-content .list-text-link{
-    font-size: 13px;
-    color: var(--salem-blue);
+    font-size: calc(13px * var(--salem-text-scale, 1));
+    color: var(--salem-accent);
     text-decoration: underline;
     text-underline-offset: 3px;
 }
@@ -2740,7 +2801,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 /* Per-field messages linked with aria-describedby */
 .field-error{
     margin-top: -16px !important;
-    font-size: 12px;
+    font-size: calc(12px * var(--salem-text-scale, 1));
     line-height: 1.5;
     color: var(--salem-rust);
 }
@@ -2753,11 +2814,11 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 /* Loading: inputs and action are disabled */
 .signup-form.is-sending .field-input,
 .signup-form.is-sending .interest-chips label,
-.signup-form.is-sending .consent-check{ background-color: var(--salem-mist); color: var(--salem-slate); cursor: wait; }
-.signup-form.is-sending .interest-chips label:has(input:checked){ background: var(--salem-mist); border-color: var(--salem-line); color: var(--salem-slate); }
+.signup-form.is-sending .consent-check{ background-color: var(--salem-surface-alt); color: var(--salem-slate); cursor: wait; }
+.signup-form.is-sending .interest-chips label:has(input:checked){ background: var(--salem-surface-alt); border-color: var(--salem-line); color: var(--salem-slate); }
 .signup-submit:disabled,
 .list-status-page .btn-accent:disabled{
-    background: var(--salem-mist);
+    background: var(--salem-surface-alt);
     color: var(--salem-slate);
     cursor: wait;
     transform: none;
@@ -2803,19 +2864,19 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     width: 62px;
     height: 62px;
     border-radius: 50%;
-    background: var(--salem-mist);
-    color: var(--salem-blue);
+    background: var(--salem-surface-alt);
+    color: var(--salem-accent);
 }
 
 .salem-home #quarto-content .list-status-heading{
-    font-size: 64px;
+    font-size: calc(64px * var(--salem-text-scale, 1));
     line-height: 1.08;
 }
 .list-status-heading:focus{ outline: none; }
 
-.list-status-lede{ font-size: 16px; line-height: 1.6; }
-.list-status-copy{ font-size: 14px; line-height: 1.6; }
-.list-status-note{ font-size: 12px; line-height: 1.6; color: var(--salem-slate); }
+.list-status-lede{ font-size: calc(16px * var(--salem-text-scale, 1)); line-height: 1.6; }
+.list-status-copy{ font-size: calc(14px * var(--salem-text-scale, 1)); line-height: 1.6; }
+.list-status-note{ font-size: calc(12px * var(--salem-text-scale, 1)); line-height: 1.6; color: var(--salem-slate); }
 
 .list-status-actions{
     display: flex;
@@ -2825,7 +2886,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
 .list-status-actions--stacked{ flex-direction: column; }
 .list-status-actions--stacked > *{ justify-content: center; width: 100%; }
 .list-status-actions .btn-accent{ gap: 16px; padding: 0 16px; }
-.list-status-page .btn-outline{ color: var(--salem-navy); background: transparent; cursor: pointer; }
+.list-status-page .btn-outline{ color: var(--salem-ink); background: transparent; cursor: pointer; }
 
 .list-resend,
 .list-prefs-form{
@@ -2842,22 +2903,22 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     width: 100%;
     margin: 0 0 8px;
     padding: 0;
-    font-size: 13px;
+    font-size: calc(13px * var(--salem-text-scale, 1));
     font-weight: 600;
 }
 
-.list-form-status{ font-size: 13px; line-height: 1.6; }
+.list-form-status{ font-size: calc(13px * var(--salem-text-scale, 1)); line-height: 1.6; }
 .list-form-status:empty{ display: none; }
 .list-form-status[data-tone="error"]{ color: var(--salem-rust); }
 
 @media (max-width: 991px){
     .list-status-page{ padding-top: 56px; padding-bottom: 72px; }
-    .salem-home #quarto-content .list-status-heading{ font-size: 48px; }
+    .salem-home #quarto-content .list-status-heading{ font-size: calc(48px * var(--salem-text-scale, 1)); }
 }
 
 @media (max-width: 600px){
     .list-status-page{ padding-top: 40px; padding-bottom: 56px; }
-    .salem-home #quarto-content .list-status-heading{ font-size: 40px; }
+    .salem-home #quarto-content .list-status-heading{ font-size: calc(40px * var(--salem-text-scale, 1)); }
     .list-notice-actions .btn-outline{ width: 100%; justify-content: center; white-space: normal; }
     .list-status-actions > *{ width: 100%; justify-content: center; white-space: normal; }
 }
@@ -2876,9 +2937,248 @@ button.list-text-link{
     border: 0;
     background: none;
     font: inherit;
-    font-size: 12px;
-    color: var(--salem-blue);
+    font-size: calc(12px * var(--salem-text-scale, 1));
+    color: var(--salem-accent);
     text-decoration: underline;
     text-underline-offset: 3px;
     cursor: pointer;
 }
+
+
+/* ==========================================================
+   Light / dark theme details
+   ========================================================== */
+/* Quarto's own light/dark toggle is replaced by the settings panel. */
+.quarto-color-scheme-toggle{ display: none !important; }
+
+/* The logo is black on transparent: show it in white on navy. */
+body.quarto-dark .navbar-logo{ filter: invert(1); }
+
+/* Icons drawn in navy become light in dark mode... */
+body.quarto-dark img[src*="arrow-up-right.svg"],
+body.quarto-dark img[src*="arrow-right-dark.svg"],
+body.quarto-dark img[src*="message-circle.svg"]{ filter: invert(1); }
+/* ...and light icons sitting on silver buttons become navy. */
+body.quarto-dark .btn-accent img[src*="-light.svg"],
+body.quarto-dark .chat-button img[src*="-light.svg"],
+body.quarto-dark .signup-submit img[src*="-light.svg"]{ filter: invert(1); }
+body.quarto-dark.salem-home #sort-post,
+body.quarto-dark .signup-form select.field-input{
+    background-image: url("images/icons/chevron-down-light.svg");
+}
+/* Photos keep their colors; a hairline keeps light photos from glowing. */
+body.quarto-dark main img:not([src$=".svg"]){ box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); }
+body.quarto-dark #quarto-header .nav-link[href$="subscribe.html"]::after{
+    background-image: url("images/icons/arrow-up-right-light.svg");
+}
+
+/* ==========================================================
+   Header tools: language link + settings (gear) panel
+   Built by _partials/site-settings.html
+   ========================================================== */
+#quarto-header .quarto-navbar-tools{
+    display: flex;
+    align-items: center;
+    margin-left: 16px;
+}
+
+.salem-tools{
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.salem-lang-link{
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 8px;
+    font-family: var(--salem-sans);
+    font-size: calc(13px * var(--salem-text-scale, 1));
+    font-weight: 500;
+    color: var(--salem-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.salem-lang-link:hover{ color: var(--salem-accent); }
+
+.salem-settings-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--salem-field-line);
+    border-radius: 50%;
+    background: var(--salem-page);
+    color: var(--salem-ink);
+    cursor: pointer;
+}
+.salem-settings-button:hover{ border-color: var(--salem-ink-line); }
+.salem-settings-button[aria-expanded="true"]{ background: var(--salem-surface-alt); }
+
+.salem-lang-link:focus-visible,
+.salem-settings-button:focus-visible,
+.salem-settings-panel a:focus-visible,
+.salem-settings-done:focus-visible,
+.salem-settings-option:has(input:focus-visible){
+    outline: 3px solid var(--salem-focus);
+    outline-offset: 2px;
+}
+
+.salem-settings-panel{
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 1050;
+    width: min(320px, calc(100vw - 32px));
+    padding: 16px;
+    border: 1px solid var(--salem-field-line);
+    border-radius: 8px;
+    background: var(--salem-surface);
+    color: var(--salem-ink);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    font-family: var(--salem-sans);
+    font-size: calc(14px * var(--salem-text-scale, 1));
+}
+.salem-settings-panel[hidden]{ display: none; }
+
+.salem-settings-title{
+    margin: 0 0 12px;
+    font-family: var(--salem-serif);
+    font-size: calc(22px * var(--salem-text-scale, 1));
+    line-height: 1.2;
+    color: var(--salem-ink);
+}
+
+.salem-settings-panel fieldset,
+.salem-settings-group{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 16px;
+    padding: 0;
+    border: 0;
+}
+
+.salem-settings-panel legend,
+.salem-settings-legend{
+    width: 100%;
+    margin: 0 0 4px;
+    padding: 0;
+    font-size: calc(12px * var(--salem-text-scale, 1));
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--salem-slate);
+    float: none;
+}
+
+.salem-settings-option{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 14px;
+    border: 1px solid var(--salem-field-line);
+    border-radius: 100px;
+    background: var(--salem-page);
+    color: var(--salem-ink);
+    text-decoration: none;
+    cursor: pointer;
+}
+.salem-settings-option input{
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.salem-settings-option:has(input:checked),
+.salem-settings-option[aria-current="true"]{
+    border-color: var(--salem-selected);
+    background: var(--salem-selected);
+    color: var(--salem-on-selected);
+    font-weight: 600;
+}
+.salem-settings-option:has(input:checked) span::before,
+.salem-settings-option[aria-current="true"] span::before{ content: "✓ "; }
+a.salem-settings-option:hover{ border-color: var(--salem-ink-line); color: var(--salem-ink); }
+a.salem-settings-option[aria-current="true"]:hover{ color: var(--salem-on-selected); }
+
+.salem-settings-done{
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid var(--salem-button);
+    border-radius: 4px;
+    background: var(--salem-button);
+    color: var(--salem-on-button);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Spanish pages: the navbar is translated by script; hide its English labels
+   until then (they show anyway after 1.5s if the script never runs). */
+html[lang="es"]:not(.salem-nav-ready) #quarto-header .navbar-nav{
+    visibility: hidden;
+    animation: salem-reveal 0s linear 1.5s forwards;
+}
+@keyframes salem-reveal{ to{ visibility: visible; } }
+
+@media (max-width: 991px){
+    #quarto-header .quarto-navbar-tools{ margin-left: 8px; order: 2; }
+    #quarto-header .navbar-toggler{ order: 3; }
+    #quarto-header .navbar-collapse{ order: 4; }
+}
+@media (max-width: 600px){
+    .salem-lang-link{ padding: 0 4px; font-size: calc(12px * var(--salem-text-scale, 1)); }
+    .salem-tools{ gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce){
+    html[lang="es"]:not(.salem-nav-ready) #quarto-header .navbar-nav{ animation-duration: 0s; }
+}
+
+/* Long Spanish words ("personalizadas,") must never push the page wider than a phone. */
+h1, h2, h3, .hero-heading, .offer-title, .section-heading{ overflow-wrap: break-word; hyphens: auto; }
+@media (max-width: 600px){
+    html[lang="es"] .home-intro .hero-heading{ font-size: calc(44px * var(--salem-text-scale, 1)); }
+}
+
+/* A "light" button stays light on navy cards in dark mode. */
+body.quarto-dark .btn-light{
+    background: var(--salem-button);
+    border-color: var(--salem-button);
+    color: var(--salem-on-button) !important; /* beats .btn-light's own !important */
+}
+body.quarto-dark .btn-light img[src*="arrow-right-dark.svg"],
+body.quarto-dark .btn-light img[src*="arrow-up-right.svg"]{ filter: none; }
+
+/* Buttons may wrap onto two lines on phones (longer Spanish labels, Larger text). */
+@media (max-width: 600px){
+    .btn-light, .btn-accent, .btn-outline{
+        white-space: normal;
+        height: auto;
+        min-height: 48px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: left;
+    }
+}
+
+/* Phones: the brand row keeps logo + wordmark; the descriptor gives way to the
+   language link and gear, which sit on the right beside the menu button. */
+@media (max-width: 600px){
+    #quarto-header .navbar-brand:not(.navbar-brand-logo)::after{ display: none; }
+    #quarto-header .navbar-brand-container{ margin-right: auto !important; margin-left: 0 !important; min-width: 0; }
+    #quarto-header .quarto-navbar-tools{ margin-left: auto; }
+    #quarto-header #quarto-search{ display: none; }
+}
+
+/* Filled buttons keep their own text color inside page content
+   (".salem-home #quarto-content a { color: inherit }" made the list pages'
+   buttons navy on blue: 2.1:1). */
+.salem-home #quarto-content a.btn-accent{ color: var(--salem-on-button); }
+
+/* Labels on the promo panels stay light on the dark/rust panel in both themes. */
+.salem-post main.content .offer-panel .section-label{ color: var(--salem-on-band-muted); }
+.salem-post.post-fall main.content .offer-panel .section-label{ color: #fbefe8; }

@@ -1,0 +1,13 @@
+/*-- scss:defaults --*/
+// Dark theme (navy and silver) on top of lux. Page colors come from the
+// --salem-* tokens in styles.css (dark values under html[data-theme="dark"]);
+// these keep Bootstrap's own parts matching.
+$body-bg: #041E42;
+$body-color: #FFFFFF;
+$link-color: #8DB4F0;
+$navbar-bg: #041E42;
+$navbar-fg: #FFFFFF;
+$navbar-hl: #8DB4F0;
+$input-bg: #0B2A55;
+$input-color: #FFFFFF;
+$border-color: #6F86A8;

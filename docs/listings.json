@@ -1,5 +1,14 @@
 [
   {
+    "listing": "/es/index.html",
+    "items": [
+      "/es/posts/October-Sale/index.html",
+      "/es/posts/Christmas-Bundle/index.html",
+      "/es/posts/Rooted/index.html",
+      "/es/posts/Salems-Mission/index.html"
+    ]
+  },
+  {
     "listing": "/index.html",
     "items": [
       "/posts/October-Sale/index.html",

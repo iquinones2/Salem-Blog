@@ -1,0 +1,68 @@
+---
+title: "Evento Rooted"
+author: "Salem"
+date: "2026-05-27"
+image: ../../../posts/Rooted/rooted-thumb.jpg
+image-alt: "La camiseta gris carbón del evento Rooted"
+description: "Ropa con un propósito compartido."
+categories: [Rooted]
+body-classes: salem-post post-rooted
+---
+
+::: {.verse-banner .post-wide}
+[Colosenses 2:6–7]{.section-label}
+
+“Por tanto, de la manera que habéis recibido al Señor Jesucristo, andad en él; arraigados y sobreedificados en él, y confirmados en la fe.”
+:::
+
+Las raíces importan. Antes de que algo pueda crecer alto, tiene que crecer profundo. Ese es el corazón de Rooted, nuestro evento previo al campamento juvenil basado en Colosenses 2:6–7, donde nos enfocamos en mantenernos firmes en Cristo y en ser edificados en nuestra fe.
+
+::::: {.rooted-feature .post-wide}
+::: {.post-photo .is-tall}
+![La camiseta Rooted, recién salida de la prensa.](../../../posts/Rooted/rootedT.jpg){fig-alt="Camiseta gris carbón del evento Rooted extendida sobre un piso de madera"}
+:::
+
+::: feature-copy
+[La camiseta]{.section-label}
+
+### Crezca profundo antes de crecer alto.
+
+Diseñamos e imprimimos la camiseta Rooted como un recordatorio del tema del evento, algo para seguir usando mucho después del campamento.
+
+- **Evento** Previo al campamento juvenil
+- **Tema** Colosenses 2:6–7
+- **Hecho en** Chicago, Illinois
+:::
+:::::
+
+::::::: {.scrapbook .post-wide}
+[Del evento]{.section-label}
+
+### Momentos de Rooted
+
+:::::: scrapbook-grid
+::: {.post-photo .is-square}
+![Camisetas de Rooted y DYTO Elgin Youth](../../../posts/Rooted/rooted.jpg){fig-alt="Una camiseta negra de Rooted y una camiseta gris de DYTO Elgin Youth colgadas en una pared"}
+:::
+
+::: {.post-photo .is-square}
+![Foto del evento](../../../posts/Rooted/photos/photo-1.png){fig-alt="Un momento del evento Rooted"}
+:::
+
+::: {.post-photo .is-square}
+![Foto del evento](../../../posts/Rooted/photos/photo-2.png){fig-alt="Un momento del evento Rooted"}
+:::
+
+::: {.post-photo .is-square}
+![Foto del evento](../../../posts/Rooted/photos/photo-3.png){fig-alt="Un momento del evento Rooted"}
+:::
+::::::
+:::::::
+
+::: post-signoff
+**¿Está planeando un campamento, un retiro o un evento de iglesia?**
+
+Nos encantaría ayudar a su grupo a vestir lo que cree.
+
+[Empiece un diseño](../../shop.html){.btn-accent} [Escríbale a Salem](https://ig.me/m/salem.csp5){.btn-outline}
+:::

@@ -1,0 +1,63 @@
+---
+title: "¡Adelántese a las fiestas!"
+author: "Salem"
+date: "2026-09-22"
+image: ../../../posts/Christmas-Bundle/holiday-thumb.jpg
+image-alt: "Tres diseños de sudaderas navideñas del Paquete Familiar de Navidad"
+description: "Paquete familiar de Navidad"
+categories: [Ofertas]
+body-classes: salem-post post-holiday
+---
+
+:::::: {.holiday-hero .post-wide}
+::: holiday-flyer
+![](../../../posts/Christmas-Bundle/ChristmasB.jpg){fig-alt="Volante del Paquete Familiar de Navidad (en inglés) con tres diseños de sudaderas navideñas y un precio de $100"}
+:::
+
+:::: holiday-panel
+[Paquete Familiar de Navidad · Chicago, Illinois]{.section-label}
+
+### Sudaderas a juego para toda la familia.
+
+::: bundle-price
+[\$100]{.price} [más envío (tarifa fija de USPS)]{.price-unit}
+:::
+
+- 5 sudaderas
+- Estampado de un solo lado
+- Diseño personalizado de 3 colores
+- Sin costo de preparación
+
+[\$0.50 por cada color adicional]{.bundle-extra}
+
+[Escríbale a Salem para hacer su pedido](https://ig.me/m/salem.csp5){.btn-light}
+::::
+::::::
+
+::::: {.design-choice .post-wide}
+::: design-choice-copy
+[Elija su diseño]{.section-label}
+
+### Uno de los nuestros, o uno suyo.
+
+Elija uno de nuestros tres diseños navideños del volante o envíenos su propio diseño. Lo imprimiremos en las cinco sudaderas para que toda la familia combine.
+
+Haga su pedido con tiempo para adelantarse a las fiestas y tener su paquete listo para Navidad.
+:::
+
+::: {.post-photo .is-tall}
+![Sudaderas navideñas, listas para la foto familiar.](../../../posts/Christmas-Bundle/photos/photo-2.png){fig-alt="Sudaderas del Paquete Familiar de Navidad"}
+:::
+:::::
+
+::: {.post-photo .is-wide .post-wide}
+![Toda la familia, combinada.](../../../posts/Christmas-Bundle/photos/photo-1.png){fig-alt="Una familia con sudaderas navideñas personalizadas a juego"}
+:::
+
+::: post-signoff
+**Adelántese a las fiestas.**
+
+Envíenos su idea de diseño y confirmaremos todo antes de que pague.
+
+[Escríbale a Salem para hacer su pedido](https://ig.me/m/salem.csp5){.btn-accent} [Diseñe la suya](../../shop.html){.btn-outline}
+:::

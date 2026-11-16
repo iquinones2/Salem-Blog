@@ -1,0 +1,9 @@
+# Spanish posts: same layout as posts/_metadata.yml, with Spanish partials.
+# Photos stay in the English post folders (../../../posts/<Post>/...), so they aren't duplicated.
+freeze: true
+body-classes: salem-post
+title-block-banner: false
+date-format: "D MMM YYYY"
+template-partials:
+  - ../../_partials/es/title-block.html
+include-after-body: ../../_partials/es/salem-footer.html

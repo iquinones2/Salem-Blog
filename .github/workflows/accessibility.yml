@@ -1,0 +1,41 @@
+# Accessibility check (WCAG 2 AA) on the rendered site in docs/.
+# Runs pa11y-ci with the axe engine on the home and subscribe pages, in English
+# and Spanish, in light and dark mode, at phone width (390px).
+# A red X on the commit means at least one WCAG AA error (low contrast, a form
+# field without a label, an image without alt text, ...). See SITE-GUIDE.md,
+# "Reading the accessibility check", for how to read the log.
+name: Accessibility
+
+on:
+  push:
+    branches: [master]
+    paths: ["docs/**", ".github/pa11y/**", ".github/workflows/accessibility.yml"]
+  pull_request:
+    paths: ["docs/**"]
+  workflow_dispatch:
+
+jobs:
+  pa11y:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false        # always report both themes
+      matrix:
+        theme: [light, dark]
+    name: WCAG AA (${{ matrix.theme }} mode)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pa11y-ci
+        run: npm install --no-save pa11y-ci@3.1.0
+
+      - name: Serve the rendered site (docs/)
+        run: |
+          python3 -m http.server 8080 --directory docs > /dev/null 2>&1 &
+          for i in $(seq 1 20); do curl -sf http://localhost:8080/index.html > /dev/null && break; sleep 1; done
+
+      - name: Check pages (${{ matrix.theme }} mode)
+        run: npx pa11y-ci --config .github/pa11y/${{ matrix.theme }}.json

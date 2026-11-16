@@ -3,6 +3,7 @@ title: "Rooted Event"
 author: "Salem"
 date: "2026-05-27"
 image: rooted-thumb.jpg
+image-alt: "The charcoal Rooted event tee"
 description: "Apparel with a shared purpose."
 categories: [Rooted]
 body-classes: salem-post post-rooted

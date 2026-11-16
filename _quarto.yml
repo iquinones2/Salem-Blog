@@ -7,6 +7,7 @@ project:
     - images/icons/sprout.svg
     - assets/js/config.js
     - assets/js/subscriber-store.js
+    - assets/js/*-page.js
 
 website:
   title: "Salem"
@@ -31,13 +32,20 @@ website:
         href: subscribe.qmd
 format:
   html:
-    theme: lux
+    theme:
+      light: [lux, assets/scss/salem-light.scss]
+      dark: [lux, assets/scss/salem-dark.scss]
+    respect-user-color-scheme: true
     css: styles.css
     include-in-header:
-      text: |
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600&family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+      - text: |
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600&family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+      - file: _partials/site-settings.html
+
+filters:
+  - assets/lua/i18n.lua
 
 editor: visual
 

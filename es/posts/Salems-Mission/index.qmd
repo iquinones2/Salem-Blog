@@ -1,0 +1,70 @@
+---
+title: "La misión de Salem"
+author: "Salem"
+date: "2026-05-26"
+image: ../../../images/Salem.jpg
+image-alt: "Logotipo de laureles de Salem Custom Screen Printing"
+categories: [Misión]
+description: "Camisetas personalizadas, hechas con cariño."
+body-classes: salem-post post-mission
+---
+
+::: {.post-photo .is-wide .post-wide}
+![Dentro del taller de Salem, Chicago, Illinois.](../../../posts/Salems-Mission/photos/photo-1.png){fig-alt="El taller de serigrafía de Salem"}
+:::
+
+::: mission-lead
+Salem Custom Screen Printing es un pequeño negocio guiado por la fe que crea ropa personalizada para personas, iglesias, eventos y campamentos juveniles.
+:::
+
+::: pull-quote
+Cada camiseta que imprimimos lleva más que tinta: lleva un mensaje.
+:::
+
+Ya sea para una recaudación de fondos, una camiseta de campamento o un regalo, estamos aquí para ayudarle a compartir lo que más importa.
+
+:::::: {.mission-values .post-wide}
+::: value
+[01]{.value-number}
+
+### Arraigados en la fe
+
+Salem está arraigado en la fe y en el amor por unir a las personas.
+:::
+
+::: value
+[02]{.value-number}
+
+### Hecho con cariño
+
+Cada pedido se imprime y se empaca con cariño en nuestro pequeño taller de Chicago.
+:::
+
+::: value
+[03]{.value-number}
+
+### Hecho para su mensaje
+
+Personas, iglesias, eventos, campamentos juveniles, recaudaciones de fondos y regalos. Sea lo que sea que tenga en mente, le ayudaremos a llevarlo con propósito.
+:::
+::::::
+
+:::: {.photo-pair .post-wide}
+::: {.post-photo .is-tall}
+![Tinta, mallas y una tanda nueva de camisetas.](../../../posts/Salems-Mission/photos/photo-2.png){fig-alt="Materiales de serigrafía en el taller"}
+:::
+
+::: {.post-photo .is-tall}
+![Un pedido terminado, listo para recoger.](../../../posts/Salems-Mission/photos/photo-3.png){fig-alt="Camisetas personalizadas dobladas, listas para recoger"}
+:::
+::::
+
+::: post-signoff
+![](/images/SalemT.png){fig-alt="Logotipo de Salem Custom Screen Printing" width="96"}
+
+**Camisetas personalizadas, hechas con cariño.**
+
+Chicago, Illinois
+
+[Diseñe una camiseta](../../shop.html){.btn-accent} [Escríbale a Salem](https://ig.me/m/salem.csp5){.btn-outline}
+:::

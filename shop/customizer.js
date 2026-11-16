@@ -13,6 +13,98 @@
     { id: "bebas", name: "Bebas Neue", css: '"Bebas Neue", Impact, sans-serif', weight: 400 },
     { id: "caveat", name: "Caveat", css: '"Caveat", cursive', weight: 600 }
   ];
+  /* ---------- Words (en/es, picked by the page's <html lang>) ---------- */
+  const LANG = /^es\b/i.test(document.documentElement.getAttribute("lang") || "") ? "es" : "en";
+  const T = {
+    en: {
+      custom: "Custom", customInk: "Custom ink color", customHex: (hex) => "Custom " + hex,
+      saveFailed: "Couldn’t auto-save this design. Your browser may be blocking storage, or an uploaded image is too large.",
+      undone: "Undone.",
+      badge: (side) => side.toUpperCase() + " · DESIGN PREVIEW",
+      describe: (style, color, side, count) => style + " in " + color + ", " + side + " side, " +
+        (count ? count + " design " + (count === 1 ? "element" : "elements") : "no design yet") + ".",
+      cardImage: (style, color) => style + " in " + color,
+      customize: "Customize this style →",
+      styleSelected: (name) => name + " selected.",
+      notChosenShort: "not chosen", artwork: "Artwork", text: "Text", empty: "(empty)",
+      selected: (kind) => kind + " selected.",
+      shirtColor: (name) => "Shirt color " + name + ".", shirtLabel: (name) => "Shirt: " + name,
+      sizeNoted: (id) => "Size " + id + " noted.", inkLabel: (name) => "Ink: " + name,
+      inkColor: (name) => "Ink color " + name + ".",
+      artworkRow: (name) => "Artwork: " + name,
+      textRow: (text, font, ink) => "Text “" + text + "” · " + font + ", " + ink,
+      style: "Style", color: "Color", size: "Size", notChosen: "Not chosen yet",
+      front: "Front", back: "Back", blank: "Blank",
+      side: (side) => (side === "front" ? "front" : "back"),
+      badType: "Please choose a PNG, JPG, or SVG file.",
+      tooBig: "That file is over 10 MB. Please choose a smaller image.",
+      added: (name, side) => "Artwork " + name + " added to the " + side + ".",
+      unreadable: "That image couldn’t be read. Try a different file.",
+      deleted: (kind) => kind + " deleted. Press Undo to bring it back.",
+      sizeShort: (s) => "Size " + s,
+      downloaded: "Preview downloaded.",
+      downloadFailed: "The preview couldn’t be saved. Open the site from a web server (quarto preview or GitHub Pages), not as a local file.",
+      showing: (side) => "Showing the " + side + ".",
+      textAdded: (side) => "Text added to the " + side + ". Type to change it.",
+      cleared: "Design cleared from both sides. Press Undo to bring it back.",
+      quoteNotSent: "Quote requests aren’t connected yet, so nothing was sent. Download your preview and message Salem on Instagram in the meantime."
+    },
+    es: {
+      custom: "Personalizado", customInk: "Color de tinta personalizado", customHex: (hex) => "Personalizado " + hex,
+      saveFailed: "No se pudo guardar este diseño automáticamente. Puede que su navegador esté bloqueando el almacenamiento o que la imagen subida sea demasiado grande.",
+      undone: "Se deshizo el cambio.",
+      badge: (side) => (side === "front" ? "FRENTE" : "ESPALDA") + " · VISTA PREVIA DEL DISEÑO",
+      describe: (style, color, side, count) => style + " en " + color + ", " + (side === "front" ? "frente" : "espalda") + ", " +
+        (count ? count + " " + (count === 1 ? "elemento" : "elementos") + " de diseño" : "sin diseño todavía") + ".",
+      cardImage: (style, color) => style + " en " + color,
+      customize: "Personalizar este estilo →",
+      styleSelected: (name) => "Estilo elegido: " + name + ".",
+      notChosenShort: "sin elegir", artwork: "Imagen", text: "Texto", empty: "(vacío)",
+      selected: (kind) => "Seleccionado: " + kind.toLowerCase() + ".",
+      shirtColor: (name) => "Color de camiseta: " + name + ".", shirtLabel: (name) => "Camiseta: " + name,
+      sizeNoted: (id) => "Talla " + id + " anotada.", inkLabel: (name) => "Tinta: " + name,
+      inkColor: (name) => "Color de tinta: " + name + ".",
+      artworkRow: (name) => "Imagen: " + name,
+      textRow: (text, font, ink) => "Texto “" + text + "” · " + font + ", " + ink,
+      style: "Estilo", color: "Color", size: "Talla", notChosen: "Sin elegir todavía",
+      front: "Frente", back: "Espalda", blank: "En blanco",
+      side: (side) => (side === "front" ? "el frente" : "la espalda"),
+      badType: "Elija un archivo PNG, JPG o SVG.",
+      tooBig: "Ese archivo pesa más de 10 MB. Elija una imagen más pequeña.",
+      added: (name, side) => "Se agregó la imagen " + name + " a " + side + ".",
+      unreadable: "No se pudo leer esa imagen. Pruebe con otro archivo.",
+      deleted: (kind) => "Se eliminó: " + kind.toLowerCase() + ". Presione Deshacer para recuperarlo.",
+      sizeShort: (s) => "Talla " + s,
+      downloaded: "Vista previa descargada.",
+      downloadFailed: "No se pudo guardar la vista previa. Abra el sitio desde un servidor web (quarto preview o GitHub Pages), no como archivo local.",
+      showing: (side) => "Mostrando " + side + ".",
+      textAdded: (side) => "Se agregó texto a " + side + ". Escriba para cambiarlo.",
+      cleared: "Se borró el diseño de ambos lados. Presione Deshacer para recuperarlo.",
+      quoteNotSent: "Las solicitudes de cotización todavía no están conectadas, así que no se envió nada. Mientras tanto, descargue su vista previa y escríbale a Salem por Instagram."
+    }
+  }[LANG];
+
+  // Image paths in shirt-styles.js are relative to the site root. Pages in a
+  // subfolder (es/shop.html) get Quarto's offset ("../") in front of them.
+  const OFFSET_META = document.querySelector('meta[name="quarto:offset"]');
+  const OFFSET = OFFSET_META ? OFFSET_META.getAttribute("content") : "./";
+  if (OFFSET && OFFSET !== "./") {
+    const fix = (path) => (path && !/^([a-z]+:|\/)/i.test(path) ? OFFSET + path : path);
+    STYLES.forEach((style) => {
+      if (style.mockup) Object.keys(style.mockup).forEach((side) => { style.mockup[side] = fix(style.mockup[side]); });
+      if (style.cardImage) style.cardImage = fix(style.cardImage);
+      (style.colors || []).forEach((c) => {
+        if (c.images) Object.keys(c.images).forEach((side) => { c.images[side] = fix(c.images[side]); });
+      });
+    });
+  }
+
+  // Spanish names/descriptions from shirt-styles.js (`es: {...}`), when present.
+  if (LANG === "es") {
+    STYLES.concat(INKS).forEach((item) => { if (item.es) Object.assign(item, item.es); });
+    STYLES.forEach((style) => (style.colors || []).forEach((c) => { if (c.es) Object.assign(c, c.es); }));
+  }
+
   const STORAGE_KEY = "salem-shirt-design-v1";
   const MAX_HISTORY = 60;
   const MAX_UPLOAD_PX = 1200;
@@ -57,7 +149,7 @@
   function getFont(id) { return FONTS.find((f) => f.id === id) || FONTS[0]; }
   function inkName(hex) {
     const ink = INKS.find((i) => i.hex.toLowerCase() === String(hex).toLowerCase());
-    return ink ? ink.name : "Custom " + hex;
+    return ink ? ink.name : T.customHex(hex);
   }
   function sideLayers() { return state.layers.filter((l) => l.side === state.side); }
   function getLayer(id) { return state.layers.find((l) => l.id === id); }
@@ -84,7 +176,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (err) {
-      announce("Couldn’t auto-save this design. Your browser may be blocking storage, or an uploaded image is too large.");
+      announce(T.saveFailed);
     }
   }
 
@@ -117,7 +209,7 @@
     if (selectedId && !getLayer(selectedId)) selectedId = null;
     saveState();
     render();
-    announce("Undone.");
+    announce(T.undone);
   }
 
   /* ---------- Announcements ---------- */
@@ -216,7 +308,7 @@
     printArea.style.top = area.y * 100 + "%";
     printArea.style.width = area.w * 100 + "%";
     printArea.style.height = area.h * 100 + "%";
-    el("preview-badge").textContent = state.side.toUpperCase() + " · DESIGN PREVIEW";
+    el("preview-badge").textContent = T.badge(state.side);
     document.querySelectorAll(".side-toggle button").forEach((button) => {
       button.setAttribute("aria-pressed", String(button.dataset.side === state.side));
     });
@@ -246,13 +338,13 @@
         img.alt = "";
         img.draggable = false;
         node.appendChild(img);
-        node.setAttribute("aria-label", "Artwork " + layer.name);
+        node.setAttribute("aria-label", T.artwork + " " + layer.name);
       } else {
         const text = document.createElement("span");
         text.className = "layer-text";
         text.textContent = layer.text;
         node.appendChild(text);
-        node.setAttribute("aria-label", "Text " + (layer.text || "(empty)"));
+        node.setAttribute("aria-label", T.text + " " + (layer.text || T.empty));
       }
       ["resize", "rotate"].forEach((kind) => {
         const handle = document.createElement("span");
@@ -266,8 +358,7 @@
       if (layer.id === focusedId) node.focus({ preventScroll: true });
     });
     const count = sideLayers().length;
-    el("preview-description").textContent = getStyle().name + " in " + getColor().name + ", " + state.side +
-      " side, " + (count ? count + " design " + (count === 1 ? "element" : "elements") : "no design yet") + ".";
+    el("preview-description").textContent = T.describe(getStyle().name, getColor().name, state.side, count);
   }
 
   function positionLayer(node, layer, areaW, areaH) {
@@ -296,7 +387,7 @@
     renderControls();
     if (!(options && options.quiet)) {
       const layer = getLayer(id);
-      if (layer) announce((layer.type === "text" ? "Text" : "Artwork") + " selected.");
+      if (layer) announce(T.selected(layer.type === "text" ? T.text : T.artwork));
     }
   }
 
@@ -314,16 +405,16 @@
           ? '<img class="style-card-photo" src="' + style.cardImage + '" alt="">'
           : '<div class="shirt-render"><div class="shirt-tint"></div><img class="shirt-shading" alt=""><img class="shirt-photo" alt="" hidden></div>';
         card.innerHTML =
-          '<span class="style-card-image" role="img" aria-label="' + escapeAttr(style.name + " in " + first.name) + '">' + visual + "</span>" +
+          '<span class="style-card-image" role="img" aria-label="' + escapeAttr(T.cardImage(style.name, first.name)) + '">' + visual + "</span>" +
           '<span class="style-card-name"></span><span class="style-card-description"></span>' +
-          '<span class="style-card-action">Customize this style →</span>';
+          '<span class="style-card-action">' + T.customize + "</span>";
         card.querySelector(".style-card-name").textContent = style.name;
         card.querySelector(".style-card-description").textContent = style.description;
         if (!style.cardImage) paintShirt(card.querySelector(".shirt-render"), style, first, "front");
         card.addEventListener("click", () => {
           if (state.styleId !== style.id) {
             change(() => setStyle(style.id));
-            announce(style.name + " selected.");
+            announce(T.styleSelected(style.name));
           }
           el("customizer").scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
           el("customizer-heading").focus({ preventScroll: true });
@@ -362,28 +453,28 @@
     renderRadioGroup(el("shirt-swatches"), style.colors.map((c) => ({ id: c.id, label: c.name, hex: c.hex })),
       color.id, (id) => {
         change(() => { state.colorId = id; });
-        announce("Shirt color " + getColor().name + ".");
+        announce(T.shirtColor(getColor().name));
       }, "swatch");
     el("shirt-color-name").textContent = color.name;
-    el("selected-shirt").textContent = "Shirt: " + color.name;
+    el("selected-shirt").textContent = T.shirtLabel(color.name);
 
     // Sizes
     renderRadioGroup(el("size-options"), style.sizes.map((s) => ({ id: s, label: s })), state.size, (id) => {
       change(() => { state.size = id; });
-      announce("Size " + id + " noted.");
+      announce(T.sizeNoted(id));
     }, "size");
-    el("size-name").textContent = state.size || "not chosen";
+    el("size-name").textContent = state.size || T.notChosenShort;
 
     // Text controls reflect the selected text layer, or the defaults for new text
     const ink = textLayer ? textLayer.color : state.ink;
     const fontId = textLayer ? textLayer.font : state.font;
     const size = textLayer ? textLayer.size : state.textSize;
     renderRadioGroup(el("ink-swatches"), INKS.map((i) => ({ id: i.hex, label: i.name, hex: i.hex }))
-      .concat([{ id: "custom", label: "Custom", custom: true }]),
+      .concat([{ id: "custom", label: T.custom, custom: true }]),
       INKS.some((i) => i.hex.toLowerCase() === ink.toLowerCase()) ? INKS.find((i) => i.hex.toLowerCase() === ink.toLowerCase()).hex : "custom",
       (id) => { if (id !== "custom") setInk(id); }, "swatch", ink);
     el("ink-color-name").textContent = inkName(ink);
-    el("selected-ink").textContent = "Ink: " + inkName(ink);
+    el("selected-ink").textContent = T.inkLabel(inkName(ink));
 
     const fontSelect = el("text-font");
     if (!fontSelect.options.length) {
@@ -434,7 +525,7 @@
             picker.setAttribute("aria-hidden", "true");
             picker.addEventListener("input", () => setInk(picker.value, true));
             option.appendChild(picker);
-            button.setAttribute("aria-label", "Custom ink color");
+            button.setAttribute("aria-label", T.customInk);
             button.addEventListener("click", () => picker.click());
           } else {
             button.style.setProperty("--swatch", item.hex);
@@ -467,7 +558,7 @@
       button.setAttribute("aria-checked", String(checked));
       button.tabIndex = checked || (!selected && button === buttons[0]) ? 0 : -1;
       const label = button.parentElement.querySelector(".swatch-label");
-      if (label) label.textContent = (checked ? "✓ " : "") + (button.classList.contains("is-custom") ? "Custom" : button.getAttribute("aria-label"));
+      if (label) label.textContent = (checked ? "✓ " : "") + (button.classList.contains("is-custom") ? T.custom : button.getAttribute("aria-label"));
       if (button.classList.contains("is-custom")) {
         const picker = button.parentElement.querySelector(".swatch-picker");
         if (customHex && /^#[0-9a-f]{6}$/i.test(customHex)) picker.value = customHex;
@@ -482,26 +573,26 @@
       state.ink = hex;
       if (layer && layer.type === "text") layer.color = hex;
     }, { group: isCustom ? "ink-custom" : null });
-    if (!isCustom) announce("Ink color " + inkName(hex) + ".");
+    if (!isCustom) announce(T.inkColor(inkName(hex)));
   }
 
   /* ---------- Summary ---------- */
   function describeLayer(layer) {
-    if (layer.type === "image") return "Artwork: " + layer.name;
-    return "Text “" + (layer.text || "").replace(/\s+/g, " ").trim() + "” · " + getFont(layer.font).name + ", " + inkName(layer.color);
+    if (layer.type === "image") return T.artworkRow(layer.name);
+    return T.textRow((layer.text || "").replace(/\s+/g, " ").trim(), getFont(layer.font).name, inkName(layer.color));
   }
 
   function renderSummary() {
     const style = getStyle();
     el("summary-title").textContent = style.name;
     const rows = [
-      ["Style", style.name],
-      ["Color", getColor().name],
-      ["Size", state.size || "Not chosen yet"]
+      [T.style, style.name],
+      [T.color, getColor().name],
+      [T.size, state.size || T.notChosen]
     ];
     ["front", "back"].forEach((side) => {
       const layers = state.layers.filter((l) => l.side === side);
-      rows.push([side === "front" ? "Front" : "Back", layers.length ? layers.map(describeLayer) : ["Blank"]]);
+      rows.push([side === "front" ? T.front : T.back, layers.length ? layers.map(describeLayer) : [T.blank]]);
     });
     const list = el("summary-list");
     list.replaceChildren();
@@ -533,8 +624,8 @@
   function handleFile(file) {
     if (!file) return;
     const okType = /^image\/(png|jpeg|svg\+xml)$/.test(file.type) || /\.(png|jpe?g|svg)$/i.test(file.name);
-    if (!okType) { announce("Please choose a PNG, JPG, or SVG file."); return; }
-    if (file.size > MAX_UPLOAD_BYTES) { announce("That file is over 10 MB. Please choose a smaller image."); return; }
+    if (!okType) { announce(T.badType); return; }
+    if (file.size > MAX_UPLOAD_BYTES) { announce(T.tooBig); return; }
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
@@ -555,9 +646,9 @@
         };
         change(() => { state.layers.push(layer); });
         selectLayer(layer.id, { quiet: true });
-        announce("Artwork " + file.name + " added to the " + state.side + ".");
+        announce(T.added(file.name, T.side(state.side)));
       };
-      img.onerror = () => announce("That image couldn’t be read. Try a different file.");
+      img.onerror = () => announce(T.unreadable);
       img.src = reader.result;
     };
     reader.readAsDataURL(file);
@@ -677,7 +768,7 @@
     change(() => { state.layers = state.layers.filter((l) => l.id !== layer.id); });
     selectedId = null;
     renderControls();
-    announce((layer.type === "text" ? "Text" : "Artwork") + " deleted. Press Undo to bring it back.");
+    announce(T.deleted(layer.type === "text" ? T.text : T.artwork));
   }
 
   /* ---------- Download preview ---------- */
@@ -755,7 +846,7 @@
       ctx.font = '500 22px "Inter", system-ui, sans-serif';
       ctx.fillStyle = "#1b2a41";
       ctx.textBaseline = "alphabetic";
-      ctx.fillText(["SALEM", style.name, color.name, state.size ? "Size " + state.size : null, state.side === "front" ? "Front" : "Back"]
+      ctx.fillText(["SALEM", style.name, color.name, state.size ? T.sizeShort(state.size) : null, state.side === "front" ? T.front : T.back]
         .filter(Boolean).join("  ·  "), 36, S - 36);
 
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
@@ -767,9 +858,9 @@
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-      announce("Preview downloaded.");
+      announce(T.downloaded);
     } catch (err) {
-      announce("The preview couldn’t be saved. Open the site from a web server (quarto preview or GitHub Pages), not as a local file.");
+      announce(T.downloadFailed);
     } finally {
       button.disabled = false;
     }
@@ -793,7 +884,7 @@
 
   el("garment-select").addEventListener("change", (event) => {
     change(() => setStyle(event.target.value));
-    announce(getStyle().name + " selected.");
+    announce(T.styleSelected(getStyle().name));
   });
 
   document.querySelectorAll(".side-toggle button").forEach((button) => {
@@ -801,7 +892,7 @@
       if (state.side === button.dataset.side) return;
       selectedId = null;
       change(() => { state.side = button.dataset.side; });
-      announce("Showing the " + state.side + ".");
+      announce(T.showing(T.side(state.side)));
     });
   });
 
@@ -811,7 +902,7 @@
     textarea.value = "GATHER IN GRACE";
     textarea.focus();
     textarea.select();
-    announce("Text added to the " + state.side + ". Type to change it.");
+    announce(T.textAdded(T.side(state.side)));
   });
 
   el("shirt-text").addEventListener("input", (event) => {
@@ -864,7 +955,7 @@
   el("reset-button").addEventListener("click", () => {
     selectedId = null;
     change(() => { state.layers = []; });
-    announce("Design cleared from both sides. Press Undo to bring it back.");
+    announce(T.cleared);
   });
   el("download-button").addEventListener("click", downloadPreview);
 
@@ -885,7 +976,7 @@
       form.reportValidity();
       return;
     }
-    status.textContent = "Quote requests aren’t connected yet, so nothing was sent. Download your preview and message Salem on Instagram in the meantime.";
+    status.textContent = T.quoteNotSent;
   });
 
   // Re-render when the preview resizes (layout changes, rotation) and once fonts load.

@@ -1,0 +1,146 @@
+---
+pagetitle: "Darse de baja · Salem"
+page-layout: custom
+body-classes: salem-home salem-about salem-list-page
+header-includes: |
+    <meta name="robots" content="noindex">
+    <meta name="referrer" content="no-referrer">
+---
+
+```{=html}
+<section class="list-status-page">
+  <!-- Paso 1: confirmar. Nunca dar de baja al cargar la página (los filtros de correo abren los enlaces). -->
+  <div class="list-status" data-view="confirm">
+    <p class="section-label">Salir de la lista de Salem</p>
+    <h1 class="list-status-heading" tabindex="-1">¿Darse de baja de los correos de Salem?</h1>
+    <p class="list-status-lede">Dejará de recibir los correos de publicaciones, las historias del taller y las ofertas de temporada de Salem, y sus datos se eliminarán de nuestra lista.</p>
+    <p class="list-status-copy">¿Prefiere recibir menos? Puede cambiar sus intereses.</p>
+    <div class="list-status-actions list-status-actions--stacked">
+      <button type="button" class="btn-accent" id="unsubscribe-button">
+        <span id="unsubscribe-label">Darme de baja</span>
+        <img src="../images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
+      </button>
+      <a class="btn-outline" href="preferences.html">
+        Mejor actualizar mis intereses
+        <img src="../images/icons/arrow-up-right.svg" width="19" height="19" alt="">
+      </a>
+    </div>
+    <p class="list-form-status" id="unsubscribe-status" role="status"></p>
+  </div>
+
+  <!-- Paso 2: listo -->
+  <div class="list-status" data-view="done" hidden>
+    <span class="list-status-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="24" height="24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <p class="section-label">Baja confirmada</p>
+    <h1 class="list-status-heading" tabindex="-1">Ya salió de la lista.</h1>
+    <p class="list-status-lede" id="done-lede">Se dio de baja de los correos de Salem y sus datos se eliminaron de nuestra lista. No recibirá más correos de publicaciones de nuestra parte.</p>
+    <p class="list-status-copy">Gracias por pasar un tiempo en el círculo de Salem. Puede seguir visitando el diario para leer historias del taller y ver ofertas de temporada.</p>
+    <div class="list-status-actions list-status-actions--stacked">
+      <a class="btn-accent" href="subscribe.html">
+        Volver a la lista de Salem
+        <img src="../images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
+      </a>
+      <a class="btn-outline" href="index.html#journal">
+        Volver al diario
+        <img src="../images/icons/arrow-up-right.svg" width="19" height="19" alt="">
+      </a>
+    </div>
+    <p class="list-status-note">¿Cambió de opinión? Volver a inscribirse siempre es su decisión.</p>
+  </div>
+
+  <!-- Sin enlace del correo: darse de baja aquí con nombre y correo -->
+  <div class="list-status" data-view="request" hidden>
+    <p class="section-label">Salir de la lista de Salem</p>
+    <h1 class="list-status-heading" tabindex="-1">Darse de baja de los correos de Salem.</h1>
+    <p class="list-status-lede">Escriba el nombre y el correo con los que se inscribió. Sus datos se eliminarán de nuestra lista y no recibirá más correos de Salem.</p>
+    <form class="list-resend" id="leave-form" novalidate>
+      <div class="list-honeypot" aria-hidden="true">
+        <label for="leave-website">Sitio web</label>
+        <input type="text" id="leave-website" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="field-pair">
+        <div class="form-field">
+          <label for="leave-first">Nombre</label>
+          <input class="field-input" type="text" id="leave-first" autocomplete="given-name" placeholder="Nombre" required>
+        </div>
+        <div class="form-field">
+          <label for="leave-last">Apellido</label>
+          <input class="field-input" type="text" id="leave-last" autocomplete="family-name" placeholder="Apellido" required>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="leave-email">Correo electrónico</label>
+        <input class="field-input" type="email" id="leave-email" autocomplete="email" placeholder="usted@ejemplo.com" required>
+      </div>
+      <button type="submit" class="btn-accent" id="leave-button">
+        <span id="leave-label">Darme de baja</span>
+        <img src="../images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
+      </button>
+      <p class="list-form-status" id="leave-status" role="status"></p>
+    </form>
+    <p class="list-status-note">¿Cambió de opinión? <a class="list-text-link" href="subscribe.html">Quedarme en la lista de Salem</a>.</p>
+  </div>
+
+  <!-- Sin token, o un token que ya no coincide con nadie -->
+  <div class="list-status" data-view="missing" hidden>
+    <p class="section-label">Enlace no reconocido</p>
+    <h1 class="list-status-heading" tabindex="-1">No encontramos ese enlace.</h1>
+    <p class="list-status-lede">Puede que esté incompleto o que sea de antes de su última inscripción. Cada inscripción recibe un enlace nuevo.</p>
+    <p class="list-status-copy">Escriba su correo y le enviaremos un enlace nuevo para darse de baja o actualizar sus intereses.</p>
+      <form class="list-resend" data-resend-form novalidate>
+        <div class="form-field">
+          <label for="resend-email">Correo electrónico</label>
+          <input class="field-input" type="email" id="resend-email" autocomplete="email" placeholder="usted@ejemplo.com" required aria-describedby="resend-status">
+        </div>
+        <button type="submit" class="btn-accent">
+          Envíenme un enlace nuevo
+          <img src="../images/icons/arrow-up-right-light.svg" width="19" height="19" alt="">
+        </button>
+        <p class="list-form-status" id="resend-status" role="status"></p>
+      </form>
+    <p class="list-status-note"><button type="button" class="list-text-link" id="use-leave-form">Mejor darme de baja con mi nombre y correo</button></p>
+  </div>
+</section>
+
+<section class="salem-circle">
+  <div class="footer-nav">
+    <div class="brand-signoff">
+      <div class="salem-brand">
+        <span class="wordmark">SALEM</span>
+        <span class="brand-descriptor" lang="en">CUSTOM SCREEN<br>PRINTING</span>
+      </div>
+      <p>Chicago, Illinois<br>Camisetas personalizadas, hechas con cariño.</p>
+    </div>
+    <div class="footer-links">
+      <div>
+        <p class="section-label">Explorar</p>
+        <a href="shop.html">Tienda</a>
+        <a href="index.html#journal">El diario</a>
+        <a href="about.html">Sobre Salem</a>
+        <a href="subscribe.html">Únase a la lista de Salem</a>
+      </div>
+      <div>
+        <p class="section-label">Síganos</p>
+        <a href="https://www.instagram.com/salem.csp5/" target="_blank" rel="noopener">Instagram ↗</a>
+        <a href="https://www.facebook.com/profile.php?id=61590308556408" target="_blank" rel="noopener">Facebook ↗</a>
+      </div>
+    </div>
+  </div>
+  <hr class="section-rule">
+  <div class="footer-small-print">
+    <span>© 2026 Salem Custom Screen Printing</span>
+    <span>Hecho con cariño. Llevado con propósito.</span>
+  </div>
+</section>
+
+<a class="chat-button" href="https://ig.me/m/salem.csp5" target="_blank" rel="noopener">
+  <img src="../images/icons/message-circle-light.svg" width="20" height="20" alt="">
+  Escríbale a Salem
+</a>
+
+<script src="../assets/js/config.js?v=2026-11-16b"></script>
+<script src="../assets/js/subscriber-store.js?v=2026-11-16b"></script>
+<script src="../assets/js/unsubscribe-page.js?v=2026-11-16b"></script>
+```

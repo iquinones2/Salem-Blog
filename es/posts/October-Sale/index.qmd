@@ -1,0 +1,94 @@
+---
+title: "¡Llegó el otoño!"
+author: "Salem"
+date: "2026-09-23"
+image: ../../../posts/October-Sale/fall-thumb.jpg
+image-alt: "Camisetas personalizadas en colores de otoño para la oferta de octubre"
+description: "¡Aproveche nuestra oferta de octubre!"
+categories: [Ofertas]
+body-classes: salem-post post-fall
+---
+
+:::::: {.offer-split .column-page}
+::: offer-flyer
+![](../../../posts/October-Sale/OctoberImg.jpg){fig-alt="Volante de la oferta de octubre (en inglés): camisetas personalizadas, un color de tinta, un lado, $16.50 por camiseta"}
+:::
+
+:::: offer-panel
+[Oferta de octubre · Chicago, Illinois]{.section-label}
+
+::: shirt-price
+[\$16.50]{.price} [por camiseta]{.price-unit}
+:::
+
+Su diseño personalizado. Un color de tinta, un lado.
+
+[Mínimo 6 camisetas · Sin costo de preparación]{.offer-minimum}
+
+------------------------------------------------------------------------
+
+Entrega gratis en el área de Chicago\
+Envío gratis en pedidos de \$300\
+Producción rápida
+
+[Pida una cotización](https://ig.me/m/salem.csp5){.btn-light}
+::::
+::::::
+
+:::::: {.press-strip .post-wide}
+[Recién salidas de la prensa]{.section-label}
+
+### Colores de otoño, su mensaje.
+
+::::: press-grid
+::: {.post-photo .is-square}
+![](../../../posts/October-Sale/photos/photo-1.png){fig-alt="Camisetas personalizadas de otoño de la oferta de octubre"}
+:::
+
+::: {.post-photo .is-square}
+![](../../../posts/October-Sale/photos/photo-2.png){fig-alt="Camisetas personalizadas de otoño de la oferta de octubre"}
+:::
+
+::: {.post-photo .is-square}
+![](../../../posts/October-Sale/photos/photo-3.png){fig-alt="Camisetas personalizadas de otoño de la oferta de octubre"}
+:::
+:::::
+::::::
+
+::::::: {.order-steps .post-wide}
+[Cómo funciona la oferta]{.section-label}
+
+:::::: steps-grid
+::: step
+[01]{.value-number}
+
+### Describa
+
+Cuéntenos su diseño, la cantidad (6 o más), el tipo de camiseta y la fecha límite.
+:::
+
+::: step
+[02]{.value-number}
+
+### Pida una cotización
+
+Confirmaremos los detalles, el precio y los tiempos antes de que usted se comprometa.
+:::
+
+::: step
+[03]{.value-number}
+
+### Recoja
+
+Una vez aprobado, sus camisetas se imprimen, se empacan y quedan listas para recoger o entregar.
+:::
+::::::
+:::::::
+
+::: post-signoff
+**Promoción de octubre de 2026.**
+
+Un color de tinta, un lado, mínimo 6 camisetas.
+
+[Diseñe su camiseta](../../shop.html){.btn-accent} [Escríbale a Salem](https://ig.me/m/salem.csp5){.btn-outline}
+:::

@@ -3,6 +3,7 @@ title: "Salem's Mission"
 author: "Salem"
 date: "2026-05-26"
 image: ../../images/Salem.jpg
+image-alt: "Salem Custom Screen Printing laurel logo"
 categories: [Mission]
 description: "Custom shirts, made with care."
 body-classes: salem-post post-mission

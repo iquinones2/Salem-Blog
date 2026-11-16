@@ -1,0 +1,4 @@
+# Spanish site. Every page under es/ mirrors the English page with the same path
+# (es/shop.qmd <-> shop.qmd). `lang: es` sets <html lang="es">, which picks the
+# Spanish text in the site scripts and translates the navbar.
+lang: es

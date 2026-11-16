@@ -66,30 +66,7 @@ header-includes: |
   Chat with Salem
 </a>
 
-<script src="assets/js/config.js?v=2026-11-16"></script>
-<script src="assets/js/subscriber-store.js?v=2026-11-16"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  // Details handed over by the subscribe form (sessionStorage, never the URL).
-  const welcome = SalemList.recall("welcome");
-  if (!welcome) return; // generic confirmation
-
-  const name = (welcome.firstName || "").trim();
-  const withName = function (text) { return name ? text + ", " + name + "." : text + "."; };
-  const heading = document.getElementById("welcome-heading");
-  const lede = document.getElementById("welcome-lede");
-  const copy = document.getElementById("welcome-copy");
-
-  if (welcome.status === "resubscribed") {
-    heading.textContent = withName("Welcome back");
-    lede.textContent = "You are subscribed to Salem Custom Screen Printing again.";
-    copy.textContent = "We’re glad you’re back. Look out for a welcome note in your inbox with fresh links to manage your emails.";
-  } else if (welcome.audience === "returning") {
-    heading.textContent = withName("Good to see you again");
-    copy.textContent = "We’ll let you know when custom order spots open, so your next round of shirts is easy. Look out for a welcome note in your inbox.";
-  } else {
-    heading.textContent = withName("Welcome to Salem");
-  }
-});
-</script>
+<script src="assets/js/config.js?v=2026-11-16b"></script>
+<script src="assets/js/subscriber-store.js?v=2026-11-16b"></script>
+<script src="assets/js/subscribed-page.js?v=2026-11-16b"></script>
 ```

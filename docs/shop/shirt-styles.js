@@ -17,6 +17,10 @@
                  photo of that color instead of tinting.
      cardImage   (optional) Photo for the style card. If left out, the
                  card shows the front mockup in the first color.
+     es          (optional) Spanish text for the Spanish shop page:
+                 { name: "...", description: "..." } on a style,
+                 { name: "..." } on a color or ink. Leave it out and the
+                 Spanish page shows the English name.
 
    Image paths are relative to the site root (where shop.qmd lives).
    ========================================================== */
@@ -26,6 +30,7 @@ window.SALEM_SHIRT_STYLES = [
     id: "crew-tee",
     name: "Classic crew tee",
     description: "Soft everyday cotton with a ribbed crew neck. Our most-printed shirt.",
+    es: { name: "Camiseta clásica de cuello redondo", description: "Algodón suave para todos los días, con cuello redondo acanalado. La camiseta que más imprimimos." },
     sizes: ["S", "M", "L", "XL", "XXL"],
     mockup: {
       front: "images/shop/crew-tee-front.svg",
@@ -36,10 +41,10 @@ window.SALEM_SHIRT_STYLES = [
       back: { x: 0.35, y: 0.22, w: 0.30, h: 0.48 }
     },
     colors: [
-      { id: "navy", name: "Navy", hex: "#1b2a41" },
-      { id: "cream", name: "Cream", hex: "#efe8d8" },
-      { id: "denim", name: "Denim", hex: "#2f5d8c" },
-      { id: "black", name: "Black", hex: "#1c1c1e" }
+      { id: "navy", name: "Navy", hex: "#1b2a41", es: { name: "Azul marino" } },
+      { id: "cream", name: "Cream", hex: "#efe8d8", es: { name: "Crema" } },
+      { id: "denim", name: "Denim", hex: "#2f5d8c", es: { name: "Mezclilla" } },
+      { id: "black", name: "Black", hex: "#1c1c1e", es: { name: "Negro" } }
       // Example with real photos:
       // { id: "heather", name: "Heather grey", hex: "#9ea3a8",
       //   images: { front: "images/shop/crew-heather-front.jpg",
@@ -50,6 +55,7 @@ window.SALEM_SHIRT_STYLES = [
     id: "v-neck-tee",
     name: "V-neck tee",
     description: "A lighter, relaxed fit with a clean V neckline for warm-weather events.",
+    es: { name: "Camiseta cuello en V", description: "Más ligera y de corte holgado, con un cuello en V limpio para eventos en días cálidos." },
     sizes: ["S", "M", "L", "XL", "XXL"],
     mockup: {
       front: "images/shop/v-neck-tee-front.svg",
@@ -60,16 +66,17 @@ window.SALEM_SHIRT_STYLES = [
       back: { x: 0.35, y: 0.22, w: 0.30, h: 0.48 }
     },
     colors: [
-      { id: "cream", name: "Cream", hex: "#efe8d8" },
-      { id: "sage", name: "Sage", hex: "#8f9f86" },
-      { id: "denim", name: "Denim", hex: "#2f5d8c" },
-      { id: "rust", name: "Rust", hex: "#a44e30" }
+      { id: "cream", name: "Cream", hex: "#efe8d8", es: { name: "Crema" } },
+      { id: "sage", name: "Sage", hex: "#8f9f86", es: { name: "Verde salvia" } },
+      { id: "denim", name: "Denim", hex: "#2f5d8c", es: { name: "Mezclilla" } },
+      { id: "rust", name: "Rust", hex: "#a44e30", es: { name: "Óxido" } }
     ]
   },
   {
     id: "long-sleeve",
     name: "Long sleeve tee",
     description: "Midweight cotton with ribbed cuffs, made for fall gatherings and camp nights.",
+    es: { name: "Camiseta de manga larga", description: "Algodón de peso medio con puños acanalados, hecha para reuniones de otoño y noches de campamento." },
     sizes: ["S", "M", "L", "XL", "XXL"],
     mockup: {
       front: "images/shop/long-sleeve-front.svg",
@@ -80,19 +87,19 @@ window.SALEM_SHIRT_STYLES = [
       back: { x: 0.35, y: 0.22, w: 0.30, h: 0.48 }
     },
     colors: [
-      { id: "black", name: "Black", hex: "#1c1c1e" },
-      { id: "navy", name: "Navy", hex: "#1b2a41" },
-      { id: "forest", name: "Forest", hex: "#2f4a3a" },
-      { id: "white", name: "White", hex: "#f7f8f6" }
+      { id: "black", name: "Black", hex: "#1c1c1e", es: { name: "Negro" } },
+      { id: "navy", name: "Navy", hex: "#1b2a41", es: { name: "Azul marino" } },
+      { id: "forest", name: "Forest", hex: "#2f4a3a", es: { name: "Verde bosque" } },
+      { id: "white", name: "White", hex: "#f7f8f6", es: { name: "Blanco" } }
     ]
   }
 ];
 
 /* Ink colors offered for text (a custom color picker is also shown). */
 window.SALEM_INK_COLORS = [
-  { id: "warm-white", name: "Warm white", hex: "#f7f4ec" },
-  { id: "navy", name: "Navy", hex: "#1b2a41" },
-  { id: "denim", name: "Denim", hex: "#2f5d8c" },
-  { id: "rust", name: "Rust", hex: "#a44e30" },
-  { id: "black", name: "Black", hex: "#1c1c1e" }
+  { id: "warm-white", name: "Warm white", hex: "#f7f4ec", es: { name: "Blanco cálido" } },
+  { id: "navy", name: "Navy", hex: "#1b2a41", es: { name: "Azul marino" } },
+  { id: "denim", name: "Denim", hex: "#2f5d8c", es: { name: "Mezclilla" } },
+  { id: "rust", name: "Rust", hex: "#a44e30", es: { name: "Óxido" } },
+  { id: "black", name: "Black", hex: "#1c1c1e", es: { name: "Negro" } }
 ];

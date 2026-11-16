@@ -1,0 +1,201 @@
+<script>
+/*
+ * Salem site settings (included in every page's <head> from _quarto.yml).
+ *   - Applies the saved text size before the page draws (no flash).
+ *   - Adds the header "Español"/"English" link and the gear (settings) button + panel:
+ *       Appearance: Light / Dark / Auto   (stored in Quarto's own "quarto-color-scheme" key;
+ *                                          no key = Auto = follow the device)
+ *       Language:   English / Español     (links to the same page in the other language)
+ *       Text size:  Normal / Larger       ("salem-text-size")
+ *   - On Spanish pages (<html lang="es">), translates the navbar and points it at /es/ pages.
+ * Every storage call is wrapped in try/catch: the site works without storage.
+ * Colors for both themes live in styles.css (body.quarto-dark).
+ */
+(function () {
+  "use strict";
+  var THEME_KEY = "quarto-color-scheme";
+  var TEXT_KEY = "salem-text-size";
+  var root = document.documentElement;
+
+  function load(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } }
+  function save(key, value) {
+    try {
+      if (value == null) window.localStorage.removeItem(key);
+      else window.localStorage.setItem(key, value);
+    } catch (e) { /* private mode or blocked storage: the choice just isn't remembered */ }
+  }
+
+  // 1. Text size, before anything draws.
+  if (load(TEXT_KEY) === "large") root.setAttribute("data-text-size", "large");
+
+  var isSpanish = /^es\b/i.test(root.getAttribute("lang") || "");
+  var T = isSpanish ? {
+    settings: "Configuración", appearance: "Apariencia", light: "Claro", dark: "Oscuro",
+    auto: "Automático (según su dispositivo)", language: "Idioma", textSize: "Tamaño del texto",
+    normal: "Normal", larger: "Más grande", done: "Listo",
+    nav: { "shop.html": "Tienda", "index.html#journal": "Diario", "about.html": "Nosotros", "subscribe.html": "Únase a la lista de Salem" }
+  } : {
+    settings: "Settings", appearance: "Appearance", light: "Light", dark: "Dark",
+    auto: "Auto (match my device)", language: "Language", textSize: "Text size",
+    normal: "Normal", larger: "Larger", done: "Done", nav: {}
+  };
+
+  /* ---------- Paths: same page in the other language ---------- */
+  // The site root, from Quarto's per-page offset (works on GitHub Pages and in quarto preview).
+  function siteRoot() {
+    var meta = document.querySelector('meta[name="quarto:offset"]');
+    return new URL(meta ? meta.getAttribute("content") : "./", window.location.href);
+  }
+  // Path of a URL relative to the site root, e.g. "shop.html", "es/posts/Rooted/".
+  function relPath(url) {
+    var r = siteRoot().pathname;
+    return url.pathname.indexOf(r) === 0 ? url.pathname.slice(r.length) : null;
+  }
+  function otherLanguageHref() {
+    var r = siteRoot();
+    // A page that exists in both languages names its twin (added by assets/lua/i18n.lua).
+    var meta = document.querySelector('meta[name="salem:alternate"]');
+    if (meta) return new URL(meta.getAttribute("content"), r).href + window.location.hash;
+    return new URL(isSpanish ? "index.html" : "es/index.html", r).href; // no twin: the other home page
+  }
+
+  /* ---------- Theme (drives Quarto's light/dark switch) ---------- */
+  function themeChoice() {
+    var v = load(THEME_KEY);
+    return v === "alternate" ? "dark" : v === "default" ? "light" : "auto";
+  }
+  function systemDark() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }
+  function setTheme(choice) {
+    var wantDark = choice === "dark" || (choice === "auto" && systemDark());
+    var isDark = document.body.classList.contains("quarto-dark");
+    if (wantDark !== isDark && typeof window.quartoToggleColorScheme === "function") {
+      window.quartoToggleColorScheme(); // switches the stylesheets and saves a choice
+    }
+    save(THEME_KEY, choice === "auto" ? null : (choice === "dark" ? "alternate" : "default"));
+  }
+
+  function setTextSize(size) {
+    if (size === "large") root.setAttribute("data-text-size", "large");
+    else root.removeAttribute("data-text-size");
+    save(TEXT_KEY, size === "large" ? "large" : null);
+  }
+
+  /* ---------- Spanish navbar ---------- */
+  function translateNavbar() {
+    if (!isSpanish) return;
+    var r = siteRoot();
+    document.querySelectorAll("#quarto-header a.nav-link, #quarto-header a.navbar-brand").forEach(function (a) {
+      var url = new URL(a.getAttribute("href") || "", window.location.href);
+      if (url.origin !== window.location.origin) return; // Instagram, Facebook
+      var rel = relPath(url);
+      if (rel == null || /^es\//.test(rel)) return;
+      var key = (rel || "index.html") + url.hash;
+      var label = a.querySelector(".menu-text");
+      if (label && T.nav[key]) label.textContent = T.nav[key];
+      var target = new URL("es/" + (rel || "index.html"), r);
+      a.setAttribute("href", target.href + url.hash);
+      // Quarto marks the current page by its English path; mark the Spanish one instead.
+      if (a.classList.contains("nav-link")) {
+        var here = target.pathname === window.location.pathname && !url.hash;
+        a.classList.toggle("active", here);
+        if (here) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      }
+    });
+    root.classList.add("salem-nav-ready");
+  }
+
+  /* ---------- Header tools: language link + gear panel ---------- */
+  var GEAR = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" ' +
+    'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/>' +
+    '<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+
+  function radio(name, value, label, checked) {
+    return '<label class="salem-settings-option"><input type="radio" name="' + name + '" value="' + value + '"' +
+      (checked ? " checked" : "") + '><span>' + label + "</span></label>";
+  }
+
+  function buildTools() {
+    var nav = document.querySelector("#quarto-header .navbar-container");
+    if (!nav || document.querySelector(".salem-tools")) return;
+    var tools = nav.querySelector(".quarto-navbar-tools");
+    if (!tools) {
+      tools = document.createElement("div");
+      tools.className = "quarto-navbar-tools";
+      nav.appendChild(tools);
+    }
+
+    var otherHref = otherLanguageHref();
+    var enHref = isSpanish ? otherHref : window.location.href.split("?")[0];
+    var esHref = isSpanish ? window.location.href.split("?")[0] : otherHref;
+    var theme = themeChoice();
+    var large = root.getAttribute("data-text-size") === "large";
+
+    var wrap = document.createElement("div");
+    wrap.className = "salem-tools";
+    wrap.innerHTML =
+      '<a class="salem-lang-link" href="' + otherHref + '" lang="' + (isSpanish ? "en" : "es") + '" hreflang="' +
+        (isSpanish ? "en" : "es") + '">' + (isSpanish ? "English" : "Español") + "</a>" +
+      '<button type="button" class="salem-settings-button" aria-expanded="false" aria-controls="salem-settings-panel" aria-label="' +
+        T.settings + '">' + GEAR + "</button>" +
+      '<div class="salem-settings-panel" id="salem-settings-panel" role="group" aria-labelledby="salem-settings-title" hidden>' +
+        '<p class="salem-settings-title" id="salem-settings-title">' + T.settings + "</p>" +
+        '<fieldset><legend>' + T.appearance + "</legend>" +
+          radio("salem-theme", "light", T.light, theme === "light") +
+          radio("salem-theme", "dark", T.dark, theme === "dark") +
+          radio("salem-theme", "auto", T.auto, theme === "auto") +
+        "</fieldset>" +
+        '<div class="salem-settings-group" role="group" aria-labelledby="salem-settings-lang">' +
+          '<p class="salem-settings-legend" id="salem-settings-lang">' + T.language + "</p>" +
+          '<a class="salem-settings-option" href="' + enHref + '" lang="en" hreflang="en"' + (isSpanish ? "" : ' aria-current="true"') + "><span>English</span></a>" +
+          '<a class="salem-settings-option" href="' + esHref + '" lang="es" hreflang="es"' + (isSpanish ? ' aria-current="true"' : "") + "><span>Español</span></a>" +
+        "</div>" +
+        '<fieldset><legend>' + T.textSize + "</legend>" +
+          radio("salem-text", "normal", T.normal, !large) +
+          radio("salem-text", "large", T.larger, large) +
+        "</fieldset>" +
+        '<button type="button" class="salem-settings-done">' + T.done + "</button>" +
+      "</div>";
+    tools.appendChild(wrap);
+
+    var button = wrap.querySelector(".salem-settings-button");
+    var panel = wrap.querySelector(".salem-settings-panel");
+
+    function open() {
+      panel.hidden = false;
+      button.setAttribute("aria-expanded", "true");
+    }
+    function close(returnFocus) {
+      if (panel.hidden) return;
+      panel.hidden = true;
+      button.setAttribute("aria-expanded", "false");
+      if (returnFocus) button.focus();
+    }
+
+    button.addEventListener("click", function () { panel.hidden ? open() : close(false); });
+    wrap.querySelector(".salem-settings-done").addEventListener("click", function () { close(true); });
+    wrap.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !panel.hidden) { e.preventDefault(); close(true); }
+    });
+    document.addEventListener("click", function (e) { if (!wrap.contains(e.target)) close(false); });
+    wrap.addEventListener("focusout", function (e) {
+      if (e.relatedTarget && !wrap.contains(e.relatedTarget)) close(false); // tabbed away
+    });
+
+    panel.querySelectorAll('input[name="salem-theme"]').forEach(function (input) {
+      input.addEventListener("change", function () { setTheme(input.value); });
+    });
+    panel.querySelectorAll('input[name="salem-text"]').forEach(function (input) {
+      input.addEventListener("change", function () { setTextSize(input.value); });
+    });
+  }
+
+  function init() {
+    translateNavbar();
+    buildTools();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>

@@ -42,10 +42,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b0ee52e4dc8db0fb1c3a6dbd8a6b6139.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-a5e17b2506df77ce1acb61f2b2d9a5aa.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-16a93f299f44201aa6225582958030f0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-a5e17b2506df77ce1acb61f2b2d9a5aa.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -73,15 +77,391 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
+/*
+ * Salem site settings (included in every page's <head> from _quarto.yml).
+ *   - Applies the saved text size before the page draws (no flash).
+ *   - Adds the header "Español"/"English" link and the gear (settings) button + panel:
+ *       Appearance: Light / Dark / Auto   (stored in Quarto's own "quarto-color-scheme" key;
+ *                                          no key = Auto = follow the device)
+ *       Language:   English / Español     (links to the same page in the other language)
+ *       Text size:  Normal / Larger       ("salem-text-size")
+ *   - On Spanish pages (<html lang="es">), translates the navbar and points it at /es/ pages.
+ * Every storage call is wrapped in try/catch: the site works without storage.
+ * Colors for both themes live in styles.css (body.quarto-dark).
+ */
+(function () {
+  "use strict";
+  var THEME_KEY = "quarto-color-scheme";
+  var TEXT_KEY = "salem-text-size";
+  var root = document.documentElement;
+
+  function load(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } }
+  function save(key, value) {
+    try {
+      if (value == null) window.localStorage.removeItem(key);
+      else window.localStorage.setItem(key, value);
+    } catch (e) { /* private mode or blocked storage: the choice just isn't remembered */ }
+  }
+
+  // 1. Text size, before anything draws.
+  if (load(TEXT_KEY) === "large") root.setAttribute("data-text-size", "large");
+
+  var isSpanish = /^es\b/i.test(root.getAttribute("lang") || "");
+  var T = isSpanish ? {
+    settings: "Configuración", appearance: "Apariencia", light: "Claro", dark: "Oscuro",
+    auto: "Automático (según su dispositivo)", language: "Idioma", textSize: "Tamaño del texto",
+    normal: "Normal", larger: "Más grande", done: "Listo",
+    nav: { "shop.html": "Tienda", "index.html#journal": "Diario", "about.html": "Nosotros", "subscribe.html": "Únase a la lista de Salem" }
+  } : {
+    settings: "Settings", appearance: "Appearance", light: "Light", dark: "Dark",
+    auto: "Auto (match my device)", language: "Language", textSize: "Text size",
+    normal: "Normal", larger: "Larger", done: "Done", nav: {}
+  };
+
+  /* ---------- Paths: same page in the other language ---------- */
+  // The site root, from Quarto's per-page offset (works on GitHub Pages and in quarto preview).
+  function siteRoot() {
+    var meta = document.querySelector('meta[name="quarto:offset"]');
+    return new URL(meta ? meta.getAttribute("content") : "./", window.location.href);
+  }
+  // Path of a URL relative to the site root, e.g. "shop.html", "es/posts/Rooted/".
+  function relPath(url) {
+    var r = siteRoot().pathname;
+    return url.pathname.indexOf(r) === 0 ? url.pathname.slice(r.length) : null;
+  }
+  function otherLanguageHref() {
+    var r = siteRoot();
+    // A page that exists in both languages names its twin (added by assets/lua/i18n.lua).
+    var meta = document.querySelector('meta[name="salem:alternate"]');
+    if (meta) return new URL(meta.getAttribute("content"), r).href + window.location.hash;
+    return new URL(isSpanish ? "index.html" : "es/index.html", r).href; // no twin: the other home page
+  }
+
+  /* ---------- Theme (drives Quarto's light/dark switch) ---------- */
+  function themeChoice() {
+    var v = load(THEME_KEY);
+    return v === "alternate" ? "dark" : v === "default" ? "light" : "auto";
+  }
+  function systemDark() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }
+  function setTheme(choice) {
+    var wantDark = choice === "dark" || (choice === "auto" && systemDark());
+    var isDark = document.body.classList.contains("quarto-dark");
+    if (wantDark !== isDark && typeof window.quartoToggleColorScheme === "function") {
+      window.quartoToggleColorScheme(); // switches the stylesheets and saves a choice
+    }
+    save(THEME_KEY, choice === "auto" ? null : (choice === "dark" ? "alternate" : "default"));
+  }
+
+  function setTextSize(size) {
+    if (size === "large") root.setAttribute("data-text-size", "large");
+    else root.removeAttribute("data-text-size");
+    save(TEXT_KEY, size === "large" ? "large" : null);
+  }
+
+  /* ---------- Spanish navbar ---------- */
+  function translateNavbar() {
+    if (!isSpanish) return;
+    var r = siteRoot();
+    document.querySelectorAll("#quarto-header a.nav-link, #quarto-header a.navbar-brand").forEach(function (a) {
+      var url = new URL(a.getAttribute("href") || "", window.location.href);
+      if (url.origin !== window.location.origin) return; // Instagram, Facebook
+      var rel = relPath(url);
+      if (rel == null || /^es\//.test(rel)) return;
+      var key = (rel || "index.html") + url.hash;
+      var label = a.querySelector(".menu-text");
+      if (label && T.nav[key]) label.textContent = T.nav[key];
+      var target = new URL("es/" + (rel || "index.html"), r);
+      a.setAttribute("href", target.href + url.hash);
+      // Quarto marks the current page by its English path; mark the Spanish one instead.
+      if (a.classList.contains("nav-link")) {
+        var here = target.pathname === window.location.pathname && !url.hash;
+        a.classList.toggle("active", here);
+        if (here) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      }
+    });
+    root.classList.add("salem-nav-ready");
+  }
+
+  /* ---------- Header tools: language link + gear panel ---------- */
+  var GEAR = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" ' +
+    'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/>' +
+    '<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+
+  function radio(name, value, label, checked) {
+    return '<label class="salem-settings-option"><input type="radio" name="' + name + '" value="' + value + '"' +
+      (checked ? " checked" : "") + '><span>' + label + "</span></label>";
+  }
+
+  function buildTools() {
+    var nav = document.querySelector("#quarto-header .navbar-container");
+    if (!nav || document.querySelector(".salem-tools")) return;
+    var tools = nav.querySelector(".quarto-navbar-tools");
+    if (!tools) {
+      tools = document.createElement("div");
+      tools.className = "quarto-navbar-tools";
+      nav.appendChild(tools);
+    }
+
+    var otherHref = otherLanguageHref();
+    var enHref = isSpanish ? otherHref : window.location.href.split("?")[0];
+    var esHref = isSpanish ? window.location.href.split("?")[0] : otherHref;
+    var theme = themeChoice();
+    var large = root.getAttribute("data-text-size") === "large";
+
+    var wrap = document.createElement("div");
+    wrap.className = "salem-tools";
+    wrap.innerHTML =
+      '<a class="salem-lang-link" href="' + otherHref + '" lang="' + (isSpanish ? "en" : "es") + '" hreflang="' +
+        (isSpanish ? "en" : "es") + '">' + (isSpanish ? "English" : "Español") + "</a>" +
+      '<button type="button" class="salem-settings-button" aria-expanded="false" aria-controls="salem-settings-panel" aria-label="' +
+        T.settings + '">' + GEAR + "</button>" +
+      '<div class="salem-settings-panel" id="salem-settings-panel" role="group" aria-labelledby="salem-settings-title" hidden>' +
+        '<p class="salem-settings-title" id="salem-settings-title">' + T.settings + "</p>" +
+        '<fieldset><legend>' + T.appearance + "</legend>" +
+          radio("salem-theme", "light", T.light, theme === "light") +
+          radio("salem-theme", "dark", T.dark, theme === "dark") +
+          radio("salem-theme", "auto", T.auto, theme === "auto") +
+        "</fieldset>" +
+        '<div class="salem-settings-group" role="group" aria-labelledby="salem-settings-lang">' +
+          '<p class="salem-settings-legend" id="salem-settings-lang">' + T.language + "</p>" +
+          '<a class="salem-settings-option" href="' + enHref + '" lang="en" hreflang="en"' + (isSpanish ? "" : ' aria-current="true"') + "><span>English</span></a>" +
+          '<a class="salem-settings-option" href="' + esHref + '" lang="es" hreflang="es"' + (isSpanish ? ' aria-current="true"' : "") + "><span>Español</span></a>" +
+        "</div>" +
+        '<fieldset><legend>' + T.textSize + "</legend>" +
+          radio("salem-text", "normal", T.normal, !large) +
+          radio("salem-text", "large", T.larger, large) +
+        "</fieldset>" +
+        '<button type="button" class="salem-settings-done">' + T.done + "</button>" +
+      "</div>";
+    tools.appendChild(wrap);
+
+    var button = wrap.querySelector(".salem-settings-button");
+    var panel = wrap.querySelector(".salem-settings-panel");
+
+    function open() {
+      panel.hidden = false;
+      button.setAttribute("aria-expanded", "true");
+    }
+    function close(returnFocus) {
+      if (panel.hidden) return;
+      panel.hidden = true;
+      button.setAttribute("aria-expanded", "false");
+      if (returnFocus) button.focus();
+    }
+
+    button.addEventListener("click", function () { panel.hidden ? open() : close(false); });
+    wrap.querySelector(".salem-settings-done").addEventListener("click", function () { close(true); });
+    wrap.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !panel.hidden) { e.preventDefault(); close(true); }
+    });
+    document.addEventListener("click", function (e) { if (!wrap.contains(e.target)) close(false); });
+    wrap.addEventListener("focusout", function (e) {
+      if (e.relatedTarget && !wrap.contains(e.relatedTarget)) close(false); // tabbed away
+    });
+
+    panel.querySelectorAll('input[name="salem-theme"]').forEach(function (input) {
+      input.addEventListener("change", function () { setTheme(input.value); });
+    });
+    panel.querySelectorAll('input[name="salem-text"]').forEach(function (input) {
+      input.addEventListener("change", function () { setTextSize(input.value); });
+    });
+  }
+
+  function init() {
+    translateNavbar();
+    buildTools();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Caveat:wght@600&amp;family=DM+Serif+Display&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="alternate" hreflang="en" href="https://iquinones2.github.io/Salem-Blog/about.html">
+<link rel="alternate" hreflang="es" href="https://iquinones2.github.io/Salem-Blog/es/about.html">
+<link rel="alternate" hreflang="x-default" href="https://iquinones2.github.io/Salem-Blog/about.html">
+<meta name="salem:alternate" content="es/about.html">
 
 
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed salem-home salem-about fullcontent quarto-light">
+<body class="nav-fixed salem-home salem-about fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const queryPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const darkModeDefault = queryPrefersDark.matches;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    queryPrefersDark.addEventListener("change", e => {
+      if(window.localStorage.getItem("quarto-color-scheme") !== null)
+        return;
+      const alternate = e.matches
+      toggleColorMode(alternate);
+      localAlternateSentinel = e.matches ? 'alternate' : 'default'; // this is used alongside local storage!
+      toggleGiscusIfUsed(alternate, darkModeDefault);
+    });
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -129,6 +509,7 @@ ul.task-list li input[type="checkbox"] {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -138,6 +519,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
 <!-- main -->
+
 
 
 
@@ -243,6 +625,19 @@ ul.task-list li input[type="checkbox"] {
 
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {

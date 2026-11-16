@@ -1,0 +1,19 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "runners": ["axe"],
+    "timeout": 60000,
+    "wait": 1500,
+    "level": "error",
+    "viewport": { "width": 390, "height": 844 },
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--force-dark-mode", "--blink-settings=preferredColorScheme=0"]
+    }
+  },
+  "urls": [
+    "http://localhost:8080/index.html",
+    "http://localhost:8080/subscribe.html",
+    "http://localhost:8080/es/index.html",
+    "http://localhost:8080/es/subscribe.html"
+  ]
+}

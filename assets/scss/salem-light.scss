@@ -1,0 +1,9 @@
+/*-- scss:defaults --*/
+// Light theme on top of lux. Page colors come from the --salem-* tokens in
+// styles.css; these keep Bootstrap's own parts (body, links, navbar) matching.
+$body-bg: #f7f8f6;
+$body-color: #1b2a41;
+$link-color: #2f5d8c;
+$navbar-bg: #f7f8f6;
+$navbar-fg: #1b2a41;
+$navbar-hl: #2f5d8c;

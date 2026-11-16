@@ -27,7 +27,7 @@ resources:
         <img class="shirt-shading" alt="">
         <img class="shirt-photo" alt="" hidden>
       </div>
-      <div class="print-area" id="print-area" aria-label="Print area"></div>
+      <div class="print-area" id="print-area" role="group" aria-label="Print area"></div>
       <p class="preview-badge" id="preview-badge">FRONT · DESIGN PREVIEW</p>
       <p class="visually-hidden" id="preview-description" aria-live="polite"></p>
     </div>
@@ -199,6 +199,6 @@ resources:
   Chat with Salem
 </a>
 
-<script src="shop/shirt-styles.js"></script>
-<script src="shop/customizer.js"></script>
+<script src="shop/shirt-styles.js?v=2026-11-16b"></script>
+<script src="shop/customizer.js?v=2026-11-16b"></script>
 ```

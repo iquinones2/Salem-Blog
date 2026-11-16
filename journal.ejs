@@ -7,7 +7,7 @@
 %>
   <a class="journal-story" href="<%- item.path %>" <%= metadataAttrs(item) %> data-cats="<%= cats.join('|') %>" data-title="<%= item.title %>">
     <% if (item.image) { %>
-    <div class="story-image"><img src="<%- item.image %>" alt="" loading="lazy"></div>
+    <div class="story-image"><img src="<%- item.image %>" alt="<%= item['image-alt'] || '' %>" loading="lazy"></div>
     <% } else { %>
     <div class="story-image mission-artwork">
       <img src="images/icons/sprout.svg" width="36" height="36" alt="">
