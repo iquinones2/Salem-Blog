@@ -5,7 +5,8 @@
  *
  * window.SalemList exposes:
  *   subscribe(data), unsubscribe(token), getPreferences(token),
- *   updateInterests(token, interests), resendLink(email)
+ *   updateInterests(token, interests, lang?), resendLink(email)
+ *   lang()           – "es" or "en", from the page's <html lang> (sent with every signup)
  *   takeToken()      – reads ?token=, keeps it for this tab, removes it from the address bar
  *   takePrefill()    – email handed over from a homepage / post signup box
  *   remember(k, v) / recall(k) – small sessionStorage helpers (never the URL)
@@ -21,6 +22,11 @@
   var LOCAL_DB_KEY = "salem-list-local-v1";
 
   function apiUrl() { return String(window.SALEM_API_URL || "").trim(); }
+
+  // The page's language decides the subscriber's email language.
+  function pageLang() {
+    return /^es\b/i.test(document.documentElement.getAttribute("lang") || "") ? "es" : "en";
+  }
 
   /* ---------- session helpers (tab-scoped, never in the URL) ---------- */
   function remember(key, value) {
@@ -78,7 +84,7 @@
         var email = String(p.email || "").trim().toLowerCase();
         var row = db.filter(function (r) { return r.email === email; })[0];
         if (row && row.status === "active") return { ok: true, status: "exists" };
-        var fresh = { token: uuid(), firstName: p.firstName, email: email, interests: p.interests || [], status: "active" };
+        var fresh = { token: uuid(), firstName: p.firstName, email: email, interests: p.interests || [], lang: p.lang || "en", status: "active" };
         if (row) { Object.assign(row, fresh); save(); return { ok: true, status: "resubscribed" }; }
         db.push(fresh); save();
         return { ok: true, status: "created" };
@@ -99,12 +105,14 @@
       }
       case "get_preferences": {
         var g = byToken(p.token);
-        return g ? { ok: true, status: "found", firstName: g.firstName, interests: g.interests } : { ok: true, status: "not_found" };
+        return g ? { ok: true, status: "found", firstName: g.firstName, interests: g.interests, lang: g.lang || "en" } : { ok: true, status: "not_found" };
       }
       case "update_interests": {
         var m = byToken(p.token);
         if (!m) return { ok: true, status: "not_found" };
-        m.interests = p.interests || []; save();
+        m.interests = p.interests || [];
+        if (p.lang) m.lang = p.lang;
+        save();
         return { ok: true, status: "updated" };
       }
       case "resend_link":
@@ -204,11 +212,15 @@
   else bindHandoffForms();
 
   window.SalemList = {
-    subscribe: function (data) { return post(Object.assign({ action: "subscribe" }, data)); },
+    subscribe: function (data) { return post(Object.assign({ action: "subscribe", lang: pageLang() }, data)); },
     unsubscribe: function (token) { return post({ action: "unsubscribe", token: token }); },
     unsubscribeByEmail: function (data) { return post(Object.assign({ action: "unsubscribe_by_email" }, data)); },
     getPreferences: function (token) { return post({ action: "get_preferences", token: token }); },
-    updateInterests: function (token, interests) { return post({ action: "update_interests", token: token, interests: interests }); },
+    updateInterests: function (token, interests, lang) {
+      var payload = { action: "update_interests", token: token, interests: interests };
+      if (lang) payload.lang = lang; // optional: change the email language too
+      return post(payload);
+    },
     resendLink: resendLink,
     bindResendForm: bindResendForm,
     errorMessage: errorMessage,
@@ -216,6 +228,7 @@
     takePrefill: takePrefill,
     remember: remember,
     recall: recall,
+    lang: pageLang,
     isLocal: function () { return !apiUrl(); }
   };
 })();

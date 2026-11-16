@@ -49,7 +49,7 @@ There is no package manager, linter, build step, or test suite. Verify changes b
 ## Salem list (subscription system, decided Nov 2026)
 
 **Backend: Google Sheet + Apps Script web app.** Deployed with Execute as: Me, Access: Anyone. URL lives only in `assets/js/config.js` (`window.SALEM_API_URL`).
-- Sheet "Salem — Subscribers", tab **`Subscribers`**, columns A–P plain text: `id | token | firstName | lastName | email | phone | birthdayMonth | birthdayDay | interests | heardAbout | consent | consentAt | status | createdAt | updatedAt | unsubscribedAt`.
+- Sheet "Salem — Subscribers", tab **`Subscribers`**, columns A–P plain text: `id | token | firstName | lastName | email | phone | birthdayMonth | birthdayDay | interests | heardAbout | consent | consentAt | status | createdAt | updatedAt | unsubscribedAt`, plus optional columns in `OPTIONAL_HEADERS` that `table_()` creates at the end of row 1 when missing: **`lang`** (`en`/`es`; blank = `en`, normalized by `langOf_`).
 - Script Properties: `SITE_URL` (no trailing slash), `OWNER_EMAIL`.
 - Source of truth: **`apps-script/Code.gs`**. After editing it, Isai pastes it into the Apps Script editor, runs `authorizeOnce` if new permissions are needed, then Deploy → Manage deployments → Edit → **New version** (keeps the same URL; never "New deployment"). Check the live version with a GET to the URL: it should return `{"ok":true,"service":"salem-subscribe",...}`.
 - Emails go out with MailApp (~100 recipients/day on a consumer Gmail account). Welcome and "your links" emails link to `unsubscribe.html?token=` and `preferences.html?token=`.
@@ -66,27 +66,29 @@ There is no package manager, linter, build step, or test suite. Verify changes b
 - **Monthly counters**: rows vanish on unsubscribe, so `countEvent_` keeps `STATS_yyyy-MM` Script Properties (`joined`, `unsubscribed`, `bounced`; numbers only). Called from `subscribe_` (created/resubscribed), `unsubscribe_`, `unsubscribeByEmail_` (only when a row was deleted) and `checkBounces`; the report deletes ones older than 13 months. "Joined" uses the larger of the counter and the rows created that month.
 - Newsletter audience targeting is the existing **"Send to"** row (values = the subscribe form's interest values in `NEWSLETTER_AUDIENCES`); the confirm dialog already shows the recipient count.
 
+**Languages (Nov 2026).** Every subscriber-facing email string lives in `STRINGS = { en, es }` near the top of `Code.gs` (Spanish: neutral Latin American, usted); interests are stored in English (they're also newsletter audiences) and shown translated via `STRINGS.es.interests`. `links_(rec)` points Spanish subscribers to `SITE_URL/es/...` only once `/es/unsubscribe.html` loads (`spanishPagesLive_`, cached 6h), so links never 404 before the Spanish site is published. Owner alerts stay English and show the language. The Newsletter tab has optional rows at the bottom (`Subject/Heading/Message/Button label/Button link (Español)`, added by "Set up Newsletter tab" on an existing tab); a Spanish speaker gets the Spanish version only when Subject + Message (Español) are both filled, otherwise the whole English email (never mixed). Preview sends both versions; the confirm dialog shows the English/Spanish split; a new-post draft clears the Spanish rows. `testSubscribeSpanish` adds an `owner+es@` test row.
+
 **Rules.** Email is the ONLY unique identifier (trimmed + lowercased); phone is optional, stored as digits only (leading US "1" dropped), and may repeat. Status is `active` (old rows may say `subscribed`). **Unsubscribing deletes the row** (Isai's decision, Nov 2026: no details are kept after someone leaves); rejoining creates a fresh row. Welcome/alert/links emails run through `trySend_`, so a mail failure is logged in Executions but never fails the request (the row is already saved by then).
 
 **API contract.** `fetch(URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action, ... }) })`. text/plain avoids a CORS preflight, which Apps Script can't answer. `GET /exec` returns health JSON.
 
 | action | body | responses (`status`) |
 |---|---|---|
-| `subscribe` | firstName, lastName, email, phone?, birthdayMonth?, birthdayDay?, interests[], heardAbout?, consent:true, website (honeypot, must be empty) | `created`, `resubscribed`, `exists`; or `{ok:false, error:"validation", fields:{name:msg}}` |
+| `subscribe` | firstName, lastName, email, phone?, birthdayMonth?, birthdayDay?, interests[], heardAbout?, consent:true, website (honeypot, must be empty), lang? (`en`/`es`; `SalemList.subscribe` adds it from `<html lang>`) | `created`, `resubscribed`, `exists`; or `{ok:false, error:"validation", fields:{name:msg}}` |
 | `unsubscribe` | token (deletes the row) | `unsubscribed`, `not_found` |
-| `get_preferences` | token | `found` (+ firstName, interests[]), `not_found` |
+| `get_preferences` | token | `found` (+ firstName, interests[], lang), `not_found` |
 | `unsubscribe_by_email` | firstName, lastName, email, website (honeypot) — deletes the row only if all three match (case-insensitive names); 5 tries per email per hour | always `unsubscribed` (never reveals a match); or `validation` |
-| `update_interests` | token, interests[] | `updated`, `not_found` |
+| `update_interests` | token, interests[], lang? (changes the email language when sent) | `updated`, `not_found` |
 | `resend_link` | email | always `ok` (never reveals whether someone is subscribed) |
 
 Errors: `{ok:false, error:"server_error"|"busy"|"bad_request", message}`. The client adds `timeout` (15s) and `network`.
 
 **Frontend.**
 - `assets/js/subscriber-store.js` (`window.SalemList`): every API call goes through it, with a 15s timeout and a localStorage stand-in when `SALEM_API_URL` is empty. It also handles the `?token=` hand-off (`takeToken`: saved to sessionStorage, stripped with `history.replaceState`), the homepage/post "Count me in" boxes (`form[data-list-handoff]` carries the email in sessionStorage, not the URL), and the shared "Email me a fresh link" forms (`[data-resend-form]`). Pages load `config.js` then `subscriber-store.js` with a `?v=` cache-buster; bump it in every page and `_partials/salem-footer.html` whenever either file changes, or browsers keep running the old copy.
-- `subscribe.qmd`: keeps all existing fields. States follow Figma "Salem — Subscribe form states" (node 27:28499): Error, Loading, Already subscribed ("Email me my preferences link" → `resend_link`), Success → redirect to `subscribed.html`. The New/Returning audience toggle and "What have you printed with us?" are not sent (the sheet has no columns for them).
+- `subscribe.qmd`: keeps all existing fields. (Commit `033a02d`, Nov 9 2026, accidentally replaced it with an old Google Form draft that sent nothing; restored from `2f0f029` on Nov 16. It must call `SalemList.subscribe`.) States follow Figma "Salem — Subscribe form states" (node 27:28499): Error, Loading, Already subscribed ("Email me my preferences link" → `resend_link`), Success → redirect to `subscribed.html`. The New/Returning audience toggle and "What have you printed with us?" are not sent (the sheet has no columns for them).
 - `subscribed.qmd`: "You are subscribed to Salem Custom Screen Printing." (+ "Welcome back" on resubscribe), personalized from sessionStorage.
 - `unsubscribe.qmd`: without a token it shows a first name / last name / email form (`unsubscribe_by_email`), so people can leave without the email link; with a token it shows a confirm button first (never unsubscribe on page load, because email scanners open links), then the Figma "You're off the list." view (node 27:27246 desktop / 27:28207 mobile).
-- `preferences.qmd`: edit interest chips.
+- `preferences.qmd`: edit interest chips and the email language (en/es radio chips, sent as `lang` with `update_interests`).
 - The three pages above use `body-classes: salem-home salem-about salem-list-page` and `header-includes` for `noindex` (+ `no-referrer` on the token pages). Use `header-includes`, not `include-in-header`, in page front matter: the latter replaces the site-wide Google Fonts include. Styles: the "Salem list" section at the end of `styles.css`.
 
 ## Future ideas (not now)

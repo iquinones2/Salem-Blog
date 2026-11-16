@@ -32,8 +32,97 @@ const HEADERS = [
   "birthdayMonth", "birthdayDay", "interests", "heardAbout",
   "consent", "consentAt", "status", "createdAt", "updatedAt", "unsubscribedAt"
 ];
+// Added later; table_() creates them if missing. lang: "en" or "es" (blank = en).
+const OPTIONAL_HEADERS = ["lang"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const BRAND = "Salem Custom Screen Printing";
+
+/* ------------------------------------------------------------------ */
+/* Email text in English and Spanish. Edit wording here.               */
+/* ------------------------------------------------------------------ */
+// {firstName} is replaced with the subscriber's first name.
+// Interest values are stored in English in the sheet (they double as
+// newsletter audiences); "interests" below only changes how they're shown.
+// Spanish: neutral Latin American, "usted". Listed in TRANSLATION-REVIEW.md.
+const STRINGS = {
+  en: {
+    langName: "English",
+    city: "CHICAGO, ILLINOIS",
+    tagline: "Custom shirts, made with care.",
+    whyYouGetThis: "You're receiving this because you joined the Salem list.",
+    unsubscribe: "Unsubscribe",
+    updateInterests: "Update interests",
+    signoff: "Made with care. Worn with purpose.",
+    friend: "friend",
+    readMore: "Read the full story",
+    previewTag: "[Preview]",
+    welcome: {
+      subject: "Welcome to the Salem circle",
+      kicker: "GOOD THINGS, IN YOUR INBOX",
+      heading: "Welcome to the Salem circle.",
+      hello: "Hello, {firstName}. Thanks for joining the Salem list. We're a small, faith-driven custom apparel business in Chicago, and we're glad you're here.",
+      expect: "Expect studio stories, seasonal offers, and a little inspiration. Every shirt we print carries more than ink — it carries a message.",
+      interestsLabel: "YOUR INTERESTS",
+      journalButton: "Explore the Salem journal",
+      shopButton: "Start a shirt idea"
+    },
+    links: {
+      subject: "Your Salem list links",
+      heading: "Your Salem list links",
+      body: "Hi {firstName}, you're already on the Salem list. Use these links to update what you hear about, or to leave the list.",
+      preferencesButton: "Update my interests",
+      unsubscribeButton: "Unsubscribe"
+    },
+    interests: {}
+  },
+  es: {
+    langName: "Español",
+    city: "CHICAGO, ILLINOIS",
+    tagline: "Camisetas personalizadas, hechas con cariño.",
+    whyYouGetThis: "Recibe este correo porque se unió a la lista de Salem.",
+    unsubscribe: "Cancelar suscripción",
+    updateInterests: "Actualizar intereses",
+    signoff: "Hecho con cariño. Llevado con propósito.",
+    friend: "amigo",
+    readMore: "Leer la historia completa",
+    previewTag: "[Vista previa]",
+    welcome: {
+      subject: "Le damos la bienvenida al círculo de Salem",
+      kicker: "COSAS BUENAS, EN SU BANDEJA DE ENTRADA",
+      heading: "Le damos la bienvenida al círculo de Salem.",
+      hello: "Hola, {firstName}. Gracias por unirse a la lista de Salem. Somos un pequeño negocio de ropa personalizada en Chicago, guiado por la fe, y nos alegra mucho que esté aquí.",
+      expect: "Le compartiremos historias del taller, ofertas de temporada y un poco de inspiración. Cada camiseta que imprimimos lleva más que tinta: lleva un mensaje.",
+      interestsLabel: "SUS INTERESES",
+      journalButton: "Explorar el diario de Salem",
+      shopButton: "Empezar a diseñar una camiseta"
+    },
+    links: {
+      subject: "Sus enlaces de la lista de Salem",
+      heading: "Sus enlaces de la lista de Salem",
+      body: "Hola, {firstName}: usted ya está en la lista de Salem. Use estos enlaces para elegir sobre qué desea recibir noticias o para salir de la lista.",
+      preferencesButton: "Actualizar mis intereses",
+      unsubscribeButton: "Cancelar suscripción"
+    },
+    interests: {
+      "Individual shirts": "Camisetas individuales",
+      "Team and group orders": "Pedidos para equipos y grupos",
+      "Church and youth events": "Eventos de iglesia y de jóvenes",
+      "Fundraisers": "Recaudación de fondos",
+      "Personal gifts": "Regalos personales",
+      "Other events": "Otros eventos"
+    }
+  }
+};
+
+/** "es" for Spanish, otherwise "en" (old rows and old pages send nothing). */
+function langOf_(v) {
+  return /^es\b/i.test(String(v == null ? "" : v).trim()) ? "es" : "en";
+}
+function strings_(lang) { return STRINGS[langOf_(lang)]; }
+function fill_(text, vars) {
+  return String(text).replace(/\{(\w+)\}/g, (m, k) => (vars && vars[k] != null ? vars[k] : m));
+}
+function interestName_(value, lang) { return strings_(lang).interests[value] || value; }
 
 /* ------------------------------------------------------------------ */
 /* Entry points                                                        */
@@ -119,6 +208,7 @@ function subscribe_(b) {
     birthdayMonth: clean_(b.birthdayMonth, 20),
     birthdayDay: String(b.birthdayDay || "").replace(/\D/g, "").slice(0, 2),
     interests: interests.join(", "),
+    lang: langOf_(b.lang), // from the page's <html lang>; missing = English
     heardAbout: clean_(b.heardAbout, 60),
     consent: "yes",
     consentAt: now,
@@ -200,17 +290,19 @@ function unsubscribeByEmail_(b) {
 function getPreferences_(b) {
   const row = findActiveByToken_(table_(), b.token);
   if (!row) return { ok: true, status: "not_found" };
-  return { ok: true, status: "found", firstName: row.data.firstName, interests: toList_(row.data.interests) };
+  return {
+    ok: true, status: "found", firstName: row.data.firstName,
+    interests: toList_(row.data.interests), lang: langOf_(row.data.lang)
+  };
 }
 
 function updateInterests_(b) {
   const t = table_();
   const row = findActiveByToken_(t, b.token);
   if (!row) return { ok: true, status: "not_found" };
-  writeRow_(t, row.rowNumber, Object.assign({}, row.data, {
-    interests: toList_(b.interests).join(", "),
-    updatedAt: new Date().toISOString()
-  }));
+  const changes = { interests: toList_(b.interests).join(", "), updatedAt: new Date().toISOString() };
+  if (b.lang != null && String(b.lang).trim()) changes.lang = langOf_(b.lang); // optional: email language
+  writeRow_(t, row.rowNumber, Object.assign({}, row.data, changes));
   return { ok: true, status: "updated" };
 }
 
@@ -245,9 +337,19 @@ function table_() {
   HEADERS.forEach(h => {
     if (headers.indexOf(h) === -1) throw new Error("Missing header: " + h);
   });
+  // Optional columns added after launch: created automatically at the end of
+  // row 1 the first time they're needed. Empty cells mean the default.
+  OPTIONAL_HEADERS.forEach(h => {
+    if (headers.indexOf(h) !== -1) return;
+    let col = headers.length;
+    while (col > 0 && !headers[col - 1]) col--; // after the last named column
+    sh.getRange(1, col + 1).setValue(h);
+    sh.getRange(1, col + 1, sh.getMaxRows(), 1).setNumberFormat("@");
+    headers[col] = h;
+  });
   const rows = values.slice(1).map((r, i) => {
     const data = {};
-    headers.forEach((h, j) => { if (h) data[h] = String(r[j]); });
+    headers.forEach((h, j) => { if (h) data[h] = r[j] == null ? "" : String(r[j]); }); // a just-added column has no cells yet
     return { rowNumber: i + 2, data: data };
   }).filter(r => r.data.id || r.data.email);
   return { sh: sh, headers: headers, rows: rows };
@@ -337,16 +439,37 @@ function canSend_() {
   }
   return true;
 }
+// Links in the subscriber's language. Spanish pages live under /es/; until
+// they're published, Spanish subscribers get the English pages (the email
+// text is still Spanish), so no link ever points to a missing page.
 function links_(rec) {
   const site = siteUrl_();
+  const lang = langOf_(rec.lang);
+  const base = lang === "es" && spanishPagesLive_() ? site + "/es" : site;
   const tok = encodeURIComponent(rec.token);
   return {
-    site: site,
-    journal: site + "/index.html#journal",
-    shop: site + "/shop.html",
-    unsubscribe: site + "/unsubscribe.html?token=" + tok,
-    preferences: site + "/preferences.html?token=" + tok
+    lang: lang,
+    site: base,
+    journal: base + "/index.html#journal",
+    shop: base + "/shop.html",
+    unsubscribe: base + "/unsubscribe.html?token=" + tok,
+    preferences: base + "/preferences.html?token=" + tok
   };
+}
+
+// True once SITE_URL/es/unsubscribe.html loads. Checked at most every 6 hours.
+function spanishPagesLive_() {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get("es_pages_live");
+  if (hit !== null) return hit === "1";
+  let live = false;
+  try {
+    live = UrlFetchApp.fetch(siteUrl_() + "/es/unsubscribe.html", { muteHttpExceptions: true }).getResponseCode() === 200;
+  } catch (err) {
+    console.warn("Spanish page check failed: " + (err && err.message));
+  }
+  cache.put("es_pages_live", live ? "1" : "0", live ? 21600 : 1800);
+  return live;
 }
 
 function button_(href, label, primary) {
@@ -357,56 +480,63 @@ function button_(href, label, primary) {
     style + 'padding:12px 16px;border-radius:4px;font-size:15px;text-decoration:none;">' + esc_(label) + ' &#8599;</a></td></tr>';
 }
 
-function emailShell_(inner, l) {
-  return '<!doctype html><html><body style="margin:0;padding:0;background:#e9ecef;">' +
+// lang: language of the email text (defaults to the links' language).
+function emailShell_(inner, l, lang) {
+  const S = strings_(lang || l.lang);
+  return '<!doctype html><html lang="' + langOf_(lang || l.lang) + '"><body style="margin:0;padding:0;background:#e9ecef;">' +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#e9ecef;"><tr><td align="center" style="padding:24px 12px;">' +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#f6f5f1;font-family:Helvetica,Arial,sans-serif;color:#1c2a42;">' +
     '<tr><td style="padding:28px 28px 8px;">' +
     '<span style="font-family:Georgia,serif;font-size:26px;letter-spacing:1px;">SALEM</span>' +
     '<span style="font-size:11px;letter-spacing:1px;padding-left:10px;">CUSTOM SCREEN PRINTING</span>' +
-    '<div style="font-size:12px;letter-spacing:1px;color:#5b6577;padding-top:8px;">CHICAGO, ILLINOIS</div></td></tr>' +
+    '<div style="font-size:12px;letter-spacing:1px;color:#5b6577;padding-top:8px;">' + esc_(S.city) + '</div></td></tr>' +
     '<tr><td style="padding:16px 28px 28px;">' + inner + '</td></tr>' +
     '<tr><td style="background:#1c2a42;color:#d6dbe4;padding:24px 28px;font-size:12px;line-height:1.6;">' +
     '<strong style="color:#ffffff;font-size:14px;">' + BRAND + '</strong><br>' +
-    esc_(mailingAddress_() || "Chicago, Illinois") + ' &middot; Custom shirts, made with care.<br><br>' +
-    "You're receiving this because you joined the Salem list.<br>" +
-    '<a href="' + esc_(l.unsubscribe) + '" style="color:#ffffff;">Unsubscribe</a> &nbsp;&nbsp; ' +
-    '<a href="' + esc_(l.preferences) + '" style="color:#ffffff;">Update interests</a>' +
+    esc_(mailingAddress_() || "Chicago, Illinois") + ' &middot; ' + esc_(S.tagline) + '<br><br>' +
+    esc_(S.whyYouGetThis) + '<br>' +
+    '<a href="' + esc_(l.unsubscribe) + '" style="color:#ffffff;">' + esc_(S.unsubscribe) + '</a> &nbsp;&nbsp; ' +
+    '<a href="' + esc_(l.preferences) + '" style="color:#ffffff;">' + esc_(S.updateInterests) + '</a>' +
     '</td></tr></table></td></tr></table></body></html>';
+}
+
+// Plain-text footer that matches emailShell_.
+function textFooter_(l, lang) {
+  const S = strings_(lang || l.lang);
+  return BRAND + "\n" + (mailingAddress_() || "Chicago, Illinois") + "\n" + S.whyYouGetThis + "\n" +
+    S.updateInterests + ": " + l.preferences + "\n" + S.unsubscribe + ": " + l.unsubscribe;
 }
 
 function sendWelcome_(rec) {
   if (!canSend_()) return;
   const l = links_(rec);
-  const interests = toList_(rec.interests);
+  const S = strings_(l.lang), W = S.welcome;
+  const vars = { firstName: rec.firstName };
+  const interests = toList_(rec.interests).map(i => interestName_(i, l.lang));
   const interestHtml = interests.length
-    ? '<div style="background:#e9ecef;padding:16px 18px;margin:20px 0;"><div style="font-size:12px;letter-spacing:1px;font-weight:bold;padding-bottom:8px;">YOUR INTERESTS</div>' +
+    ? '<div style="background:#e9ecef;padding:16px 18px;margin:20px 0;"><div style="font-size:12px;letter-spacing:1px;font-weight:bold;padding-bottom:8px;">' + esc_(W.interestsLabel) + '</div>' +
       interests.map(i => '<div style="font-size:14px;padding:3px 0;">&#10003; ' + esc_(i) + '</div>').join("") + '</div>'
     : "";
 
   const inner =
-    '<div style="font-size:12px;letter-spacing:1px;font-weight:bold;">GOOD THINGS, IN YOUR INBOX</div>' +
-    '<h1 style="font-family:Georgia,serif;font-size:34px;line-height:1.15;margin:14px 0;">Welcome to the Salem circle.</h1>' +
-    '<p style="font-size:16px;line-height:1.6;">Hello, ' + esc_(rec.firstName) + '. Thanks for joining the Salem list. ' +
-    "We're a small, faith-driven custom apparel business in Chicago, and we're glad you're here.</p>" +
-    '<p style="font-size:14px;line-height:1.6;">Expect studio stories, seasonal offers, and a little inspiration. ' +
-    'Every shirt we print carries more than ink &mdash; it carries a message.</p>' +
+    '<div style="font-size:12px;letter-spacing:1px;font-weight:bold;">' + esc_(W.kicker) + '</div>' +
+    '<h1 style="font-family:Georgia,serif;font-size:34px;line-height:1.15;margin:14px 0;">' + esc_(W.heading) + '</h1>' +
+    '<p style="font-size:16px;line-height:1.6;">' + esc_(fill_(W.hello, vars)) + '</p>' +
+    '<p style="font-size:14px;line-height:1.6;">' + esc_(W.expect) + '</p>' +
     interestHtml +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
-    button_(l.journal, "Explore the Salem journal", true) +
-    button_(l.shop, "Start a shirt idea", false) + '</table>' +
-    '<p style="font-size:14px;line-height:1.6;margin-top:20px;">Made with care. Worn with purpose.<br>&mdash; Salem</p>';
+    button_(l.journal, W.journalButton, true) +
+    button_(l.shop, W.shopButton, false) + '</table>' +
+    '<p style="font-size:14px;line-height:1.6;margin-top:20px;">' + esc_(S.signoff) + '<br>&mdash; Salem</p>';
 
   const text =
-    "Welcome to the Salem circle.\n\nHello, " + rec.firstName + ". Thanks for joining the Salem list. " +
-    "We're a small, faith-driven custom apparel business in Chicago, and we're glad you're here.\n\n" +
-    (interests.length ? "Your interests: " + interests.join(", ") + "\n\n" : "") +
-    "Explore the Salem journal: " + l.journal + "\nStart a shirt idea: " + l.shop + "\n\n" +
-    "Made with care. Worn with purpose. — Salem\n\n" +
-    "Update interests: " + l.preferences + "\nUnsubscribe: " + l.unsubscribe;
+    W.heading + "\n\n" + fill_(W.hello, vars) + "\n\n" + W.expect + "\n\n" +
+    (interests.length ? W.interestsLabel + ": " + interests.join(", ") + "\n\n" : "") +
+    W.journalButton + ": " + l.journal + "\n" + W.shopButton + ": " + l.shop + "\n\n" +
+    S.signoff + " — Salem\n\n" + textFooter_(l);
 
   MailApp.sendEmail({
-    to: rec.email, subject: "Welcome to the Salem circle", name: BRAND,
+    to: rec.email, subject: W.subject, name: BRAND,
     body: text, htmlBody: emailShell_(inner, l)
   });
 }
@@ -414,17 +544,17 @@ function sendWelcome_(rec) {
 function sendLinks_(rec) {
   if (!canSend_()) return;
   const l = links_(rec);
+  const K = strings_(l.lang).links;
+  const body = fill_(K.body, { firstName: rec.firstName });
   const inner =
-    '<h1 style="font-family:Georgia,serif;font-size:28px;margin:10px 0 14px;">Your Salem list links</h1>' +
-    '<p style="font-size:15px;line-height:1.6;">Hi ' + esc_(rec.firstName) +
-    ", you're already on the Salem list. Use these links to update what you hear about, or to leave the list.</p>" +
+    '<h1 style="font-family:Georgia,serif;font-size:28px;margin:10px 0 14px;">' + esc_(K.heading) + '</h1>' +
+    '<p style="font-size:15px;line-height:1.6;">' + esc_(body) + '</p>' +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
-    button_(l.preferences, "Update my interests", true) +
-    button_(l.unsubscribe, "Unsubscribe", false) + '</table>';
-  const text = "Hi " + rec.firstName + ", you're already on the Salem list.\n\nUpdate interests: " +
-    l.preferences + "\nUnsubscribe: " + l.unsubscribe;
+    button_(l.preferences, K.preferencesButton, true) +
+    button_(l.unsubscribe, K.unsubscribeButton, false) + '</table>';
+  const text = body + "\n\n" + K.preferencesButton + ": " + l.preferences + "\n" + K.unsubscribeButton + ": " + l.unsubscribe;
   MailApp.sendEmail({
-    to: rec.email, subject: "Your Salem list links", name: BRAND,
+    to: rec.email, subject: K.subject, name: BRAND,
     body: text, htmlBody: emailShell_(inner, l)
   });
 }
@@ -438,6 +568,7 @@ function sendOwnerAlert_(rec) {
     ["Email", rec.email],
     ["Phone", rec.phone || "—"],
     ["Interests", rec.interests || "—"],
+    ["Language", langOf_(rec.lang) === "es" ? "Spanish (es)" : "English (en)"],
     ["Heard about Salem", rec.heardAbout || "—"],
     ["Joined", rec.createdAt]
   ];
@@ -479,6 +610,16 @@ const NEWSLETTER_FIELDS = [
   ["Status", "Draft", "Set by the script: Draft → Sending → Sent."],
   ["Progress", "", "Filled in by the script."]
 ];
+// Spanish version: optional rows below the English ones. Spanish-speaking
+// subscribers get it when "Subject (Español)" and "Message (Español)" are both
+// filled; otherwise they get the English version.
+const NEWSLETTER_ES_FIELDS = [
+  ["Subject (Español)", "", "Spanish version (optional). Fill Subject and Message (Español) to send Spanish speakers their own version."],
+  ["Heading (Español)", "", "Optional."],
+  ["Message (Español)", "", "Blank line = new paragraph. {firstName} works here too."],
+  ["Button label (Español)", "", 'Optional. Blank = "Leer la historia completa" when there is a button link.'],
+  ["Button link (Español)", "", "Optional. Blank = the English button link (e.g. use the /es/ page here)."]
+];
 const NEWSLETTER_AUDIENCES = [
   "Everyone", "Individual shirts", "Team and group orders", "Church and youth events",
   "Fundraisers", "Personal gifts", "Other events"
@@ -507,11 +648,18 @@ function onOpen() {
     .addToUi();
 }
 
-/** Creates the "Newsletter" tab with its labels. Safe to run again: it won't overwrite a draft. */
+/**
+ * Creates the "Newsletter" tab with its labels, or adds the Spanish rows to an
+ * existing tab. Safe to run again: it never changes what's already written.
+ */
 function setupNewsletterTab() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (ss.getSheetByName(NEWSLETTER_SHEET)) {
-    notify_('The "' + NEWSLETTER_SHEET + '" tab already exists. Nothing was changed.');
+  const existing = ss.getSheetByName(NEWSLETTER_SHEET);
+  if (existing) {
+    const added = addSpanishNewsletterRows_(existing);
+    notify_(added
+      ? "Added " + added + ' Spanish row(s) at the bottom of the "' + NEWSLETTER_SHEET + '" tab.'
+      : 'The "' + NEWSLETTER_SHEET + '" tab is already up to date. Nothing was changed.');
     return;
   }
   const sh = ss.insertSheet(NEWSLETTER_SHEET);
@@ -528,23 +676,46 @@ function setupNewsletterTab() {
     SpreadsheetApp.newDataValidation().requireValueInList(NEWSLETTER_AUDIENCES, true).build());
   sh.getRange(fieldRow_("Status"), 2).setDataValidation(
     SpreadsheetApp.newDataValidation().requireValueInList(["Draft", "Sending", "Sent"], true).build());
-  notify_('Created the "' + NEWSLETTER_SHEET + '" tab. Write the email in column B, then use Salem list → Send me a preview.');
+  addSpanishNewsletterRows_(sh);
+  notify_('Created the "' + NEWSLETTER_SHEET + '" tab. Write the email in column B (the Spanish rows at the bottom are optional), then use Salem list → Send me a preview.');
 }
 
-/** Sends one copy of the current newsletter to OWNER_EMAIL, so Salem can check it first. */
+// Appends any missing "(Español)" rows below the existing ones. Returns how many.
+function addSpanishNewsletterRows_(sh) {
+  const labels = sh.getLastRow() ? sh.getRange(1, 1, sh.getLastRow(), 1).getDisplayValues().map(r => String(r[0]).trim()) : [];
+  const missing = NEWSLETTER_ES_FIELDS.filter(f => labels.indexOf(f[0]) === -1);
+  if (!missing.length) return 0;
+  const start = sh.getLastRow() + 1;
+  sh.getRange(start, 1, missing.length, 3).setValues(missing);
+  sh.getRange(start, 1, missing.length, 1).setFontWeight("bold");
+  sh.getRange(start, 2, missing.length, 1).setWrap(true).setNumberFormat("@");
+  sh.getRange(start, 3, missing.length, 1).setFontColor("#5b6577").setWrap(true);
+  sh.getRange(start, 1, missing.length, 3).setVerticalAlignment("top");
+  missing.forEach((f, i) => { if (f[0] === "Message (Español)") sh.setRowHeight(start + i, 240); });
+  return missing.length;
+}
+
+/** Sends the owner a preview of each version (English, and Spanish when it's filled in). */
 function previewNewsletter() {
   const owner = ownerEmail_();
   if (!owner) return notify_('Add the "Owner email" in the Settings tab (or the OWNER_EMAIL Script Property) first, so the preview has somewhere to go.');
   const n = readNewsletter_();
   if (!n.subject && !n.message) return notify_("Write a Subject and Message in the Newsletter tab first.");
-  if (!canSend_()) return notify_("Gmail's daily email limit is used up. Try again tomorrow.");
 
   // Preview links use a fake token: they open the right pages but won't change anything.
-  const m = renderNewsletter_(n, { firstName: "Friend", token: "preview" });
-  MailApp.sendEmail({ to: owner, subject: "[Preview] " + m.subject, name: BRAND, body: m.text, htmlBody: m.html });
+  const langs = n.hasEs ? ["en", "es"] : ["en"];
+  const sent = [];
+  langs.forEach(lang => {
+    if (!canSend_()) return;
+    const m = renderNewsletter_(n, { firstName: strings_(lang).friend, token: "preview", lang: lang });
+    MailApp.sendEmail({ to: owner, subject: strings_(lang).previewTag + " " + m.subject, name: BRAND, body: m.text, htmlBody: m.html });
+    sent.push(lang === "es" ? "Spanish" : "English");
+  });
+  if (!sent.length) return notify_("Gmail's daily email limit is used up. Try again tomorrow.");
 
   const problems = newsletterProblems_(n);
-  notify_("Preview sent to OWNER_EMAIL." +
+  notify_("Preview sent to the owner email: " + sent.join(" and ") + " version" + (sent.length > 1 ? "s" : "") + "." +
+    (n.hasEs ? "" : "\n\nThere's no Spanish version, so Spanish-speaking subscribers will get the English one.") +
     (problems.length ? "\n\nFix these before sending to the list:\n- " + problems.join("\n- ") : ""));
 }
 
@@ -558,17 +729,22 @@ function confirmSendNewsletter() {
     return notify_('This newsletter is already sending (see Progress). It continues each morning at 9am.');
   }
 
-  const count = newsletterRecipients_(n, table_()).length;
+  const recipients = newsletterRecipients_(n, table_());
+  const count = recipients.length;
   if (!count) return notify_('Nobody on the list matches "Send to: ' + n.sendTo + '". Nothing was sent.');
+  const esCount = recipients.filter(r => langOf_(r.data.lang) === "es").length;
+  const enCount = count - esCount;
 
   const again = n.status === "sent" ? "\n\nThis newsletter was already sent once. Sending again emails everyone a second time." : "";
   const days = Math.ceil(count / 90);
   const timing = days > 1 ? "\n\nGmail's daily limit means this takes about " + days + " days. It continues each morning at 9am." : "";
+  const split = "\n\n" + enCount + " in English, " + esCount + " in Spanish." +
+    (esCount && !n.hasEs ? " The Spanish version is empty, so those " + esCount + " will get the English version." : "");
   let answer;
   try {
     answer = ui.alert("Send the Salem newsletter?",
       'Send "' + n.subject + '" to ' + count + (count === 1 ? " person" : " people") +
-      (n.sendTo === "Everyone" ? "" : " interested in " + n.sendTo) + "?" + again + timing,
+      (n.sendTo === "Everyone" ? "" : " interested in " + n.sendTo) + "?" + split + again + timing,
       ui.ButtonSet.YES_NO);
   } catch (err) {
     // The editor's Run button has no sheet window to ask in, so nothing is sent.
@@ -666,6 +842,14 @@ function readNewsletter_() {
   NEWSLETTER_FIELDS.forEach(x => {
     if (!(x[0] in f)) throw new Error('Missing row "' + x[0] + '" in the ' + NEWSLETTER_SHEET + " tab.");
   });
+  const opt = key => String(f[key] || "").trim(); // Spanish rows are optional (older tabs don't have them)
+  const es = {
+    subject: opt("Subject (Español)"),
+    heading: opt("Heading (Español)"),
+    message: opt("Message (Español)").replace(/\r\n?/g, "\n"),
+    buttonLabel: opt("Button label (Español)"),
+    buttonLink: opt("Button link (Español)")
+  };
   return {
     sh: sh,
     rows: rows,
@@ -676,7 +860,9 @@ function readNewsletter_() {
     buttonLink: f["Button link"].trim(),
     sendTo: f["Send to"].trim() || "Everyone",
     status: f["Status"].trim().toLowerCase(),
-    progress: f["Progress"].trim()
+    progress: f["Progress"].trim(),
+    es: es,
+    hasEs: Boolean(es.subject && es.message)
   };
 }
 
@@ -696,6 +882,10 @@ function newsletterProblems_(n) {
   if (n.buttonLink && !n.buttonLabel) p.push("Add a Button label, or clear the Button link.");
   if (n.buttonLink && !/^https:\/\/\S+$/i.test(n.buttonLink)) p.push("The Button link must be a full https:// link.");
   if (NEWSLETTER_AUDIENCES.indexOf(n.sendTo) === -1) p.push('"Send to" must be Everyone or one of the interests.');
+  if (n.es && Boolean(n.es.subject) !== Boolean(n.es.message)) {
+    p.push('Fill in both "Subject (Español)" and "Message (Español)", or leave both empty to send everyone the English version.');
+  }
+  if (n.es && n.es.buttonLink && !/^https:\/\/\S+$/i.test(n.es.buttonLink)) p.push("The Button link (Español) must be a full https:// link.");
   return p;
 }
 
@@ -706,31 +896,39 @@ function newsletterRecipients_(n, t) {
     (want === "everyone" || toList_(r.data.interests).some(i => i.toLowerCase() === want)));
 }
 
+// The newsletter for one subscriber, in their language when a Spanish version
+// exists; otherwise the English version (with an English footer, so one email
+// never mixes languages). Links still go to the subscriber's language pages.
 function renderNewsletter_(n, rec) {
-  const name = rec.firstName || "friend";
-  const fill = s => s.replace(/\{firstName\}/g, name);
   const l = links_(rec);
-  const paras = fill(n.message).split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
-  const heading = fill(n.heading);
+  const lang = l.lang === "es" && n.hasEs ? "es" : "en";
+  const S = strings_(lang);
+  const v = lang === "es"
+    ? { subject: n.es.subject, heading: n.es.heading, message: n.es.message,
+        buttonLink: n.es.buttonLink || n.buttonLink,
+        buttonLabel: n.es.buttonLabel || ((n.es.buttonLink || n.buttonLink) ? S.readMore : "") }
+    : { subject: n.subject, heading: n.heading, message: n.message, buttonLink: n.buttonLink, buttonLabel: n.buttonLabel };
+
+  const name = rec.firstName || S.friend;
+  const fill = s => String(s || "").replace(/\{firstName\}/g, name);
+  const paras = fill(v.message).split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  const heading = fill(v.heading);
 
   const inner =
     (heading ? '<h1 style="font-family:Georgia,serif;font-size:32px;line-height:1.15;margin:10px 0 16px;">' + esc_(heading) + "</h1>" : "") +
     paras.map(p => '<p style="font-size:16px;line-height:1.6;">' + esc_(p).replace(/\n/g, "<br>") + "</p>").join("") +
-    (n.buttonLink
+    (v.buttonLink
       ? '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">' +
-        button_(n.buttonLink, n.buttonLabel, true) + "</table>"
+        button_(v.buttonLink, v.buttonLabel, true) + "</table>"
       : "") +
-    '<p style="font-size:14px;line-height:1.6;margin-top:20px;">Made with care. Worn with purpose.<br>&mdash; Salem</p>';
+    '<p style="font-size:14px;line-height:1.6;margin-top:20px;">' + esc_(S.signoff) + '<br>&mdash; Salem</p>';
 
   const text =
     (heading ? heading + "\n\n" : "") + paras.join("\n\n") +
-    (n.buttonLink ? "\n\n" + n.buttonLabel + ": " + n.buttonLink : "") +
-    "\n\nMade with care. Worn with purpose. — Salem\n\n" +
-    BRAND + "\n" + (mailingAddress_() || "Chicago, Illinois") + "\n" +
-    "You're receiving this because you joined the Salem list.\n" +
-    "Update interests: " + l.preferences + "\nUnsubscribe: " + l.unsubscribe;
+    (v.buttonLink ? "\n\n" + v.buttonLabel + ": " + v.buttonLink : "") +
+    "\n\n" + S.signoff + " — Salem\n\n" + textFooter_(l, lang);
 
-  return { subject: fill(n.subject), html: emailShell_(inner, l), text: text };
+  return { subject: fill(v.subject), html: emailShell_(inner, l, lang), text: text, lang: lang };
 }
 
 // Starts a fresh send: new campaign id, empty progress log.
@@ -1874,6 +2072,8 @@ function draftFromPost_(post, fromMenu) {
     setNewsletterField_(n, "Button label", "Read the full story");
     setNewsletterField_(n, "Button link", post.link);
     setNewsletterField_(n, "Send to", "Everyone");
+    // Clear the Spanish rows: text left from an older newsletter must never go out with this one.
+    NEWSLETTER_ES_FIELDS.forEach(f => { if (n.rows[f[0]]) setNewsletterField_(n, f[0], ""); });
     setNewsletterField_(n, "Status", "Draft");
     setNewsletterField_(n, "Progress", POST_DRAFT_MARK + " · " + (d.ai ? "written by AI" : "made from the post") +
       ' for "' + post.title + '" · ' + stamp_());
@@ -2092,13 +2292,24 @@ function testClaude() {
 
 /** Optional: adds a test subscriber using the owner email, without the website. Delete the row afterwards. */
 function testSubscribe() {
-  const owner = ownerEmail_();
+  testSubscribeAs_(ownerEmail_(), "en");
+}
+
+/**
+ * Optional: adds a Spanish-speaking test subscriber at owner+es@… (Gmail
+ * delivers "+" addresses to the same inbox). Delete the row afterwards.
+ */
+function testSubscribeSpanish() {
+  testSubscribeAs_(ownerEmail_().replace("@", "+es@"), "es");
+}
+
+function testSubscribeAs_(email, lang) {
   const res = doPost({
     postData: {
       type: "text/plain",
       contents: JSON.stringify({
-        action: "subscribe", firstName: "Test", lastName: "Subscriber", email: owner,
-        interests: ["Individual shirts", "Church & youth events"], consent: true
+        action: "subscribe", firstName: lang === "es" ? "Prueba" : "Test", lastName: "Subscriber", email: email,
+        interests: ["Individual shirts", "Church and youth events"], consent: true, lang: lang
       })
     }
   });
