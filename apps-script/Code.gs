@@ -22,7 +22,8 @@
  * Script Properties used: SITE_URL, OWNER_EMAIL, MAILING_ADDRESS (optional),
  * ANTHROPIC_API_KEY (optional; only ever stored here, never in the website code)
  * (NEWSLETTER_CAMPAIGN is set and cleared by the script while a newsletter sends.
- *  LAST_POST_LINK, LAST_POST_DATE and AI_OFF_NOTED are kept by the automations.)
+ *  LAST_POST_LINK, LAST_POST_DATE, AI_OFF_NOTED, NEWSLETTER_STARTED and STATS_yyyy-MM
+ *  monthly counters are kept by the automations.)
  */
 
 const SHEET_NAME = "Subscribers";
@@ -131,12 +132,14 @@ function subscribe_(b) {
   if (old) {
     const merged = Object.assign({}, old.data, fresh);
     writeRow_(t, old.rowNumber, merged);
+    countEvent_("joined");
     trySend_("welcome", () => sendWelcome_(merged));
     return { ok: true, status: "resubscribed" };
   }
 
   const record = Object.assign({ id: Utilities.getUuid(), createdAt: now }, fresh);
   writeRow_(t, t.sh.getLastRow() + 1, record);
+  countEvent_("joined");
   // The row is saved at this point: an email failure must not turn that into an error.
   trySend_("welcome", () => sendWelcome_(record));
   trySend_("owner alert", () => sendOwnerAlert_(record));
@@ -151,6 +154,7 @@ function unsubscribe_(b) {
   const row = t.rows.find(r => r.data.token === token);
   if (!row) return { ok: true, status: "not_found" };
   t.sh.deleteRow(row.rowNumber);
+  countEvent_("unsubscribed"); // a number for the monthly report; nothing about the person
   return { ok: true, status: "unsubscribed" };
 }
 
@@ -186,7 +190,10 @@ function unsubscribeByEmail_(b) {
     r.data.firstName.trim().toLowerCase() === firstName &&
     r.data.lastName.trim().toLowerCase() === lastName
   );
-  if (row) t.sh.deleteRow(row.rowNumber);
+  if (row) {
+    t.sh.deleteRow(row.rowNumber);
+    countEvent_("unsubscribed");
+  }
   return done;
 }
 
@@ -461,6 +468,7 @@ function sendOwnerAlert_(rec) {
 
 const NEWSLETTER_SHEET = "Newsletter";
 const NEWSLETTER_LOG_SHEET = "Newsletter log";
+const NEWSLETTER_HISTORY_SHEET = "Newsletter history";
 const NEWSLETTER_FIELDS = [
   ["Subject", "", "Subject line in the inbox. {firstName} works here too."],
   ["Heading", "", "Big title at the top of the email (optional)."],
@@ -491,6 +499,11 @@ function onOpen() {
     .addSeparator()
     .addItem("Draft newsletter from latest post", "draftNewsletterFromLatestPost")
     .addItem("Check for bounced emails now", "checkBounces")
+    .addSeparator()
+    .addItem("Set up Orders tab", "setupOrdersTab")
+    .addItem("Check order deadlines now", "checkOrderDeadlines")
+    .addSeparator()
+    .addItem("Run monthly report now", "runMonthlyReport")
     .addToUi();
 }
 
@@ -624,6 +637,7 @@ function sendNewsletter() {
     if (!stoppedEarly) {
       setNewsletterField_(n, "Status", "Sent");
       setNewsletterField_(n, "Progress", "Sent to " + reached + " of " + total + failNote + " · finished " + stamp_());
+      recordNewsletter_(n, reached);
       finishNewsletter_(log, campaign);
       notify_("Newsletter sent to " + reached + (reached === 1 ? " person" : " people") + failNote + ".");
     } else {
@@ -725,6 +739,7 @@ function startNewsletter_(n) {
   const old = props.getProperty("NEWSLETTER_CAMPAIGN");
   if (old) finishNewsletter_(newsletterLog_(), old);
   props.setProperty("NEWSLETTER_CAMPAIGN", Utilities.getUuid());
+  props.setProperty("NEWSLETTER_STARTED", String(Date.now())); // for "took N days" in the history
   setNewsletterField_(n, "Status", "Sending");
   setNewsletterField_(n, "Progress", "Starting · " + stamp_());
 }
@@ -739,7 +754,29 @@ function finishNewsletter_(log, campaign) {
     }
   }
   PropertiesService.getScriptProperties().deleteProperty("NEWSLETTER_CAMPAIGN");
+  PropertiesService.getScriptProperties().deleteProperty("NEWSLETTER_STARTED");
   stopNewsletterTrigger_();
+}
+
+// One row per finished newsletter in the "Newsletter history" tab (subject and
+// counts only), plus an Agent Log line. The monthly report reads this tab.
+function recordNewsletter_(n, reached) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sh = ss.getSheetByName(NEWSLETTER_HISTORY_SHEET);
+    if (!sh) {
+      sh = ss.insertSheet(NEWSLETTER_HISTORY_SHEET);
+      sh.getRange(1, 1, 1, 5).setValues([["Finished", "Subject", "Sent to", "People reached", "Days it took"]]).setFontWeight("bold");
+      sh.setFrozenRows(1);
+      sh.setColumnWidth(2, 360);
+    }
+    const started = Number(PropertiesService.getScriptProperties().getProperty("NEWSLETTER_STARTED") || 0);
+    const days = started ? dayIndex_(new Date()) - dayIndex_(new Date(started)) + 1 : 1;
+    sh.appendRow([new Date(), safeCell_(n.subject), n.sendTo, reached, days]);
+    logAgent_("newsletter sent", 'Sent "' + n.subject + '" to ' + reached + " people (Send to: " + n.sendTo + ") over " + days + " day(s).");
+  } catch (err) {
+    console.error("Newsletter history write failed: " + (err && err.message));
+  }
 }
 
 // Hidden tab: campaign id | subscriber id | sent at. Ids only, never names or emails.
@@ -983,8 +1020,723 @@ function scheduledJobs_() {
     { fn: "checkBounces", label: "Bounced email check (Mondays, about 6am)",
       when: b => b.timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(6) },
     { fn: "checkNewPost", label: "New journal post check (daily, about 8am)",
-      when: b => b.timeBased().everyDays(1).atHour(8) }
+      when: b => b.timeBased().everyDays(1).atHour(8) },
+    { fn: "checkOrderDeadlines", label: "Order deadline reminders (daily, about 7am; only emails when something is due)",
+      when: b => b.timeBased().everyDays(1).atHour(7) },
+    { fn: "runMonthlyReport", label: "Monthly report (day " + reportDay_() + " of each month, about 8am)",
+      when: b => b.timeBased().onMonthDay(reportDay_()).atHour(8) }
   ];
+}
+
+// "Report day" from Settings, kept to 1–28 so it exists in every month.
+function reportDay_() {
+  const d = parseInt(setting_("Report day", "1"), 10);
+  return Math.min(Math.max(isNaN(d) ? 1 : d, 1), 28);
+}
+
+/* Monthly counters --------------------------------------------------- */
+// Numbers that can't be read back from the sheet later (unsubscribing deletes
+// the row). Stored as STATS_yyyy-MM Script Properties: counts only, no people.
+
+function countEvent_(name, n) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const key = "STATS_" + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM");
+    const s = JSON.parse(props.getProperty(key) || "{}");
+    s[name] = (Number(s[name]) || 0) + (n == null ? 1 : n);
+    props.setProperty(key, JSON.stringify(s));
+  } catch (err) {
+    console.error("countEvent_ failed: " + (err && err.message));
+  }
+}
+
+function monthStats_(monthKey) {
+  try {
+    return JSON.parse(PropertiesService.getScriptProperties().getProperty("STATS_" + monthKey) || "{}");
+  } catch (err) {
+    return {};
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Orders tab and deadline reminders (no AI)                           */
+/* ------------------------------------------------------------------ */
+//
+// Salem keeps one row per order in the "Orders" tab. Every morning the script
+// emails Salem a short list ONLY if an order is overdue or due in the next 7
+// days and not yet picked up (or cancelled). Quiet days send nothing.
+//
+// Filled in automatically while Salem types (onEdit):
+//   Order ID      - next S-0001 style number when a new row gets a customer
+//   Picked up on  - today's date when Status is set to "Picked up"
+// The monthly report uses "Picked up on" to count completed orders.
+
+const ORDERS_SHEET = "Orders";
+const ORDER_HEADERS = [
+  "Order ID", "Customer", "Contact", "Description", "Quantity", "Ink colors",
+  "Deadline", "Status", "Notes", "Picked up on"
+];
+const ORDER_STATUSES = ["Quote", "Confirmed", "Printing", "Ready", "Picked up", "Cancelled"];
+const ORDER_CLOSED = ["picked up", "cancelled"];
+const ORDER_REMINDER_DAYS = 7;
+
+/** Creates the Orders tab, or adds missing columns to it. Never changes existing rows. */
+function setupOrdersTab() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(ORDERS_SHEET);
+  const created = !sh;
+  if (!sh) sh = ss.insertSheet(ORDERS_SHEET);
+
+  const have = sh.getLastColumn() ? sh.getRange(1, 1, 1, sh.getLastColumn()).getDisplayValues()[0].map(h => String(h).trim()) : [];
+  const missing = ORDER_HEADERS.filter(h => have.indexOf(h) === -1);
+  if (missing.length) {
+    const start = have.filter(Boolean).length + 1;
+    sh.getRange(1, start, 1, missing.length).setValues([missing]);
+  }
+  const headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getDisplayValues()[0].map(h => String(h).trim());
+  const col = name => headers.indexOf(name) + 1;
+  const rows = Math.max(sh.getMaxRows() - 1, 1); // every row of the tab below the header
+
+  sh.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#e9ecef");
+  sh.setFrozenRows(1);
+  sh.getRange(2, col("Status"), rows, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(ORDER_STATUSES, true).setAllowInvalid(false).build());
+  sh.getRange(2, col("Deadline"), rows, 1).setNumberFormat("ddd, mmm d, yyyy").setDataValidation(
+    SpreadsheetApp.newDataValidation().requireDate().setAllowInvalid(false)
+      .setHelpText("Enter a date, e.g. 12/20/2026").build());
+  sh.getRange(2, col("Picked up on"), rows, 1).setNumberFormat("mmm d, yyyy");
+  sh.getRange(2, col("Quantity"), rows, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireNumberGreaterThanOrEqualTo(0).setAllowInvalid(false)
+      .setHelpText("Number of shirts").build());
+  sh.getRange(2, col("Order ID"), rows, 1).setFontColor("#5b6577");
+  [["Order ID", 80], ["Customer", 170], ["Contact", 190], ["Description", 280], ["Quantity", 80],
+   ["Ink colors", 140], ["Deadline", 140], ["Status", 110], ["Notes", 260], ["Picked up on", 110]]
+    .forEach(w => { if (col(w[0])) sh.setColumnWidth(col(w[0]), w[1]); });
+
+  logAgent_("setup orders", created ? "Created the Orders tab." : "Checked the Orders tab; added " + missing.length + " column(s).");
+  notify_(created
+    ? 'Created the "Orders" tab. Add one row per order. Order ID and "Picked up on" fill in by themselves.'
+    : missing.length ? "Added " + missing.length + " column(s) to the Orders tab: " + missing.join(", ") : "The Orders tab is already set up.");
+}
+
+/** Open and closed orders as objects. Returns null when the tab doesn't exist. */
+function readOrders_() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ORDERS_SHEET);
+  if (!sh) return null;
+  if (sh.getLastRow() < 2) return [];
+  const values = sh.getRange(1, 1, sh.getLastRow(), sh.getLastColumn()).getValues();
+  const headers = values[0].map(h => String(h).trim());
+  const get = (r, name) => { const i = headers.indexOf(name); return i === -1 ? "" : r[i]; };
+  const asDate = v => (v instanceof Date && !isNaN(v)) ? v : (v ? (d => isNaN(d) ? null : d)(new Date(v)) : null);
+  return values.slice(1).map((r, i) => ({
+    rowNumber: i + 2,
+    id: String(get(r, "Order ID")).trim(),
+    customer: String(get(r, "Customer")).trim(),
+    contact: String(get(r, "Contact")).trim(),
+    description: String(get(r, "Description")).trim(),
+    quantity: Number(get(r, "Quantity")) || 0,
+    inks: String(get(r, "Ink colors")).trim(),
+    deadline: asDate(get(r, "Deadline")),
+    status: String(get(r, "Status")).trim(),
+    notes: String(get(r, "Notes")).trim(),
+    pickedUpOn: asDate(get(r, "Picked up on"))
+  })).filter(o => o.customer || o.description);
+}
+
+function isOrderOpen_(o) {
+  return ORDER_CLOSED.indexOf(o.status.toLowerCase()) === -1;
+}
+
+// Whole days between two dates in the script's time zone (deadline - today).
+function dayIndex_(d) {
+  const p = Utilities.formatDate(d, Session.getScriptTimeZone(), "yyyy-M-d").split("-").map(Number);
+  return Math.round(Date.UTC(p[0], p[1] - 1, p[2]) / 86400000);
+}
+
+/** Daily trigger (and menu): emails Salem only when an open order is overdue or due within 7 days. */
+function checkOrderDeadlines() {
+  const job = "order reminders";
+  try {
+    const orders = readOrders_();
+    if (orders === null) {
+      logAgent_(job, "No Orders tab yet; nothing to check.");
+      return notify_('There is no "Orders" tab yet. Use Salem list → Set up Orders tab.');
+    }
+    const today = dayIndex_(new Date());
+    const open = orders.filter(isOrderOpen_);
+    const due = open.filter(o => o.deadline)
+      .map(o => Object.assign({ daysLeft: dayIndex_(o.deadline) - today }, o))
+      .filter(o => o.daysLeft <= ORDER_REMINDER_DAYS)
+      .sort((a, b) => a.daysLeft - b.daysLeft || b.quantity - a.quantity);
+    const noDeadline = open.filter(o => !o.deadline).length;
+
+    if (!due.length) {
+      const msg = "Nothing overdue or due in the next " + ORDER_REMINDER_DAYS + " days (" + open.length + " open order(s)). No email sent.";
+      logAgent_(job, msg);
+      return notify_(msg);
+    }
+    const owner = ownerEmail_();
+    if (!owner) {
+      logAgent_(job, due.length + " order(s) due, but no owner email is set.", "Add Owner email in Settings.");
+      return notify_('Add the "Owner email" in the Settings tab so reminders have somewhere to go.');
+    }
+    if (!canSend_()) {
+      logAgent_(job, due.length + " order(s) due, but no email quota is left today.", "Daily email limit reached.");
+      return notify_("Gmail's daily email limit is used up, so the reminder could not be sent today.");
+    }
+
+    const overdue = due.filter(o => o.daysLeft < 0).length;
+    const subject = "Salem orders: " +
+      [overdue ? overdue + " overdue" : "", due.length - overdue ? (due.length - overdue) + " due this week" : ""]
+        .filter(Boolean).join(", ");
+    const when = o => o.daysLeft < 0 ? "Overdue " + (-o.daysLeft) + (o.daysLeft === -1 ? " day" : " days")
+      : o.daysLeft === 0 ? "Today" : o.daysLeft === 1 ? "Tomorrow" : "In " + o.daysLeft + " days";
+    const fmt = d => Utilities.formatDate(d, Session.getScriptTimeZone(), "EEE, MMM d");
+
+    const html = '<div style="font-family:Helvetica,Arial,sans-serif;color:#1c2a42;max-width:640px;">' +
+      '<h2 style="font-family:Georgia,serif;margin:0 0 12px;">Orders coming up</h2>' +
+      '<table cellpadding="8" cellspacing="0" style="border-collapse:collapse;font-size:14px;width:100%;">' +
+      '<tr style="background:#e9ecef;text-align:left;"><th>When</th><th>Customer</th><th>Qty</th><th>What</th><th>Status</th></tr>' +
+      due.map(o => '<tr style="border-bottom:1px solid #d6dbe4;">' +
+        '<td style="white-space:nowrap;' + (o.daysLeft < 0 ? "color:#a61b1b;font-weight:bold;" : "") + '">' +
+          esc_(when(o)) + '<br><span style="color:#5b6577;font-size:12px;">' + esc_(fmt(o.deadline)) + "</span></td>" +
+        "<td>" + esc_(o.customer) + (o.contact ? '<br><span style="color:#5b6577;font-size:12px;">' + esc_(o.contact) + "</span>" : "") + "</td>" +
+        "<td>" + esc_(o.quantity || "—") + "</td>" +
+        "<td>" + esc_(o.description) + (o.inks ? '<br><span style="color:#5b6577;font-size:12px;">Ink: ' + esc_(o.inks) + "</span>" : "") + "</td>" +
+        "<td>" + esc_(o.status || "—") + "</td></tr>").join("") +
+      "</table>" +
+      (noDeadline ? '<p style="font-size:13px;color:#5b6577;">' + noDeadline + " open order(s) have no deadline yet.</p>" : "") +
+      '<p style="font-size:13px;"><a href="' + esc_(SpreadsheetApp.getActiveSpreadsheet().getUrl()) +
+      '" style="color:#2f5d8c;">Open the Orders tab</a></p></div>';
+    const text = "Orders coming up\n\n" + due.map(o =>
+      when(o) + " (" + fmt(o.deadline) + "): " + o.customer + " · " + (o.quantity || "?") + " · " + o.description + " · " + (o.status || "no status")
+    ).join("\n") + (noDeadline ? "\n\n" + noDeadline + " open order(s) have no deadline yet." : "") +
+      "\n\nSheet: " + SpreadsheetApp.getActiveSpreadsheet().getUrl();
+
+    MailApp.sendEmail({ to: owner, subject: subject, name: "Salem website", body: text, htmlBody: html });
+    const msg = "Emailed Salem about " + due.length + " order(s): " + subject.replace("Salem orders: ", "") + ".";
+    logAgent_(job, msg);
+    notify_(msg);
+  } catch (err) {
+    logAgent_(job, "Order reminder check did not finish.", (err && err.message) || String(err));
+    notify_("The order check did not finish: " + ((err && err.message) || err));
+  }
+}
+
+/**
+ * Runs by itself whenever someone edits the sheet. Only acts on the Orders tab:
+ * gives new orders an ID and stamps "Picked up on". Never blocks typing.
+ */
+function onEdit(e) {
+  try {
+    if (!e || !e.range) return;
+    const sh = e.range.getSheet();
+    if (sh.getName() !== ORDERS_SHEET || e.range.getLastRow() < 2) return;
+    const headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getDisplayValues()[0].map(h => String(h).trim());
+    const c = name => headers.indexOf(name) + 1;
+    if (!c("Order ID") || !c("Status")) return;
+    const first = Math.max(e.range.getRow(), 2), last = e.range.getLastRow();
+    for (let r = first; r <= last; r++) {
+      const row = sh.getRange(r, 1, 1, headers.length).getValues()[0];
+      const filled = row[c("Customer") - 1] || row[c("Description") - 1];
+      if (filled && !String(row[c("Order ID") - 1]).trim()) {
+        sh.getRange(r, c("Order ID")).setValue(nextOrderId_(sh, c("Order ID")));
+      }
+      if (c("Picked up on") && String(row[c("Status") - 1]).trim().toLowerCase() === "picked up" && !row[c("Picked up on") - 1]) {
+        const today = new Date();
+        sh.getRange(r, c("Picked up on")).setValue(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+      }
+    }
+  } catch (err) {
+    console.error("onEdit (Orders) failed: " + (err && err.message));
+  }
+}
+
+function nextOrderId_(sh, idCol) {
+  const ids = sh.getLastRow() < 2 ? [] : sh.getRange(2, idCol, sh.getLastRow() - 1, 1).getDisplayValues();
+  const max = ids.reduce((m, r) => {
+    const n = Number((String(r[0]).match(/^S-(\d+)$/i) || [])[1] || 0);
+    return Math.max(m, n);
+  }, 0);
+  return "S-" + String(max + 1).padStart(4, "0");
+}
+
+/* ------------------------------------------------------------------ */
+/* Monthly report                                                      */
+/* ------------------------------------------------------------------ */
+//
+// On "Report day" (Settings, default the 1st) around 8am, and from the menu,
+// Salem gets one email about the previous calendar month:
+//   1. headline numbers   2. summary + seasonal tip (AI summary only if a key is set)
+//   3. site check + problems logged   4. orders due   5. a copy-paste prompt for free claude.ai
+// One row per month also goes in the "Monthly Reports" tab (re-running a month
+// replaces its row). Only counts and titles go into the prompt, never people.
+
+const MONTHLY_REPORTS_SHEET = "Monthly Reports";
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July",
+  "August", "September", "October", "November", "December"];
+const REPORT_HEADERS = ["Month", "Active subscribers", "New", "Unsubscribed", "Bounced", "Net change",
+  "Newsletters sent", "Orders picked up", "Shirts picked up", "Open orders", "Site issues",
+  "Problems logged", "Summary", "Tip for next month", "Made"];
+
+function runMonthlyReport() {
+  const job = "monthly report";
+  try {
+    const tz = Session.getScriptTimeZone();
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const end = new Date(now.getFullYear(), now.getMonth(), 1);
+    const nextEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const prevStart = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+    const inMonth = d => Boolean(d) && !isNaN(d) && d >= start && d < end;
+    const why = err => (err && err.message) || String(err);
+
+    const r = {
+      key: Utilities.formatDate(start, tz, "yyyy-MM"),
+      label: Utilities.formatDate(start, tz, "MMMM yyyy"),
+      monthName: MONTH_NAMES[start.getMonth()],
+      prevName: MONTH_NAMES[prevStart.getMonth()],
+      nextName: MONTH_NAMES[end.getMonth()],
+      notes: [] // parts that could not be checked
+    };
+
+    try { r.subs = subscriberStats_(inMonth, r.key); } catch (err) { r.notes.push("Subscribers: " + why(err)); }
+    try { r.letters = newsletterStats_(inMonth); } catch (err) { r.notes.push("Newsletters: " + why(err)); }
+    try { r.orders = orderStats_(inMonth, nextEnd); } catch (err) { r.notes.push("Orders: " + why(err)); }
+    let posts = [];
+    try { posts = readFeed_(); } catch (err) { r.notes.push("Journal feed: " + why(err)); }
+    r.postsThisMonth = posts.filter(p => inMonth(p.date)).map(p => p.title);
+    try { r.site = siteCheck_(posts, now); } catch (err) { r.notes.push("Site check: " + why(err)); }
+    try { r.problems = agentProblems_(r.key); } catch (err) { r.notes.push("Agent Log: " + why(err)); }
+    r.prev = previousReport_(Utilities.formatDate(prevStart, tz, "yyyy-MM"));
+    r.tip = setting_("Tip: " + r.nextName, "");
+    r.plain = plainSummary_(r);
+    r.prompt = reportPrompt_(r);
+    r.ai = askClaude_(r.prompt + "\n\nReply in plain text, no markdown, under 200 words.", 1500, job);
+
+    saveReportRow_(r);
+    cleanOldStats_(now);
+    const emailed = sendReportEmail_(r);
+    const msg = "Report for " + r.label + (emailed ? " emailed to Salem" : " saved, but not emailed (no owner email or no quota left)") +
+      ". " + (r.site ? r.site.issues.length + " site issue(s), " : "") + (r.problems ? r.problems.count + " problem(s) logged." : "");
+    logAgent_(job, msg, r.notes.join("; "));
+    notify_(msg + (r.notes.length ? "\n\nCould not check:\n- " + r.notes.join("\n- ") : ""));
+  } catch (err) {
+    logAgent_(job, "The monthly report did not finish.", (err && err.message) || String(err));
+    notify_("The monthly report did not finish: " + ((err && err.message) || err));
+  }
+}
+
+/* Gathering numbers -------------------------------------------------- */
+
+function subscriberStats_(inMonth, key) {
+  const t = table_();
+  const stats = monthStats_(key);
+  const active = t.rows.filter(r => isActive_(r.data.status));
+  // Rows of people who joined and then left are gone, so use the counter when it's higher.
+  const joinedRows = t.rows.filter(r => inMonth(new Date(r.data.createdAt))).length;
+  const joined = Math.max(Number(stats.joined) || 0, joinedRows);
+  const left = Number(stats.unsubscribed) || 0;
+  const bounced = Number(stats.bounced) || 0;
+
+  const counts = {};
+  NEWSLETTER_AUDIENCES.filter(a => a !== "Everyone").forEach(a => { counts[a] = 0; });
+  active.forEach(r => toList_(r.data.interests).forEach(i => { counts[i] = (counts[i] || 0) + 1; }));
+  const interests = Object.keys(counts).map(k => [k, counts[k]]).sort((a, b) => b[1] - a[1]);
+
+  return {
+    active: active.length, joined: joined, left: left, bounced: bounced,
+    bouncedTotal: t.rows.filter(r => r.data.status === "bounced").length,
+    net: joined - left - bounced, interests: interests
+  };
+}
+
+function newsletterStats_(inMonth) {
+  const sent = [];
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(NEWSLETTER_HISTORY_SHEET);
+  if (sh && sh.getLastRow() > 1) {
+    sh.getRange(2, 1, sh.getLastRow() - 1, 5).getValues().forEach(v => {
+      const d = v[0] instanceof Date ? v[0] : new Date(v[0]);
+      if (inMonth(d)) sent.push({ subject: String(v[1]), sendTo: String(v[2]), people: Number(v[3]) || 0, days: Number(v[4]) || 1 });
+    });
+  }
+  let sendingNow = null;
+  try {
+    const n = readNewsletter_();
+    if (n.status === "sending") sendingNow = n.subject;
+  } catch (err) { /* no Newsletter tab */ }
+  return { sent: sent, sendingNow: sendingNow };
+}
+
+function orderStats_(inMonth, nextEnd) {
+  const orders = readOrders_();
+  if (orders === null) return { hasTab: false };
+  const done = orders.filter(o => o.status.toLowerCase() === "picked up" && inMonth(o.pickedUpOn));
+  const open = orders.filter(isOrderOpen_);
+  const sum = list => list.reduce((s, o) => s + (o.quantity || 0), 0);
+  const upcoming = open.filter(o => o.deadline && o.deadline < nextEnd)
+    .sort((a, b) => a.deadline - b.deadline || b.quantity - a.quantity);
+  return {
+    hasTab: true, completed: done.length, shirts: sum(done),
+    open: open.length, openShirts: sum(open), upcoming: upcoming,
+    noDeadline: open.filter(o => !o.deadline).length
+  };
+}
+
+function agentProblems_(key) {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(AGENT_LOG_SHEET);
+  const out = { count: 0, latest: [] };
+  if (!sh || sh.getLastRow() < 2) return out;
+  const tz = Session.getScriptTimeZone();
+  sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues().forEach(v => {
+    const month = v[0] instanceof Date ? Utilities.formatDate(v[0], tz, "yyyy-MM") : String(v[0]).slice(0, 7);
+    if (month !== key || !String(v[3]).trim()) return;
+    out.count++;
+    out.latest.push(String(v[1]) + ": " + String(v[3]).slice(0, 160));
+  });
+  out.latest = out.latest.slice(-5).reverse();
+  return out;
+}
+
+function previousReport_(prevKey) {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(MONTHLY_REPORTS_SHEET);
+  if (!sh || sh.getLastRow() < 2) return null;
+  const rows = sh.getRange(2, 1, sh.getLastRow() - 1, 3).getDisplayValues();
+  const row = rows.find(v => v[0] === prevKey);
+  return row ? { active: Number(row[1]) || 0, joined: Number(row[2]) || 0 } : null;
+}
+
+/* Site check --------------------------------------------------------- */
+
+function siteCheck_(posts, now) {
+  const site = siteUrl_();
+  const issues = [];
+  const short = u => u.indexOf(site) === 0 ? (u.slice(site.length) || "/") : u;
+
+  // 1. The home page and every post in the feed.
+  const pages = [site + "/"].concat(posts.map(p => p.link));
+  const pageRes = fetchAllSafe_(pages);
+  const html = {};
+  pages.forEach(u => {
+    const r = pageRes[u];
+    if (!r || r.code !== 200) issues.push("Page " + short(u) + " did not load (" + (r ? (r.code ? "HTTP " + r.code : r.error) : "no answer") + ").");
+    else html[u] = r.text;
+  });
+
+  // 2. Every link and image on those pages that points to this website's server
+  //    (external sites like Instagram often block automated checks, so they're skipped).
+  const origin = (site.match(/^https?:\/\/[^\/]+/) || [site])[0];
+  const links = new Map();
+  Object.keys(html).forEach(page => {
+    const re = /\b(?:href|src)\s*=\s*"([^"]+)"/gi;
+    let m;
+    while ((m = re.exec(html[page]))) {
+      const u = resolveUrl_(page, m[1]);
+      if (u && u.indexOf(origin + "/") === 0 && pages.indexOf(u) === -1 && !links.has(u)) links.set(u, page);
+    }
+  });
+  const linkList = Array.from(links.keys()).slice(0, 200);
+  const linkRes = fetchAllSafe_(linkList);
+  linkList.forEach(u => {
+    const r = linkRes[u];
+    if (!r || r.code !== 200) {
+      issues.push("Broken link on " + short(links.get(u)) + ": " + short(u) + " (" + (r ? (r.code ? "HTTP " + r.code : r.error) : "no answer") + ").");
+    }
+  });
+
+  // 3. Sales and featured months that have already passed.
+  if (html[site + "/"]) stalePromos_(html[site + "/"], posts, now).forEach(x => issues.push(x));
+
+  // 4. The signup system: the URL the website uses must answer.
+  const cfg = fetchAllSafe_([site + "/assets/js/config.js"])[site + "/assets/js/config.js"];
+  const api = cfg && cfg.code === 200 ? (cfg.text.match(/SALEM_API_URL\s*=\s*["']([^"']*)["']/) || [])[1] : null;
+  if (!api) {
+    issues.push("Could not read the signup system address from assets/js/config.js.");
+  } else {
+    const a = fetchAllSafe_([api])[api];
+    let okJson = false;
+    try { const j = JSON.parse(a.text); okJson = j.ok === true && j.service === "salem-subscribe"; } catch (err) { /* not JSON */ }
+    if (!a || a.code !== 200 || !okJson) {
+      issues.push("The signup system (Apps Script web app) did not answer correctly (" + (a && a.code ? "HTTP " + a.code : "no answer") +
+        "). Signups, unsubscribes and preferences may be failing.");
+    }
+  }
+  return { issues: issues, checked: pages.length + linkList.length + 2 };
+}
+
+// Fetches many URLs in parallel; never throws. { url: { code, text, error } }
+function fetchAllSafe_(urls) {
+  const out = {};
+  for (let i = 0; i < urls.length; i += 40) {
+    const batch = urls.slice(i, i + 40);
+    try {
+      UrlFetchApp.fetchAll(batch.map(u => ({ url: u, muteHttpExceptions: true, followRedirects: true })))
+        .forEach((res, j) => { out[batch[j]] = { code: res.getResponseCode(), text: res.getContentText() }; });
+    } catch (err) {
+      // One bad URL fails the whole batch, so fall back to one at a time.
+      batch.forEach(u => {
+        try {
+          const res = UrlFetchApp.fetch(u, { muteHttpExceptions: true, followRedirects: true });
+          out[u] = { code: res.getResponseCode(), text: res.getContentText() };
+        } catch (e) {
+          out[u] = { code: 0, text: "", error: (e && e.message) || String(e) };
+        }
+      });
+    }
+  }
+  return out;
+}
+
+// Turns a link found on a page into a full URL (or null for anchors, mailto:, etc.).
+function resolveUrl_(base, href) {
+  href = String(href || "").replace(/&amp;/g, "&").trim();
+  if (!href || /^(#|mailto:|tel:|javascript:|data:)/i.test(href)) return null;
+  href = href.split("#")[0].split("?")[0];
+  if (!href) return null;
+  if (/^https?:\/\//i.test(href)) return href;
+  if (href.indexOf("//") === 0) return "https:" + href;
+  const origin = (base.match(/^https?:\/\/[^\/]+/) || [""])[0];
+  if (href.charAt(0) === "/") return origin + href;
+  const dir = base.split("#")[0].split("?")[0].replace(/[^\/]*$/, "");
+  const out = [];
+  (dir.slice(origin.length) + href).split("/").forEach(p => {
+    if (p === "..") out.pop();
+    else if (p !== ".") out.push(p);
+  });
+  return origin + ("/" + out.join("/")).replace(/^\/+/, "/");
+}
+
+// Sales or "Featured · <Month Year>" labels that are still showing after their month ended.
+function stalePromos_(homeHtml, posts, now) {
+  const current = now.getFullYear() * 12 + now.getMonth();
+  const out = [];
+  const text = plainText_(homeHtml.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " "));
+  const re = new RegExp("\\b(" + MONTH_NAMES.join("|") + ")\\s+(20\\d\\d)\\b", "g");
+  const seen = new Set();
+  let m;
+  while ((m = re.exec(text))) {
+    const when = Number(m[2]) * 12 + MONTH_NAMES.indexOf(m[1]);
+    if (when < current && !seen.has(m[0])) {
+      seen.add(m[0]);
+      const around = text.slice(Math.max(0, m.index - 30), m.index + m[0].length + 30).trim();
+      out.push('The home page still features "' + m[0] + '", which has passed ("…' + around + '…"). Update or remove that section.');
+    }
+  }
+  posts.filter(p => (p.categories || []).some(c => /sale|promo|special|offer|deal/i.test(c))).forEach(p => {
+    const words = p.title + " " + p.description;
+    const posted = p.date.getFullYear() * 12 + p.date.getMonth();
+    MONTH_NAMES.forEach((name, i) => {
+      if (!new RegExp("\\b" + name + "\\b", "i").test(words)) return;
+      let when = p.date.getFullYear() * 12 + i;
+      if (when < posted) when += 12; // e.g. a December post about a January sale
+      if (when < current) {
+        out.push('Sale post "' + p.title + '" is about ' + name + ", which has passed, but it is still in the journal on the home page.");
+      }
+    });
+  });
+  return out;
+}
+
+/* Writing the report ------------------------------------------------- */
+
+function plural_(n, one, many) { return n + " " + (n === 1 ? one : many); }
+
+function plainSummary_(r) {
+  const s = [];
+  if (r.subs) {
+    s.push("You have " + plural_(r.subs.active, "person", "people") + " on the Salem list. In " + r.monthName + ", " +
+      r.subs.joined + " joined and " + r.subs.left + " left" +
+      (r.subs.bounced ? ", and " + plural_(r.subs.bounced, "email address", "email addresses") + " stopped working" : "") + ".");
+    if (r.prev) {
+      const d = r.subs.joined - r.prev.joined;
+      s.push(d > 0 ? "That's " + plural_(d, "more sign-up", "more sign-ups") + " than " + r.prevName + "."
+        : d < 0 ? "That's " + plural_(-d, "fewer sign-up", "fewer sign-ups") + " than " + r.prevName + "."
+        : "That's the same number of sign-ups as " + r.prevName + ".");
+    }
+  }
+  if (r.orders && r.orders.hasTab) {
+    s.push(plural_(r.orders.completed, "order", "orders") + " (" + plural_(r.orders.shirts, "shirt", "shirts") +
+      ") were picked up, and " + r.orders.open + " " + (r.orders.open === 1 ? "is" : "are") + " still open.");
+  }
+  if (r.letters) {
+    s.push(r.letters.sent.length ? plural_(r.letters.sent.length, "newsletter", "newsletters") + " went out."
+      : "No newsletter went out this month. The tip below could make a good one.");
+  }
+  return s.join(" ");
+}
+
+// The same text is sent to the AI (when a key is set) and offered for copy-paste.
+function reportPrompt_(r) {
+  const L = [];
+  L.push("I run Salem Custom Screen Printing, a small, faith-driven custom apparel shop in Chicago that serves " +
+    "churches and the local community. I work on it part-time, and people order by messaging us on Instagram. " +
+    "Here are my numbers for " + r.label + ":");
+  if (r.subs) {
+    L.push("- Email list: " + r.subs.active + " active subscribers; " + r.subs.joined + " joined, " + r.subs.left +
+      " unsubscribed, " + r.subs.bounced + " bounced (net " + (r.subs.net >= 0 ? "+" : "") + r.subs.net + ")." +
+      (r.prev ? " Previous month: " + r.prev.joined + " joined, " + r.prev.active + " active." : ""));
+    L.push("- What subscribers are interested in: " + r.subs.interests.map(x => x[0] + " " + x[1]).join(", ") + ".");
+  }
+  if (r.letters) {
+    L.push("- Newsletters sent: " + (r.letters.sent.length
+      ? r.letters.sent.map(x => '"' + x.subject.replace(/\{firstName\}/g, "") + '" to ' + x.people + " people").join("; ")
+      : "none") + ".");
+  }
+  L.push("- Journal posts published: " + (r.postsThisMonth.length ? r.postsThisMonth.map(t => '"' + t + '"').join(", ") : "none") + ".");
+  if (r.orders && r.orders.hasTab) {
+    L.push("- Orders: " + r.orders.completed + " picked up (" + r.orders.shirts + " shirts); " + r.orders.open +
+      " still open (" + r.orders.openShirts + " shirts); " + r.orders.upcoming.length + " due by the end of " + r.nextName + ".");
+  }
+  L.push("");
+  L.push("Please give me:");
+  L.push("1. A 3-4 sentence summary in plain, friendly words.");
+  L.push("2. 2-3 concrete ideas for " + r.nextName + " that fit a church and community outreach business. " +
+    "Think about upcoming seasons such as Christmas, Easter, VBS and youth camps, and fundraisers.");
+  L.push("3. One newsletter topic I could write about.");
+  L.push("Keep it short: I have about 2 minutes to read it.");
+  return L.join("\n");
+}
+
+function saveReportRow_(r) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(MONTHLY_REPORTS_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(MONTHLY_REPORTS_SHEET);
+    sh.getRange(1, 1, 1, REPORT_HEADERS.length).setValues([REPORT_HEADERS]).setFontWeight("bold");
+    sh.setFrozenRows(1);
+    sh.getRange("A:A").setNumberFormat("@"); // keep "2026-11" as text, not a date
+    sh.setColumnWidth(13, 420);
+    sh.setColumnWidth(14, 320);
+  }
+  const s = r.subs || {}, o = r.orders || {};
+  const line = [
+    r.key, s.active, s.joined, s.left, s.bounced, s.net,
+    r.letters ? r.letters.sent.length : "", o.hasTab ? o.completed : "", o.hasTab ? o.shirts : "", o.hasTab ? o.open : "",
+    r.site ? r.site.issues.length : "", r.problems ? r.problems.count : "",
+    safeCell_(r.ai || r.plain), safeCell_(r.tip), new Date()
+  ].map(v => v == null ? "" : v);
+  const keys = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 1).getDisplayValues().map(v => v[0]) : [];
+  const at = keys.indexOf(r.key);
+  const row = at === -1 ? sh.getLastRow() + 1 : at + 2;
+  sh.getRange(row, 1, 1, line.length).setValues([line]);
+}
+
+// Monthly counters older than about a year are no longer needed.
+function cleanOldStats_(now) {
+  const props = PropertiesService.getScriptProperties();
+  const cutoff = Utilities.formatDate(new Date(now.getFullYear(), now.getMonth() - 13, 1), Session.getScriptTimeZone(), "yyyy-MM");
+  props.getKeys().filter(k => k.indexOf("STATS_") === 0 && k.slice(6) < cutoff).forEach(k => props.deleteProperty(k));
+}
+
+function sendReportEmail_(r) {
+  const owner = ownerEmail_();
+  if (!owner || !canSend_()) return false;
+  const tz = Session.getScriptTimeZone();
+  const h2 = t => '<h2 style="font-family:Georgia,serif;font-size:20px;margin:26px 0 8px;">' + esc_(t) + "</h2>";
+  const p = t => '<p style="font-size:15px;line-height:1.6;margin:0 0 10px;">' + t + "</p>";
+  const li = items => '<ul style="font-size:14px;line-height:1.6;padding-left:20px;margin:0;">' +
+    items.map(x => "<li>" + x + "</li>").join("") + "</ul>";
+  const sign = n => (n > 0 ? "+" : "") + n;
+  const text = [];
+
+  // 1. Headline numbers
+  const tiles = [];
+  if (r.subs) {
+    tiles.push(["On the list", r.subs.active, sign(r.subs.net) + " this month"]);
+    tiles.push(["Joined", r.subs.joined, r.prev ? r.prev.joined + " in " + r.prevName : ""]);
+    tiles.push(["Left", r.subs.left, r.subs.bounced ? r.subs.bounced + " bounced" : ""]);
+  }
+  if (r.letters) tiles.push(["Newsletters", r.letters.sent.length, r.letters.sendingNow ? "1 still sending" : ""]);
+  if (r.orders && r.orders.hasTab) {
+    tiles.push(["Orders picked up", r.orders.completed, plural_(r.orders.shirts, "shirt", "shirts")]);
+    tiles.push(["Open orders", r.orders.open, plural_(r.orders.openShirts, "shirt", "shirts")]);
+  }
+  let html = '<div style="font-family:Helvetica,Arial,sans-serif;color:#1c2a42;max-width:640px;">' +
+    '<div style="font-size:12px;letter-spacing:1px;color:#5b6577;">SALEM MONTHLY REPORT</div>' +
+    '<h1 style="font-family:Georgia,serif;font-size:30px;margin:6px 0 16px;">' + esc_(r.label) + "</h1>" +
+    '<table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>' +
+    tiles.map((t, i) => (i && i % 3 === 0 ? "</tr><tr>" : "") +
+      '<td style="width:33%;padding:10px;background:#f1f3f5;border:4px solid #ffffff;vertical-align:top;">' +
+      '<div style="font-size:12px;color:#5b6577;">' + esc_(t[0]) + "</div>" +
+      '<div style="font-size:26px;font-weight:bold;">' + esc_(t[1]) + "</div>" +
+      '<div style="font-size:12px;color:#5b6577;">' + esc_(t[2]) + "</div></td>").join("") +
+    "</tr></table>";
+  text.push("SALEM MONTHLY REPORT · " + r.label, "", tiles.map(t => t[0] + ": " + t[1] + (t[2] ? " (" + t[2] + ")" : "")).join("\n"));
+
+  if (r.subs && r.subs.interests.length) {
+    const list = r.subs.interests.map(x => esc_(x[0]) + " <strong>" + x[1] + "</strong>").join(" · ");
+    html += p('<span style="color:#5b6577;">Interests:</span> ' + list);
+    text.push("Interests: " + r.subs.interests.map(x => x[0] + " " + x[1]).join(", "));
+  }
+  if (r.letters && r.letters.sent.length) {
+    html += li(r.letters.sent.map(x => "Newsletter “" + esc_(x.subject) + "” reached " + x.people + " people" +
+      (x.days > 1 ? " over " + x.days + " days" : "")));
+    text.push(r.letters.sent.map(x => 'Newsletter "' + x.subject + '": ' + x.people + " people" + (x.days > 1 ? " over " + x.days + " days" : "")).join("\n"));
+  }
+
+  // 2. Summary and ideas
+  html += h2(r.ai ? "Summary and ideas" : "Summary");
+  html += r.ai
+    ? '<div style="font-size:15px;line-height:1.6;white-space:pre-wrap;">' + esc_(r.ai) + "</div>"
+    : p(esc_(r.plain));
+  text.push("", r.ai ? "SUMMARY AND IDEAS" : "SUMMARY", r.ai || r.plain);
+  if (r.tip) {
+    html += '<div style="background:#eef3f8;border-left:4px solid #2f5d8c;padding:12px 14px;margin-top:12px;">' +
+      '<div style="font-size:12px;letter-spacing:1px;font-weight:bold;">IDEA FOR ' + esc_(r.nextName.toUpperCase()) + "</div>" +
+      '<div style="font-size:15px;line-height:1.6;">' + esc_(r.tip) + "</div></div>";
+    text.push("", "IDEA FOR " + r.nextName.toUpperCase(), r.tip);
+  }
+
+  // 3. Site check and problems
+  html += h2("Website check");
+  if (r.site) {
+    html += r.site.issues.length ? li(r.site.issues.map(esc_))
+      : p("Everything checked out (" + r.site.checked + " pages, links and images, plus the signup system).");
+    text.push("", "WEBSITE CHECK", r.site.issues.length ? r.site.issues.map(x => "- " + x).join("\n") : "Everything checked out.");
+  }
+  if (r.problems && r.problems.count) {
+    html += p("<strong>" + plural_(r.problems.count, "problem was", "problems were") + "</strong> logged by the automations this month. Latest:") +
+      li(r.problems.latest.map(esc_)) + p('<span style="font-size:13px;color:#5b6577;">Details are in the Agent Log tab.</span>');
+    text.push("Problems logged: " + r.problems.count + "\n" + r.problems.latest.map(x => "- " + x).join("\n"));
+  }
+  if (r.notes.length) {
+    html += p('<span style="color:#a61b1b;">Could not check:</span> ' + esc_(r.notes.join("; ")));
+    text.push("Could not check: " + r.notes.join("; "));
+  }
+
+  // 4. Orders coming up
+  if (r.orders && r.orders.hasTab) {
+    html += h2("Orders due by the end of " + r.nextName);
+    const fmt = d => Utilities.formatDate(d, tz, "EEE, MMM d");
+    if (r.orders.upcoming.length) {
+      html += li(r.orders.upcoming.map(o => "<strong>" + esc_(fmt(o.deadline)) + "</strong> · " + esc_(o.customer) + " · " +
+        esc_(o.quantity || "?") + " · " + esc_(o.description) + ' <span style="color:#5b6577;">(' + esc_(o.status || "no status") + ")</span>"));
+    } else {
+      html += p("Nothing due yet.");
+    }
+    if (r.orders.noDeadline) html += p('<span style="font-size:13px;color:#5b6577;">' + plural_(r.orders.noDeadline, "open order has", "open orders have") + " no deadline.</span>");
+    text.push("", "ORDERS DUE BY THE END OF " + r.nextName.toUpperCase(),
+      r.orders.upcoming.length ? r.orders.upcoming.map(o => fmt(o.deadline) + " · " + o.customer + " · " + (o.quantity || "?") + " · " + o.description).join("\n") : "Nothing due yet.");
+  }
+
+  // 5. Free AI help: a prompt to paste into claude.ai (only when the report had no AI section)
+  if (!r.ai) {
+    html += h2("Want more ideas?") +
+      p("Copy everything in the box into a free chat at claude.ai. It has numbers only, no names or emails.") +
+      '<pre style="white-space:pre-wrap;font-family:Menlo,Consolas,monospace;font-size:12px;line-height:1.5;background:#f1f3f5;padding:12px;border:1px solid #d6dbe4;">' +
+      esc_(r.prompt) + "</pre>";
+    text.push("", "WANT MORE IDEAS? Paste this into a free chat at claude.ai:", "", r.prompt);
+  }
+
+  const sheetUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+  html += p('<a href="' + esc_(sheetUrl) + '" style="color:#2f5d8c;">Open the Salem sheet</a>') + "</div>";
+  text.push("", "Sheet: " + sheetUrl);
+
+  MailApp.sendEmail({
+    to: owner, name: "Salem website", subject: "Salem monthly report: " + r.label,
+    body: text.join("\n"), htmlBody: html
+  });
+  return true;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1020,7 +1772,8 @@ function readFeed_() {
     title: plainText_(it.getChildText("title")),
     link: String(it.getChildText("link") || "").trim(),
     description: plainText_(it.getChildText("description")),
-    date: new Date(it.getChildText("pubDate") || 0)
+    date: new Date(it.getChildText("pubDate") || 0),
+    categories: it.getChildren("category").map(c => plainText_(c.getText()))
   })).filter(p => p.link).sort((a, b) => b.date - a.date);
 }
 
@@ -1241,6 +1994,7 @@ function checkBounces() {
           writeRow_(t, r.rowNumber, Object.assign({}, r.data, { status: "bounced", updatedAt: now }));
           marked++;
         });
+        if (marked) countEvent_("bounced", marked);
       } finally {
         lock.releaseLock();
       }
