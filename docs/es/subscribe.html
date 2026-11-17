@@ -111,12 +111,12 @@ ul.task-list li input[type="checkbox"] {
   var T = isSpanish ? {
     settings: "Configuración", appearance: "Apariencia", light: "Claro", dark: "Oscuro",
     auto: "Automático (según su dispositivo)", language: "Idioma", textSize: "Tamaño del texto",
-    normal: "Normal", larger: "Más grande", done: "Listo",
+    normal: "Normal", larger: "Más grande", done: "Listo", menu: "Menú",
     nav: { "shop.html": "Tienda", "index.html#journal": "Diario", "about.html": "Nosotros", "subscribe.html": "Únase a la lista de Salem" }
   } : {
     settings: "Settings", appearance: "Appearance", light: "Light", dark: "Dark",
     auto: "Auto (match my device)", language: "Language", textSize: "Text size",
-    normal: "Normal", larger: "Larger", done: "Done", nav: {}
+    normal: "Normal", larger: "Larger", done: "Done", menu: "Menu", nav: {}
   };
 
   /* ---------- Paths: same page in the other language ---------- */
@@ -270,7 +270,18 @@ ul.task-list li input[type="checkbox"] {
     });
   }
 
+  // Quarto gives the menu button role="menu", which tells screen readers it is a
+  // menu of items (it is just a button that opens the links). Remove it, and
+  // replace Quarto's Spanish label ("Navegación de palanca").
+  function fixMenuButton() {
+    document.querySelectorAll('#quarto-header .navbar-toggler').forEach(function (b) {
+      b.removeAttribute("role");
+      b.setAttribute("aria-label", T.menu);
+    });
+  }
+
   function init() {
+    fixMenuButton();
     translateNavbar();
     buildTools();
   }

@@ -23,14 +23,14 @@ jobs:
         theme: [light, dark]
     name: WCAG AA (${{ matrix.theme }} mode)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Install pa11y-ci
-        run: npm install --no-save pa11y-ci@3.1.0
+        run: npm install --no-save pa11y-ci@5.0.0   # pa11y 10, axe-core 4.13, current Chrome
 
       - name: Serve the rendered site (docs/)
         run: |
