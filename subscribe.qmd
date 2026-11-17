@@ -71,13 +71,13 @@ body-classes: salem-home salem-about salem-subscribe
         <fieldset class="form-field">
           <legend>Birthday <span class="field-optional">(optional · month and day only)</span></legend>
           <div class="field-pair">
-            <select class="field-input" id="bmonth" name="bmonth" aria-label="Birthday month">
+            <span class="select-wrap"><select class="field-input" id="bmonth" name="bmonth" aria-label="Birthday month">
               <option value="">Month</option>
               <option value="January">January</option><option value="February">February</option><option value="March">March</option>
               <option value="April">April</option><option value="May">May</option><option value="June">June</option>
               <option value="July">July</option><option value="August">August</option><option value="September">September</option>
               <option value="October">October</option><option value="November">November</option><option value="December">December</option>
-            </select>
+            </select></span>
             <input class="field-input" type="number" id="bday" name="bday" min="1" max="31" inputmode="numeric" placeholder="Day" aria-label="Birthday day">
           </div>
         </fieldset>
@@ -96,7 +96,7 @@ body-classes: salem-home salem-about salem-subscribe
 
         <div class="form-field" data-audience="new">
           <label for="source">How did you hear about Salem? <span class="field-optional">(optional)</span></label>
-          <select class="field-input" id="source" name="source">
+          <span class="select-wrap"><select class="field-input" id="source" name="source">
             <option value="">Choose one</option>
             <option>Friend or family</option>
             <option>Church or event</option>
@@ -104,7 +104,7 @@ body-classes: salem-home salem-about salem-subscribe
             <option>Facebook</option>
             <option>LinkedIn</option>
             <option>Other</option>
-          </select>
+          </select></span>
         </div>
 
         <div class="form-field" data-audience="returning" hidden>

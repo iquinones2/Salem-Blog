@@ -669,7 +669,7 @@ body{
     border: 0;
     border-radius: 0;
     box-shadow: none;
-    background: url("images/icons/chevron-down.svg") no-repeat right center;
+    background: transparent;   /* the arrow is .sort-control::after (see "Select arrows") */
     font-family: var(--salem-sans);
     font-size: calc(13px * var(--salem-text-scale, 1));
     color: var(--salem-muted);
@@ -2636,7 +2636,7 @@ textarea.field-input{ min-height: 112px; resize: vertical; }
     appearance: none;
     -webkit-appearance: none;
     padding-right: 40px;
-    background: var(--salem-surface) url("images/icons/chevron-down.svg") no-repeat right 14px center;
+    background: var(--salem-surface);   /* the arrow is .select-wrap::after (see "Select arrows") */
     cursor: pointer;
 }
 
@@ -2962,10 +2962,6 @@ body.quarto-dark img[src*="message-circle.svg"]{ filter: invert(1); }
 body.quarto-dark .btn-accent img[src*="-light.svg"],
 body.quarto-dark .chat-button img[src*="-light.svg"],
 body.quarto-dark .signup-submit img[src*="-light.svg"]{ filter: invert(1); }
-body.quarto-dark.salem-home #sort-post,
-body.quarto-dark .signup-form select.field-input{
-    background-image: url("images/icons/chevron-down-light.svg");
-}
 /* Photos keep their colors; a hairline keeps light photos from glowing. */
 body.quarto-dark main img:not([src$=".svg"]){ box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); }
 body.quarto-dark #quarto-header .nav-link[href$="subscribe.html"]::after{
@@ -3256,4 +3252,36 @@ body.quarto-dark .btn-light img[src*="arrow-up-right.svg"]{ filter: none; }
     html[data-text-size="large"] #quarto-header .navbar-title{ font-size: 30px; }
     html[data-text-size="large"] #quarto-header .navbar-nav{ gap: 8px; }
     html[data-text-size="large"] #quarto-header .navbar-collapse{ margin-left: 16px; }
+}
+
+/* ==========================================================
+   Select arrows
+   The ▾ arrow is drawn beside the <select>, not as its background image:
+   accessibility checkers can't measure text contrast over a background
+   image and report it as a failure. Wrap a styled select in
+   <span class="select-wrap"> to give it the arrow.
+   ========================================================== */
+.select-wrap,
+.salem-home .sort-control{
+    position: relative;
+    display: block;
+}
+.salem-home .sort-control{ display: inline-block; }
+.select-wrap > select{ width: 100%; }
+.select-wrap::after,
+.salem-home .sort-control::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    background: url("images/icons/chevron-down.svg") no-repeat center / 14px 14px;
+    pointer-events: none;   /* clicks go through to the select */
+}
+.salem-home .sort-control::after{ right: 0; }
+body.quarto-dark .select-wrap::after,
+body.quarto-dark.salem-home .sort-control::after{
+    background-image: url("images/icons/chevron-down-light.svg");
 }
